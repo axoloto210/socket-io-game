@@ -12,7 +12,7 @@ export interface Message {
     count: number;
   }
 
-const socket = io('http://localhost:3000');
+const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const ChatRoom = () => {
   const [roomId, setRoomId] = useState<string>();

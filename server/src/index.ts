@@ -1,18 +1,23 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
 
 // ルーム管理用のMap
 const rooms = new Map();
+
+const messages: any = []
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
@@ -36,11 +41,18 @@ io.on("connection", (socket) => {
 
   // メッセージ送信
   socket.on("send_message", (data) => {
+    messages.push({
+      roomId: data.roomId,
+      message: data.message,
+      sender: socket.id,
+      timestamp: new Date(),
+    })
     io.to(data.roomId).emit("receive_message", {
       message: data.message,
       sender: socket.id,
       timestamp: new Date(),
     });
+    console.log('messages:',messages)
   });
 
   // ルームから退出
