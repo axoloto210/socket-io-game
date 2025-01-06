@@ -1,7 +1,7 @@
-import ChatRoom from "./components/ChatRoom";
+import Room from "./components/Room";
 
 function App() {
-  return <ChatRoom />;
+  return <Room />;
 }
 
 export default App;

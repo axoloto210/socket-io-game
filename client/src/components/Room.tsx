@@ -14,7 +14,7 @@ export interface Message {
 
 const socket = io(import.meta.env.VITE_BACKEND_URL);
 
-const ChatRoom = () => {
+const Room = () => {
   const [roomId, setRoomId] = useState<string>();
   const [message, setMessage] = useState<string>();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -117,4 +117,4 @@ const ChatRoom = () => {
   );
 };
 
-export default ChatRoom;
+export default Room;
