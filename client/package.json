@@ -1,7 +1,7 @@
 {
-  "name": "socket-io-game",
+  "name": "@socket-io-game/client",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@socket-io-game/common": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "socket.io-client": "^4.8.1"

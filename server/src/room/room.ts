@@ -7,7 +7,7 @@ export const roomServer = (
   // ルーム管理用のMap
   const rooms = new Map();
   // ユーザー管理用のMap
-  const users = new Map();
+  // const users = new Map();
 
   const messages: any = [];
 

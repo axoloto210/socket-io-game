@@ -57,7 +57,7 @@ const Room = () => {
 
   return (
     <div className="p-4">
-      {currentRoom && (
+      {!currentRoom && (
         <div className="mb-4">
           <input
             type="text"

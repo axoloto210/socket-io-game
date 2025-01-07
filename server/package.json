@@ -1,10 +1,14 @@
 {
+  "name": "@socket-io-game/server",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@socket-io-game/common": "workspace:*",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "socket.io": "^4.8.1"
