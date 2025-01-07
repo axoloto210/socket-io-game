@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
-import { ROOM_EVENTS } from "../../../server/src/room/event";
+import { ROOM_EVENTS } from "@socket-io-game/common/src/types/room";
 
 export type Message = {
   message: string;

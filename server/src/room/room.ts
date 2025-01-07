@@ -1,5 +1,5 @@
 import { DefaultEventsMap, Server } from "socket.io";
-import { ROOM_EVENTS } from "./event";
+import { ROOM_EVENTS } from "@socket-io-game/common/src/types/room";
 
 export const roomServer = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>

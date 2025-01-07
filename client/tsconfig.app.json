@@ -8,7 +8,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "composite": true
   },
   "include": ["src"],
   "references": [
