@@ -1,17 +1,20 @@
 import { DefaultEventsMap, Server } from "socket.io";
+import { ROOM_EVENTS } from "./event";
 
 export const roomServer = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   // ルーム管理用のMap
   const rooms = new Map();
+  // ユーザー管理用のMap
+  const users = new Map();
 
   const messages: any = [];
 
-  io.on("connection", (socket) => {
+  io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on("join_room", (roomId) => {
+    socket.on(ROOM_EVENTS.JOIN_ROOM, (roomId) => {
       socket.join(roomId);
       console.log(`ユーザー ${socket.id} がルーム ${roomId} に参加しました`);
 
@@ -20,23 +23,17 @@ export const roomServer = (
         rooms.set(roomId, new Set());
       }
       rooms.get(roomId).add(socket.id);
-
-      // ルーム参加者数を送信
-      io.to(roomId).emit("room_users", {
-        roomId,
-        count: rooms.get(roomId).size,
-      });
     });
 
     // メッセージ送信
-    socket.on("send_message", (data) => {
+    socket.on(ROOM_EVENTS.SEND_MESSAGE, (data) => {
       messages.push({
         roomId: data.roomId,
         message: data.message,
         sender: socket.id,
         timestamp: new Date(),
       });
-      io.to(data.roomId).emit("receive_message", {
+      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, {
         message: data.message,
         sender: socket.id,
         timestamp: new Date(),
@@ -45,7 +42,7 @@ export const roomServer = (
     });
 
     // ルームから退出
-    socket.on("leave_room", (roomId) => {
+    socket.on(ROOM_EVENTS.LEAVE_ROOM, (roomId) => {
       socket.leave(roomId);
       if (rooms.has(roomId)) {
         rooms.get(roomId).delete(socket.id);
@@ -62,7 +59,7 @@ export const roomServer = (
     });
 
     // 切断時の処理
-    socket.on("disconnect", () => {
+    socket.on(ROOM_EVENTS.DISCONNECTION, () => {
       rooms.forEach((users, roomId) => {
         if (users.has(socket.id)) {
           users.delete(socket.id);
