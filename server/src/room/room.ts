@@ -63,6 +63,9 @@ export const roomServer = (
         if (rooms.get(roomId).size === 0) {
           rooms.delete(roomId);
         }
+        if(users.get(socket.id)){
+          users.delete(socket.id)
+        }
       }
       console.log(`ユーザー ${socket.id} がルーム ${roomId} から退出しました`);
     });
@@ -77,7 +80,7 @@ export const roomServer = (
           }
         }
       });
-      console.log("ユーザーが切断しました:", socket.id, users.get(socket.id));
+      console.log(`ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`);
     });
   });
 };
