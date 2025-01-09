@@ -4,6 +4,6 @@ export const ROOM_EVENTS = {
     SEND_MESSAGE: "send_message",
     RECEIVE_MESSAGE: "receive_message",
     LEAVE_ROOM: "leave_room",
-    DISCONNECTION: "disconnection",
+    DISCONNECT: "disconnect",
   } as const;
   

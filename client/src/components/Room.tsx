@@ -1,25 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { io } from "socket.io-client";
-import { ROOM_EVENTS } from "@socket-io-game/common/src/types/room";
-
-export type Message = {
-  message: string;
-  sender: string;
-  timestamp: Date;
-};
-
-export type RoomUserCount = {
-  roomId: string;
-  count: number;
-};
+import { ROOM_EVENTS } from "@socket-io-game/common/src/const/room";
+import { UserContext } from "../contexts/UserContext";
+import { Message } from "@socket-io-game/common/src/types";
 
 const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const Room = () => {
-  const [roomId, setRoomId] = useState<string>();
-  const [message, setMessage] = useState<string>();
+  const [roomId, setRoomId] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentRoom, setCurrentRoom] = useState<string | null>(null);
+
+  const user = useContext(UserContext);
 
   // メッセージ受信のハンドラー
   useEffect(() => {
@@ -33,27 +26,30 @@ const Room = () => {
   }, []);
 
   // ルーム参加処理
-  const joinRoom = useCallback(() => {
+  const joinRoom = () => {
     if (roomId && roomId.trim()) {
       if (currentRoom) {
         socket.emit(ROOM_EVENTS.LEAVE_ROOM, currentRoom);
       }
-      socket.emit(ROOM_EVENTS.JOIN_ROOM, roomId);
+      console.log('roomId', roomId)
+      console.log('user', user)
+      socket.emit(ROOM_EVENTS.JOIN_ROOM, { roomId, userName: user.userName });
       setCurrentRoom(roomId);
       setMessages([]);
     }
-  }, [roomId, currentRoom]);
+  };
 
   // メッセージ送信処理
   const sendMessage = useCallback(() => {
     if (message && message.trim() && currentRoom) {
       socket.emit(ROOM_EVENTS.SEND_MESSAGE, {
         roomId: currentRoom,
+        userName: user.userName,
         message: message.trim(),
       });
       setMessage("");
     }
-  }, [message, currentRoom]);
+  }, [message, currentRoom, user]);
 
   return (
     <div className="p-4">
@@ -83,9 +79,7 @@ const Room = () => {
       <div className="mb-4 h-96 overflow-y-auto border p-4">
         {messages.map((msg, index) => (
           <div key={index} className="mb-2">
-            <span className="font-bold">
-              {msg.sender === socket.id ? "あなた" : "他のユーザー"}:
-            </span>
+            <span className="font-bold">{msg.userName}:</span>
             <span className="ml-2">{msg.message}</span>
             <span className="text-sm text-gray-500 ml-2">
               {new Date(msg.timestamp).toLocaleTimeString()}
