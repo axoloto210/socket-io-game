@@ -14,7 +14,7 @@ export const useMessage = (socket: Socket) => {
   // メッセージ受信のハンドラー
   useEffect(() => {
     socket.on(ROOM_EVENTS.RECEIVE_MESSAGE, (data) => {
-      setMessages((prev) => [...prev, data]);
+      setMessages(data);
     });
 
     return () => {

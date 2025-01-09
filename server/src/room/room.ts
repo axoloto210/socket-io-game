@@ -46,13 +46,7 @@ export const roomServer = (
         sender: socket.id,
         timestamp: new Date(),
       });
-      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, {
-        message: data.message,
-        userName: users.get(socket.id) ?? "不明",
-        sender: socket.id,
-        timestamp: new Date(),
-      });
-      console.log("messages:", messages);
+      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, messages);
     });
 
     // ルームから退出
