@@ -1,79 +1,67 @@
+// roomServer.ts
 import { DefaultEventsMap, Server } from "socket.io";
-import { ROOM_EVENTS } from "@socket-io-game/common/src/types/room";
+
+import { MessageHandler } from "../feature/messageHandler";
+import { ROOM_EVENTS } from "../common/src/const/room";
+
 
 export const roomServer = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  // ルーム管理用のMap
   const rooms = new Map();
-  // ユーザー管理用のMap
-  // const users = new Map();
-
-  const messages: any = [];
+  const users = new Map();
+  const messageHandler = new MessageHandler(io, users);
 
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on(ROOM_EVENTS.JOIN_ROOM, (roomId) => {
-      socket.join(roomId);
-      console.log(`ユーザー ${socket.id} がルーム ${roomId} に参加しました`);
+    // メッセージハンドラーのセットアップ
+    messageHandler.setupMessageHandlers(socket);
 
-      // ルーム情報を更新
+    socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {
+      socket.join(roomId);
+      console.log(
+        `${userName}：${socket.id} がルーム ${roomId} に参加しました`
+      );
+
       if (!rooms.has(roomId)) {
         rooms.set(roomId, new Set());
       }
       rooms.get(roomId).add(socket.id);
+
+      if (!users.has(socket.id)) {
+        users.set(socket.id, userName);
+      }
     });
 
-    // メッセージ送信
-    socket.on(ROOM_EVENTS.SEND_MESSAGE, (data) => {
-      messages.push({
-        roomId: data.roomId,
-        message: data.message,
-        sender: socket.id,
-        timestamp: new Date(),
-      });
-      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, {
-        message: data.message,
-        sender: socket.id,
-        timestamp: new Date(),
-      });
-      console.log("messages:", messages);
-    });
-
-    // ルームから退出
     socket.on(ROOM_EVENTS.LEAVE_ROOM, (roomId) => {
       socket.leave(roomId);
       if (rooms.has(roomId)) {
         rooms.get(roomId).delete(socket.id);
         if (rooms.get(roomId).size === 0) {
           rooms.delete(roomId);
-        } else {
-          io.to(roomId).emit("room_users", {
-            roomId,
-            count: rooms.get(roomId).size,
-          });
+          messageHandler.cleanupRoom(roomId);
+        }
+        if (users.get(socket.id)) {
+          users.delete(socket.id);
         }
       }
       console.log(`ユーザー ${socket.id} がルーム ${roomId} から退出しました`);
     });
 
-    // 切断時の処理
-    socket.on(ROOM_EVENTS.DISCONNECTION, () => {
+    socket.on(ROOM_EVENTS.DISCONNECT, () => {
       rooms.forEach((users, roomId) => {
         if (users.has(socket.id)) {
           users.delete(socket.id);
           if (users.size === 0) {
             rooms.delete(roomId);
-          } else {
-            io.to(roomId).emit("room_users", {
-              roomId,
-              count: users.size,
-            });
+            messageHandler.cleanupRoom(roomId);
           }
         }
       });
-      console.log("ユーザーが切断しました:", socket.id);
+      console.log(
+        `ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`
+      );
     });
   });
 };
