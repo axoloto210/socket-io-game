@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
-import { MessageArea } from "./MessageArea";
+
 
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
@@ -52,7 +52,7 @@ const Room = () => {
         )}
       </div>
       {currentRoomId && (
-        <MessageArea socket={socket} currentRoomId={currentRoomId} />
+        <></>
       )}
     </>
   );
