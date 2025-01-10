@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { Message } from "../common/src/types";
-import { ROOM_EVENTS } from "../common/src/const/room";
+import { MESSAGE_EVENTS } from "../common/src/const/room";
 
 
 
@@ -19,7 +19,7 @@ export class MessageHandler {
   ) {}
 
   setupMessageHandlers(socket: Socket) {
-    socket.on(ROOM_EVENTS.SEND_MESSAGE, (data) =>
+    socket.on(MESSAGE_EVENTS.SEND_MESSAGE, (data) =>
       this.handleMessage(socket, data)
     );
   }
@@ -47,7 +47,7 @@ export class MessageHandler {
   private broadcastMessage(roomId: string) {
     this.io
       .to(roomId)
-      .emit(ROOM_EVENTS.RECEIVE_MESSAGE, this.messages.get(roomId));
+      .emit(MESSAGE_EVENTS.RECEIVE_MESSAGE, this.messages.get(roomId));
   }
 
   // メッセージの取得メソッド
