@@ -4,9 +4,9 @@ import { Socket } from "socket.io-client";
 import { UserContext } from "../contexts/UserContext";
 
 export const useRoom = (socket: Socket) => {
-  const [currentRoomId, setCurrentRoomId] = useState<string>("");
-
   const user = useContext(UserContext);
+
+  const [currentRoomId, setCurrentRoomId] = useState<string>("");
 
   // ルーム参加処理
   const joinRoom = (roomId: string) => {
@@ -19,8 +19,15 @@ export const useRoom = (socket: Socket) => {
     }
   };
 
+  // ルーム退室処理
+  const leaveRoom = () => {
+    socket.emit(ROOM_EVENTS.LEAVE_ROOM, currentRoomId);
+    setCurrentRoomId("");
+  };
+
   return {
     currentRoomId,
     joinRoom,
+    leaveRoom,
   };
 };

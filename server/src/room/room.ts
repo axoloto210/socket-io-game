@@ -14,7 +14,7 @@ export const roomServer = (
    */
   const users = new Map();
 
-  const messages: Message[] = [];
+  const messages: Map<string, Message[]> = new Map();
 
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
@@ -39,14 +39,17 @@ export const roomServer = (
 
     // メッセージ送信
     socket.on(ROOM_EVENTS.SEND_MESSAGE, (data) => {
-      messages.push({
+      if (!messages.has(data.roomId)) {
+        messages.set(data.roomId, []);
+      }
+      (messages.get(data.roomId) as Message[]).push({
         roomId: data.roomId,
         userName: users.get(socket.id) ?? "不明",
         message: data.message,
         sender: socket.id,
         timestamp: new Date(),
       });
-      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, messages);
+      io.to(data.roomId).emit(ROOM_EVENTS.RECEIVE_MESSAGE, messages.get(data.roomId));
     });
 
     // ルームから退出
@@ -57,8 +60,8 @@ export const roomServer = (
         if (rooms.get(roomId).size === 0) {
           rooms.delete(roomId);
         }
-        if(users.get(socket.id)){
-          users.delete(socket.id)
+        if (users.get(socket.id)) {
+          users.delete(socket.id);
         }
       }
       console.log(`ユーザー ${socket.id} がルーム ${roomId} から退出しました`);
@@ -74,7 +77,9 @@ export const roomServer = (
           }
         }
       });
-      console.log(`ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`);
+      console.log(
+        `ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`
+      );
     });
   });
 };
