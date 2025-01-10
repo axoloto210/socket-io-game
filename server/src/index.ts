@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import dotenv from 'dotenv'
-import { roomServer } from "./room/room";
+import { roomServer } from "./room/roomServer";
 
 dotenv.config()
 

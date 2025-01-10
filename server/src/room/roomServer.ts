@@ -1,22 +1,20 @@
-// roomServer.ts
 import { DefaultEventsMap, Server } from "socket.io";
 
-import { MessageHandler } from "../feature/messageHandler";
 import { ROOM_EVENTS } from "../common/src/const/room";
-
+import { CardGameHandler } from "../feature/cardGameHandler";
 
 export const roomServer = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   const rooms = new Map();
   const users = new Map();
-  const messageHandler = new MessageHandler(io, users);
+
+  const cardGameHandler = new CardGameHandler(io, users);
 
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
-    // メッセージハンドラーのセットアップ
-    messageHandler.setupMessageHandlers(socket);
+    cardGameHandler.setupCardGameHandlers(socket)
 
     socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {
       socket.join(roomId);
@@ -40,7 +38,7 @@ export const roomServer = (
         rooms.get(roomId).delete(socket.id);
         if (rooms.get(roomId).size === 0) {
           rooms.delete(roomId);
-          messageHandler.cleanupRoom(roomId);
+          cardGameHandler.cleanupRoom(roomId);
         }
         if (users.get(socket.id)) {
           users.delete(socket.id);
@@ -55,7 +53,7 @@ export const roomServer = (
           users.delete(socket.id);
           if (users.size === 0) {
             rooms.delete(roomId);
-            messageHandler.cleanupRoom(roomId);
+            cardGameHandler.cleanupRoom(roomId);
           }
         }
       });

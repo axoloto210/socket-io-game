@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
+import { CardGame } from "./CardGame";
 
 
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
@@ -52,7 +53,7 @@ const Room = () => {
         )}
       </div>
       {currentRoomId && (
-        <></>
+        <CardGame socket={socket} currentRoomId={currentRoomId}/>
       )}
     </>
   );
