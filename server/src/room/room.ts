@@ -1,7 +1,8 @@
 // roomServer.ts
 import { DefaultEventsMap, Server } from "socket.io";
-import { ROOM_EVENTS } from "@socket-io-game/common/src/const/room";
+
 import { MessageHandler } from "../feature/messageHandler";
+import { ROOM_EVENTS } from "../common/src/const/room";
 
 
 export const roomServer = (

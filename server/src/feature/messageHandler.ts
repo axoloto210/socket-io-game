@@ -1,8 +1,10 @@
 // messageHandler.ts
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { ROOM_EVENTS } from "@socket-io-game/common/src/const/room";
-import { Message } from "@socket-io-game/common/src/types";
+import { Message } from "../common/src/types";
+import { ROOM_EVENTS } from "../common/src/const/room";
+
+
 
 export class MessageHandler {
   private messages: Map<string, Message[]> = new Map();

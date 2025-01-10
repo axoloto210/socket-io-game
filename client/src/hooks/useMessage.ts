@@ -1,8 +1,10 @@
-import { ROOM_EVENTS } from "@socket-io-game/common/src/const/room";
+
 import { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { UserContext } from "../contexts/UserContext";
-import { Message } from "@socket-io-game/common/src/types";
+import { Message } from "../common/src/types";
+import { ROOM_EVENTS } from "../common/src/const/room";
+
 
 export const useMessage = (socket: Socket) => {
   const user = useContext(UserContext);
