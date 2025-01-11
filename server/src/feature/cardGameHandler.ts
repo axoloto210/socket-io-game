@@ -1,33 +1,32 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { ROOM_EVENTS } from "../common/src/const/room";
-// import { CARD_GAME_EVENTS } from "../common/src/const/room";
-// import { Card, CardGameStatus } from "../common/src/types";
+import { CARD_GAME_EVENTS, ROOM_EVENTS } from "../common/src/const/room";
+import { Card, CardGameStatus, PlayerStatuses } from "../common/src/types";
 
-// const INITIAL_HP = 3;
+const INITIAL_HP = 3;
 
-// const INITIAL_HANDS: Card[] = [
-//   {
-//     cardId: 1,
-//     power: 1,
-//   },
-//   {
-//     cardId: 2,
-//     power: 2,
-//   },
-//   {
-//     cardId: 3,
-//     power: 3,
-//   },
-//   {
-//     cardId: 4,
-//     power: 4,
-//   },
-//   {
-//     cardId: 5,
-//     power: 5,
-//   },
-// ];
+const INITIAL_HANDS: Card[] = [
+  {
+    cardId: 1,
+    power: 1,
+  },
+  {
+    cardId: 2,
+    power: 2,
+  },
+  {
+    cardId: 3,
+    power: 3,
+  },
+  {
+    cardId: 4,
+    power: 4,
+  },
+  {
+    cardId: 5,
+    power: 5,
+  },
+];
 // はら：場の偶数のパワーを+2するアイテム
 // はら：相手の効果を無効
 // はら：このターンのパワー-2、勝ったら2ダメージ
@@ -35,6 +34,10 @@ export class CardGameHandler {
   private readonly MAX_PLAYERS = 2;
   private gameStarted: boolean = false;
   private players: Map<string, string> = new Map(); // socket.io -> userName
+  private cardGameStatus: CardGameStatus = {
+    playerStatuses: {},
+    status: CARD_GAME_EVENTS.PENDING,
+  };
 
   constructor(
     private io: Server<
@@ -61,7 +64,6 @@ export class CardGameHandler {
   setupSocket(socket: Socket, userName: string): boolean {
     this.players.set(socket.id, userName);
 
-
     // 2人揃ったらゲーム開始
     if (this.players.size === this.MAX_PLAYERS) {
       this.startGame();
@@ -72,18 +74,42 @@ export class CardGameHandler {
 
   private startGame() {
     this.gameStarted = true;
-    this.io.to(this.roomId).emit("gameStart", {
+    this.io.to(this.roomId).emit(CARD_GAME_EVENTS.START, {
       players: Array.from(this.players.values()),
     });
     // ゲーム開始時の初期化処理
+
+    const newPlayerStatuses: PlayerStatuses = Array.from(
+      this.players.keys()
+    ).reduce((previousValue, currentValue) => {
+      return {
+        ...previousValue,
+        [currentValue]: {
+          userName: this.players.get(currentValue),
+          hp: INITIAL_HP,
+          hands: INITIAL_HANDS,
+        },
+      };
+    }, {});
+    this.cardGameStatus = {
+      status: CARD_GAME_EVENTS.START,
+      playerStatuses: newPlayerStatuses,
+    };
+
+    this.sendGameStatusToClient();
+  }
+
+  sendGameStatusToClient() {
+    console.log(this.gameStarted)
+    this.io
+      .to(this.roomId)
+      .emit(CARD_GAME_EVENTS.RECEIVE_CARD_GAME, this.cardGameStatus);
   }
 
   cleanupRoom() {
-    console.log(this.gameStarted)
-    console.log('cleanup!!!!!!')
     this.io.to(this.roomId).emit(ROOM_EVENTS.ROOM_DISMISS, {
-      message: `部屋:${this.roomId}が解散されました。`
-    })
+      message: `部屋:${this.roomId}が解散されました。`,
+    });
     this.players.clear();
     this.gameStarted = false;
   }

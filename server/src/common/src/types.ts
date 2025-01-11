@@ -15,12 +15,15 @@ export type Card = {
   power: number;
 };
 
-export type UserStatus = {
+export type PlayerStatus = {
+  userName: string;
   hp: number;
   hands: Card[];
 };
 
+export type PlayerStatuses = { [socketId: string]: PlayerStatus };
+
 export type CardGameStatus = {
-  roomUsersStatus: { [userName: string]: UserStatus };
+  playerStatuses: PlayerStatuses;
   status: (typeof CARD_GAME_EVENTS)[keyof typeof CARD_GAME_EVENTS];
 };

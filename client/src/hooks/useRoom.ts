@@ -10,15 +10,18 @@ export const useRoom = (socket: Socket) => {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-
   useEffect(() => {
-    socket.on(ROOM_EVENTS.ROOM_FULL, ({message}) => {
+    socket.on(ROOM_EVENTS.ROOM_FULL, ({ message }) => {
       setErrorMessage(message);
     });
 
-    socket.on(ROOM_EVENTS.ROOM_DISMISS, ({message})=>{
+    socket.on(ROOM_EVENTS.ROOM_DISMISS, ({ message }) => {
       setErrorMessage(message);
-    })
+    });
+    return () => {
+      socket.off(ROOM_EVENTS.ROOM_FULL);
+      socket.off(ROOM_EVENTS.ROOM_DISMISS);
+    };
   }, [socket]);
 
   // ルーム参加処理

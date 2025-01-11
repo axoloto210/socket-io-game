@@ -7,7 +7,7 @@ export const roomServer = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   const rooms = new Map(); // roomId -> Set()
-  const users = new Map();
+  const users = new Map(); // socket.id -> userName
 
   const cardGameHandlers = new Map<string, CardGameHandler>(); //roomId -> CardGameHandler
 
