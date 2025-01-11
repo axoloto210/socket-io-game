@@ -1,3 +1,5 @@
+//TODO: モノレポ化
+
 import { CARD_GAME_EVENTS } from "./const/room";
 
 export type Message = {

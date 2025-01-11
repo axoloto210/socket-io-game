@@ -1,35 +1,40 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { CARD_GAME_EVENTS } from "../common/src/const/room";
-import { Card, CardGameStatus } from "../common/src/types";
+import { ROOM_EVENTS } from "../common/src/const/room";
+// import { CARD_GAME_EVENTS } from "../common/src/const/room";
+// import { Card, CardGameStatus } from "../common/src/types";
 
-const INITIAL_HP = 3;
+// const INITIAL_HP = 3;
 
-const INITIAL_HANDS: Card[] = [
-  {
-    cardId: 1,
-    power: 1,
-  },
-  {
-    cardId: 2,
-    power: 2,
-  },
-  {
-    cardId: 3,
-    power: 3,
-  },
-  {
-    cardId: 4,
-    power: 4,
-  },
-  {
-    cardId: 5,
-    power: 5,
-  },
-];
-
+// const INITIAL_HANDS: Card[] = [
+//   {
+//     cardId: 1,
+//     power: 1,
+//   },
+//   {
+//     cardId: 2,
+//     power: 2,
+//   },
+//   {
+//     cardId: 3,
+//     power: 3,
+//   },
+//   {
+//     cardId: 4,
+//     power: 4,
+//   },
+//   {
+//     cardId: 5,
+//     power: 5,
+//   },
+// ];
+// はら：場の偶数のパワーを+2するアイテム
+// はら：相手の効果を無効
+// はら：このターンのパワー-2、勝ったら2ダメージ
 export class CardGameHandler {
-  private cardGameStatuses: Map<string, CardGameStatus> = new Map();
+  private readonly MAX_PLAYERS = 2;
+  private gameStarted: boolean = false;
+  private players: Map<string, string> = new Map(); // socket.io -> userName
 
   constructor(
     private io: Server<
@@ -38,107 +43,138 @@ export class CardGameHandler {
       DefaultEventsMap,
       any
     >,
-    private users: Map<string, string>
+    private roomId: string
   ) {}
 
-  getStatus(roomId: string) {
-    if (!this.cardGameStatuses.has(roomId)) {
-      throw new Error();
-    }
-
-    console.log(this.users);
-    return this.cardGameStatuses.get(roomId) as CardGameStatus;
-  }
-
-  setupCardGameHandlers(socket: Socket) {
-    socket.on(CARD_GAME_EVENTS.PENDING, (data) =>{
-        console.log('data!!!',data)
-      this.handlePendingPhase(data)
-    }
-    );
-    // socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-    //   this.handleSelectPhase(socket, data);
-    // });
-    // socket.on(CARD_GAME_EVENTS.RESOLVE, (data) => {
-    //   this.handleResolvePhase(socket, data);
-    // });
-    // socket.on(CARD_GAME_EVENTS.RESULT_CHECK, (data) => {
-    //   this.handleResultCheckPhase(socket, data);
-    // });
-  }
-
-  private handlePendingPhase(
-    // socket: Socket,
-    data: { roomId: string; userName: string }
-  ) {
-
-    console.log('uooooooo')
-    if (!this.cardGameStatuses.has(data.roomId)) {
-      this.cardGameStatuses.set(data.roomId, {
-        status: CARD_GAME_EVENTS.PENDING,
-        roomUsersStatus: {
-          [data.userName]: {
-            hp: INITIAL_HP,
-            hands: INITIAL_HANDS,
-          },
-        },
-      } as CardGameStatus);
+  canJoin(socket: Socket): boolean {
+    console.log("playser:", this.players);
+    if (this.players.size < this.MAX_PLAYERS) {
+      return true;
     } else {
-      const currentStatus = this.getStatus(data.roomId);
-      this.cardGameStatuses.set(data.roomId, {
-        status: CARD_GAME_EVENTS.START,
-        roomUsersStatus: {
-          ...currentStatus.roomUsersStatus,
-
-          [data.userName]: {
-            hp: INITIAL_HP,
-            hands: INITIAL_HANDS,
-          },
-        },
+      socket.emit(ROOM_EVENTS.ROOM_FULL, {
+        message: "このルームは満員です",
       });
-      if (
-        Object.keys(
-          this.cardGameStatuses.get(data.roomId)?.roomUsersStatus ?? {}
-        ).length === 2
-      ) {
-        this.cardGameStatuses.set(data.roomId, {
-          ...(this.cardGameStatuses.get(data.roomId) as CardGameStatus),
-          status: CARD_GAME_EVENTS.START,
-        });
-      } else if (
-        Object.keys(
-          this.cardGameStatuses.get(data.roomId)?.roomUsersStatus ?? {}
-        ).length > 2
-      ) {
-        console.log("定員オーバーです。");
-      }
+      return false;
+    }
+  }
+
+  setupSocket(socket: Socket, userName: string): boolean {
+    this.players.set(socket.id, userName);
+
+
+    // 2人揃ったらゲーム開始
+    if (this.players.size === this.MAX_PLAYERS) {
+      this.startGame();
     }
 
-    this.broadcastStatus(data.roomId);
+    return true;
   }
 
-  private broadcastStatus(roomId: string) {
-    console.log('dispatch!!!!!!!!')
-    console.log(this.cardGameStatuses.get(roomId))
-    this.io
-      .to(roomId)
-      .emit(
-        CARD_GAME_EVENTS.RECEIVE_CARD_GAME,
-        this.cardGameStatuses.get(roomId)
-      );
+  private startGame() {
+    this.gameStarted = true;
+    this.io.to(this.roomId).emit("gameStart", {
+      players: Array.from(this.players.values()),
+    });
+    // ゲーム開始時の初期化処理
   }
 
-  //   private handleSelectPhase(socket: Socket, data: {}) {}
-  //   private handleResolvePhase(socket: Socket, data: {}) {}
-  //   private handleResultCheckPhase(socket: Socket, data: {}) {}
+  cleanupRoom() {
+    console.log(this.gameStarted)
+    console.log('cleanup!!!!!!')
+    this.io.to(this.roomId).emit(ROOM_EVENTS.ROOM_DISMISS, {
+      message: `部屋:${this.roomId}が解散されました。`
+    })
+    this.players.clear();
+    this.gameStarted = false;
+  }
 
-  //   // メッセージの取得メソッド
-  //   getMessages(roomId: string): Message[] {
-  //     return this.messages.get(roomId) ?? [];
-  //   }
-
-  // ルーム削除時のクリーンアップ
-  cleanupRoom(roomId: string) {
-    this.cardGameStatuses.delete(roomId);
+  getPlayerCount(): number {
+    return this.players.size;
   }
 }
+
+// class RoomGameLogic {
+// private io: Server;
+// private roomId: string;
+// private players: Map<string, string>; // socketId -> userName
+// private readonly MAX_PLAYERS = 2;
+// private gameStarted: boolean = false;
+
+//   constructor(io: Server, roomId: string) {
+//     this.io = io;
+//     this.roomId = roomId;
+//     this.players = new Map();
+//   }
+
+// canJoin(): boolean {
+//   return this.players.size < this.MAX_PLAYERS;
+// }
+
+//   setupSocket(socket: Socket, userName: string): boolean {
+//     // プレイヤー数チェック
+//     if (!this.canJoin()) {
+//       socket.emit('roomFull', {
+//         message: 'このルームは満員です'
+//       });
+//       return false;
+//     }
+
+//     this.players.set(socket.id, userName);
+
+//     // ゲーム関連のイベントハンドラー設定
+//     socket.on('playCard', (cardData) => this.handlePlayCard(socket, cardData));
+//     socket.on('disconnect', () => this.handlePlayerDisconnect(socket));
+
+//     // ルーム情報を全プレイヤーに通知
+//     this.broadcastRoomStatus();
+
+//     // 2人揃ったらゲーム開始
+//     if (this.players.size === this.MAX_PLAYERS) {
+//       this.startGame();
+//     }
+
+//     return true;
+//   }
+
+// private broadcastRoomStatus() {
+//   this.io.to(this.roomId).emit('roomStatus', {
+//     currentPlayers: Array.from(this.players.entries()).map(([id, name]) => ({
+//       id,
+//       name
+//     })),
+//     playerCount: this.players.size,
+//     isFull: this.players.size >= this.MAX_PLAYERS,
+//     gameStarted: this.gameStarted
+//   });
+// }
+
+// private startGame() {
+//   this.gameStarted = true;
+//   this.io.to(this.roomId).emit('gameStart', {
+//     players: Array.from(this.players.values())
+//   });
+//   // ゲーム開始時の初期化処理
+// }
+
+//   private handlePlayerDisconnect(socket: Socket) {
+//     this.players.delete(socket.id);
+//     this.gameStarted = false;
+
+//     // 他のプレイヤーに通知
+//     this.io.to(this.roomId).emit('playerLeft', {
+//       playerId: socket.id,
+//       message: 'プレイヤーが退出しました。ゲームを中断します。'
+//     });
+
+//     this.broadcastRoomStatus();
+//   }
+
+// cleanup() {
+//   this.players.clear();
+//   this.gameStarted = false;
+// }
+
+// getPlayerCount(): number {
+//   return this.players.size;
+// }
+// }
