@@ -46,6 +46,14 @@ export const CardGame = (props: CardGameProps) => {
     selectCard(selectedCardId, selectedItemId);
   };
 
+  const clickItemHandler = (itemId: number) => {
+    if (itemId === selectedItemId) {
+      setSelectedItemId(undefined);
+    } else {
+      setSelectedItemId(itemId);
+    }
+  };
+
   return (
     <>
       {playerStatus && (
@@ -139,7 +147,7 @@ export const CardGame = (props: CardGameProps) => {
                 <ItemConponent
                   {...item}
                   currentItemId={selectedItemId}
-                  onClick={setSelectedItemId}
+                  onClick={clickItemHandler}
                 />
               );
             })}
@@ -267,7 +275,7 @@ const CardComponentArea = () => {
 
 type ItemConponentProps = Item & {
   currentItemId: number | undefined;
-  onClick: Dispatch<SetStateAction<number | undefined>>;
+  onClick: (itemId: number) => void;
 };
 
 const ItemConponent = (props: ItemConponentProps) => {
