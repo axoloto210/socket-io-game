@@ -15,15 +15,29 @@ export type Card = {
   power: number;
 };
 
+export type Item = {
+  itemId: number,
+  itemName: string,
+  itemEffect: string
+}
+
 export type PlayerStatus = {
   userName: string;
   hp: number;
   hands: Card[];
+  items: Item[];
 };
 
 export type PlayerStatuses = { [socketId: string]: PlayerStatus };
 
+export type SelectedCards = Record<string, {
+  playerName?: string;
+  card?: Card;
+  item?: Item;
+}>
+
 export type CardGameStatus = {
   playerStatuses: PlayerStatuses;
   status: (typeof CARD_GAME_EVENTS)[keyof typeof CARD_GAME_EVENTS];
+  selectedCards?: SelectedCards
 };
