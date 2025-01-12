@@ -35,24 +35,6 @@ const INITIAL_HANDS: Card[] = [
   },
 ] as const;
 
-const INITIAL_ITEMS = [
-  {
-    itemId: 1,
-    itemName: "グウスウ",
-    itemEffect: "場の偶数のパワーを+2するアイテム",
-  },
-  {
-    itemId: 2,
-    itemName: "ムコウカ",
-    itemEffect: "相手のアイテム効果を無効にする",
-  },
-  {
-    itemId: 3,
-    itemName: "リスキー",
-    itemEffect: "このターンのパワー -2、勝ったら2ダメージ",
-  },
-] as const;
-
 type Cards = { card: Card; item?: Item };
 
 type SelectedCardsMap = Map<string, Cards>;
@@ -120,7 +102,7 @@ export class CardGameHandler {
           userName: this.players.get(currentValue),
           hp: INITIAL_HP,
           hands: structuredClone(INITIAL_HANDS),
-          items: structuredClone(INITIAL_ITEMS),
+          items: structuredClone(items.getInitialItems()),
         },
       };
     }, {});
@@ -286,8 +268,6 @@ export class CardGameHandler {
       player2Cards;
 
     this.applyItemEffects({
-      player1Id,
-      player2Id,
       player1SelectedCard,
       player2SelectedCard,
       player1SelectedItem,
@@ -313,15 +293,11 @@ export class CardGameHandler {
   }
 
   private applyItemEffects({
-    player1Id,
-    player2Id,
     player1SelectedCard,
     player2SelectedCard,
     player1SelectedItem,
     player2SelectedItem,
   }: {
-    player1Id: string;
-    player2Id: string;
     player1SelectedCard: Card;
     player2SelectedCard: Card;
     player1SelectedItem?: Item;
@@ -375,7 +351,15 @@ export class CardGameHandler {
     player2Status: PlayerStatus;
   }) {
     //player1 勝利時
-    if (player1SelectedCard.power > player2SelectedCard.power) {
+    // if (player1SelectedCard.power > player2SelectedCard.power) {
+    if (
+      this.isFirstPlayerWin({
+        firstPlayerSelectedCard: player1SelectedCard,
+        firstPlayerSelectedItem: player1SelectedItem,
+        secondPlayerSelectedCard: player2SelectedCard,
+        secondPlayerSelectedItem: player2SelectedItem,
+      })
+    ) {
       player2Status.hp -= 1;
       if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
@@ -390,7 +374,14 @@ export class CardGameHandler {
         }
       }
     } // player2 勝利時
-    else if (player1SelectedCard.power < player2SelectedCard.power) {
+    else if (
+      this.isFirstPlayerWin({
+        firstPlayerSelectedCard: player2SelectedCard,
+        firstPlayerSelectedItem: player2SelectedItem,
+        secondPlayerSelectedCard: player1SelectedCard,
+        secondPlayerSelectedItem: player1SelectedItem,
+      })
+    ) {
       player1Status.hp -= 1;
       if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
@@ -400,16 +391,67 @@ export class CardGameHandler {
       // リスキー
       if (player2SelectedItem?.itemId === 3) {
         player1Status.hp -= 1;
-        if (player2Status.hp < 0) {
+        if (player1Status.hp < 0) {
           player1Status.hp = 0;
         }
       }
     } // 引き分け時
     else {
-      player1Status.hp -= 1;
-      player2Status.hp -= 1;
+      let basePoint = 1;
+
       if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+        player1Status.hp -= basePoint;
+        player2Status.hp -= basePoint;
         return;
+      }
+      const { player1BasePoint, player2BasePoint } = items.getDrawBasePoint(
+        basePoint,
+        player1SelectedItem,
+        player2SelectedItem
+      );
+
+      player1Status.hp -= player1BasePoint;
+      player2Status.hp -= player2BasePoint;
+    }
+  }
+
+  /**
+   * 引数に渡したfirstPlayerがラウンドで勝った時には真。
+   * @param param0
+   * @returns
+   */
+  private isFirstPlayerWin({
+    firstPlayerSelectedCard,
+    secondPlayerSelectedCard,
+    firstPlayerSelectedItem,
+    secondPlayerSelectedItem,
+  }: {
+    firstPlayerSelectedCard: Card;
+    secondPlayerSelectedCard: Card;
+    firstPlayerSelectedItem?: Item;
+    secondPlayerSelectedItem?: Item;
+  }): boolean {
+    if (
+      items.isMukouEffect(firstPlayerSelectedItem, secondPlayerSelectedItem)
+    ) {
+      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    if (items.isAbekobe(firstPlayerSelectedItem, secondPlayerSelectedItem)) {
+      if (firstPlayerSelectedCard.power < secondPlayerSelectedCard.power) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
+        return true;
+      } else {
+        return false;
       }
     }
   }

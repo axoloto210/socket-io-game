@@ -26,8 +26,6 @@ export const CardGame = (props: CardGameProps) => {
     getGameResult,
   } = useCardGame(socket);
 
-  console.log(cardGameStatus);
-
   const playerStatus = cardGameStatus.playerStatuses[socket.id!];
 
   const playerSelectedCards = cardGameStatus.selectedCards

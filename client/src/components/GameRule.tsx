@@ -91,12 +91,12 @@ export const GameRule = () => {
                     </p>
                     <p>
                       カードを選択して数字の小さい方に1ダメージが与えられます。
-                      <br/>
+                      <br />
                       お互いに同じ数字の場合には両者に1ダメージが与えられます。
                     </p>
                     <p>
                       アイテムを使用することで、カードの数値を変えたりすることができます。
-                      <br/>
+                      <br />
                       アイテムは、カードの勝敗を決定する時に適用されます。
                     </p>
                     <p>
@@ -128,6 +128,20 @@ export const GameRule = () => {
                         自分のカードの値が-2されますが、勝利した時に2ダメージを与えます。
                         <br />
                         引き分けの時には効果がありません。
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                      <h4 className="font-bold text-gray-900 mb-2">アベコベ</h4>
+                      <p className="text-gray-700">
+                        カードの勝敗が逆転します。
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                      <h4 className="font-bold text-gray-900 mb-2">ウラギリ</h4>
+                      <p className="text-gray-700">
+                        引き分けたときに、相手に2ダメージを与え、自分へはダメージを与えません。
+                        <br />
+                        お互いにウラギリを使用したときには、お互いに2ダメージが与えられます。
                       </p>
                     </div>
                   </div>
