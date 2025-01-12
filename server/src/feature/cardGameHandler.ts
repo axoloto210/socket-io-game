@@ -5,8 +5,10 @@ import {
   Card,
   CardGameStatus,
   Item,
+  PlayerStatus,
   PlayerStatuses,
 } from "../common/src/types";
+import { Items } from "./Items";
 
 const INITIAL_HP = 3;
 
@@ -31,7 +33,7 @@ const INITIAL_HANDS: Card[] = [
     cardId: 5,
     power: 5,
   },
-];
+] as const;
 
 const INITIAL_ITEMS = [
   {
@@ -49,11 +51,13 @@ const INITIAL_ITEMS = [
     itemName: "リスキー",
     itemEffect: "このターンのパワー -2、勝ったら2ダメージ",
   },
-];
+] as const;
 
 type Cards = { card: Card; item?: Item };
 
 type SelectedCardsMap = Map<string, Cards>;
+
+const items = new Items();
 
 export class CardGameHandler {
   private readonly MAX_PLAYERS = 2;
@@ -115,8 +119,8 @@ export class CardGameHandler {
         [currentValue]: {
           userName: this.players.get(currentValue),
           hp: INITIAL_HP,
-          hands: INITIAL_HANDS,
-          items: INITIAL_ITEMS,
+          hands: structuredClone(INITIAL_HANDS),
+          items: structuredClone(INITIAL_ITEMS),
         },
       };
     }, {});
@@ -195,7 +199,6 @@ export class CardGameHandler {
 
   private resolveSelectedCards() {
     const players = Array.from(this.selectedCards.entries());
-    console.log(players);
 
     const selectedCardsInfo = players.reduce(
       (acc, [playerId, _]) => {
@@ -235,7 +238,6 @@ export class CardGameHandler {
 
   private resolveRound() {
     const players = Array.from(this.selectedCards.entries());
-    console.log("resolve players:", players);
     const [
       [player1Key, player1SelectedCards],
       [player2Key, player2SelectedCards],
@@ -261,37 +263,13 @@ export class CardGameHandler {
     this.cardGameStatus = {
       ...this.cardGameStatus,
       selectedCards: {},
-      status: this.cardGameStatus.status === CARD_GAME_EVENTS.GAME_END ? CARD_GAME_EVENTS.GAME_END : CARD_GAME_EVENTS.RESOLVE,
+      status:
+        this.cardGameStatus.status === CARD_GAME_EVENTS.GAME_END
+          ? CARD_GAME_EVENTS.GAME_END
+          : CARD_GAME_EVENTS.RESOLVE,
     };
     this.sendGameStatusToClient();
   }
-
-  // private applyItemEffects(
-  //   playerId: string,
-  //   itemId: number | undefined,
-  //   card: Card
-  // ) {
-  //   if (!itemId) return;
-
-  //   const playerStatus = this.cardGameStatus.playerStatuses[playerId];
-  //   const item = playerStatus?.items.find((item) => item.itemId === itemId);
-
-  //   if (!item) return;
-
-  //   switch (item.itemId) {
-  //     case 1: // グウスウ
-  //       if (card.power % 2 === 0) {
-  //         card.power += 2;
-  //       }
-  //       break;
-  //     case 2: // ムコウカ
-  //       // 相手のアイテム効果を無効化する処理は別途実装
-  //       break;
-  //     case 3: // リスキー
-  //       card.power -= 2;
-  //       break;
-  //   }
-  // }
 
   private determineBattleResult(
     player1Id: string,
@@ -307,26 +285,132 @@ export class CardGameHandler {
     const { card: player2SelectedCard, item: player2SelectedItem } =
       player2Cards;
 
-    if (player1SelectedCard.power > player2SelectedCard.power) {
-      player2Status.hp -= 1;
-      // // リスキーの追加ダメージ
-      // if (this.selectedCards.get(player1Id)?.itemId === 3) {
-      //   player2Status.hp -= 1;
-      // }
-    } else if (player1SelectedCard.power < player2SelectedCard.power) {
-      player1Status.hp -= 1;
-      // // リスキーの追加ダメージ
-      // if (this.selectedCards.get(player2Id)?.itemId === 3) {
-      //   player1Status.hp -= 1;
-      // }
-    } else {
-      player1Status.hp -= 1;
-      player2Status.hp -= 1;
-    }
+    this.applyItemEffects({
+      player1Id,
+      player2Id,
+      player1SelectedCard,
+      player2SelectedCard,
+      player1SelectedItem,
+      player2SelectedItem,
+    });
 
-    // 勝敗判定
+    //カードの勝敗判定とダメージ適用
+    this.applyDamage({
+      player1Id,
+      player2Id,
+      player1SelectedCard,
+      player2SelectedCard,
+      player1SelectedItem,
+      player2SelectedItem,
+      player1Status,
+      player2Status,
+    });
+
+    // ゲームの勝敗判定
     if (player1Status.hp <= 0 || player2Status.hp <= 0) {
       this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
+    }
+  }
+
+  private applyItemEffects({
+    player1Id,
+    player2Id,
+    player1SelectedCard,
+    player2SelectedCard,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Id: string;
+    player2Id: string;
+    player1SelectedCard: Card;
+    player2SelectedCard: Card;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    // アイテム処理を行わないケース
+    if (
+      items.isMukouEffect(player1SelectedItem, player2SelectedItem) ||
+      (player1SelectedItem == null && player2SelectedItem == null)
+    ) {
+      return;
+    }
+
+    // const player1Status = this.cardGameStatus.playerStatuses[player1Id];
+    // const player2Status = this.cardGameStatus.playerStatuses[player2Id];
+
+    // グウスウ
+    if (player1SelectedItem?.itemId === 1) {
+      items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
+    }
+    if (player2SelectedItem?.itemId === 1) {
+      items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
+    }
+
+    // リスキー
+    if (player1SelectedItem?.itemId === 3) {
+      items.applyRiskyEffect(player1SelectedCard);
+    }
+    if (player2SelectedItem?.itemId === 3) {
+      items.applyRiskyEffect(player2SelectedCard);
+    }
+  }
+
+  private applyDamage({
+    player1Id,
+    player2Id,
+    player1SelectedCard,
+    player2SelectedCard,
+    player1SelectedItem,
+    player2SelectedItem,
+    player1Status,
+    player2Status,
+  }: {
+    player1Id: string;
+    player2Id: string;
+    player1SelectedCard: Card;
+    player2SelectedCard: Card;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+  }) {
+    //player1 勝利時
+    if (player1SelectedCard.power > player2SelectedCard.power) {
+      player2Status.hp -= 1;
+      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+        return;
+      }
+
+      // アイテム処理
+      // リスキー
+      if (player1SelectedItem?.itemId === 3) {
+        player2Status.hp -= 1;
+        if (player2Status.hp < 0) {
+          player2Status.hp = 0;
+        }
+      }
+    } // player2 勝利時
+    else if (player1SelectedCard.power < player2SelectedCard.power) {
+      player1Status.hp -= 1;
+      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+        return;
+      }
+
+      // アイテム処理
+      // リスキー
+      if (player2SelectedItem?.itemId === 3) {
+        player1Status.hp -= 1;
+        if (player2Status.hp < 0) {
+          player1Status.hp = 0;
+        }
+      }
+    } // 引き分け時
+    else {
+      player1Status.hp -= 1;
+      player2Status.hp -= 1;
+      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+        return;
+      }
     }
   }
 }
