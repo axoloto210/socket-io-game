@@ -63,12 +63,17 @@ export const CardGame = (props: CardGameProps) => {
 
   return (
     <>
-      {gameResult !== GAME_RESULTS.IN_GAME &&
-        (gameResult === GAME_RESULTS.WIN ? (
-          <div className="text-yellow-200">YOU WIN!</div>
-        ) : (
-          <div className="text-blue-500">YOU LOSE ..</div>
-        ))}
+      {gameResult !== GAME_RESULTS.IN_GAME && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className={`text-8xl font-bold animate-bounce ${
+            gameResult === GAME_RESULTS.WIN 
+              ? "text-yellow-300" 
+              : "text-blue-500"
+          }`}>
+            {gameResult === GAME_RESULTS.WIN ? "YOU WIN!" : "YOU LOSE.."}
+          </div>
+        </div>
+      )}
       {playerStatus && (
         <>
           <div className="flex">あいて：{opponentStatus.userName}</div>
