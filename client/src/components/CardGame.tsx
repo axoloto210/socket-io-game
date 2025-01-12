@@ -1,5 +1,9 @@
 import { Socket } from "socket.io-client";
-import { DEFAULT_CARD_ID, useCardGame } from "../hooks/useCardGame";
+import {
+  DEFAULT_CARD_ID,
+  GAME_RESULTS,
+  useCardGame,
+} from "../hooks/useCardGame";
 import { Card, Item } from "../common/src/types";
 import { Dispatch, SetStateAction } from "react";
 import { Heart } from "./Heart";
@@ -19,6 +23,7 @@ export const CardGame = (props: CardGameProps) => {
     setSelectedCardId,
     selectedItemId,
     setSelectedItemId,
+    getGameResult,
   } = useCardGame(socket);
 
   console.log(cardGameStatus);
@@ -39,6 +44,8 @@ export const CardGame = (props: CardGameProps) => {
     ? cardGameStatus.selectedCards[opponentStatusKey]
     : undefined;
 
+  const gameResult = getGameResult(opponentStatus?.hp);
+
   const clickDecideHandler = () => {
     if (selectedCardId === DEFAULT_CARD_ID) {
       return;
@@ -56,6 +63,12 @@ export const CardGame = (props: CardGameProps) => {
 
   return (
     <>
+      {gameResult !== GAME_RESULTS.IN_GAME &&
+        (gameResult === GAME_RESULTS.WIN ? (
+          <div className="text-yellow-200">YOU WIN!</div>
+        ) : (
+          <div className="text-blue-500">YOU LOSE ..</div>
+        ))}
       {playerStatus && (
         <>
           <div className="flex">あいて：{opponentStatus.userName}</div>

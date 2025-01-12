@@ -51,6 +51,10 @@ const INITIAL_ITEMS = [
   },
 ];
 
+type Cards = { card: Card; item?: Item };
+
+type SelectedCardsMap = Map<string, Cards>;
+
 export class CardGameHandler {
   private readonly MAX_PLAYERS = 2;
   private gameStarted: boolean = false;
@@ -139,7 +143,7 @@ export class CardGameHandler {
     this.gameStarted = false;
   }
 
-  private selectedCards: Map<string, { card: Card; item?: Item }> = new Map();
+  private selectedCards: SelectedCardsMap = new Map();
 
   handleCardSelect(socket: Socket, data: { cardId: number; itemId?: number }) {
     const playerId = socket.id;
@@ -196,7 +200,6 @@ export class CardGameHandler {
     const selectedCardsInfo = players.reduce(
       (acc, [playerId, _]) => {
         const playerStatus = this.cardGameStatus.playerStatuses[playerId];
-        // 選択されたカードの情報を取得（既に手札からは削除済み）
         const selectedCards = this.selectedCards.get(playerId);
 
         acc[playerId] = {
@@ -227,40 +230,38 @@ export class CardGameHandler {
 
     setTimeout(() => {
       this.resolveRound();
-    }, 3000);
+    }, 5000);
   }
 
   private resolveRound() {
     const players = Array.from(this.selectedCards.entries());
     console.log("resolve players:", players);
-    // const [player1, player2] = players;
+    const [
+      [player1Key, player1SelectedCards],
+      [player2Key, player2SelectedCards],
+    ] = players;
 
-    // // プレイヤーの選択したカードの取得
-    // const player1Card = this.getSelectedCard(player1[0], player1[1].cardId);
-    // const player2Card = this.getSelectedCard(player2[0], player2[1].cardId);
-
-    // if (!player1Card || !player2Card) {
-    //   return;
-    // }
+    if (!player1SelectedCards || !player2SelectedCards) {
+      return;
+    }
 
     // // アイテム効果の適用
-    // this.applyItemEffects(player1[0], player1[1].itemId, player1Card);
-    // this.applyItemEffects(player2[0], player2[1].itemId, player2Card);
+    // this.applyItemEffects();
 
-    // // 勝敗判定
-    // this.determineBattleResult(
-    //   player1[0],
-    //   player2[0],
-    //   player1Card,
-    //   player2Card
-    // );
+    // 勝敗判定
+    this.determineBattleResult(
+      player1Key,
+      player2Key,
+      player1SelectedCards,
+      player2SelectedCards
+    );
 
     // 次のラウンドの準備
     this.selectedCards.clear();
     this.cardGameStatus = {
       ...this.cardGameStatus,
       selectedCards: {},
-      status: CARD_GAME_EVENTS.RESOLVE,
+      status: this.cardGameStatus.status === CARD_GAME_EVENTS.GAME_END ? CARD_GAME_EVENTS.GAME_END : CARD_GAME_EVENTS.RESOLVE,
     };
     this.sendGameStatusToClient();
   }
@@ -292,32 +293,40 @@ export class CardGameHandler {
   //   }
   // }
 
-  // private determineBattleResult(
-  //   player1Id: string,
-  //   player2Id: string,
-  //   player1Card: Card,
-  //   player2Card: Card
-  // ) {
-  //   const player1Status = this.cardGameStatus.playerStatuses[player1Id];
-  //   const player2Status = this.cardGameStatus.playerStatuses[player2Id];
+  private determineBattleResult(
+    player1Id: string,
+    player2Id: string,
+    player1Cards: Cards,
+    player2Cards: Cards
+  ) {
+    const player1Status = this.cardGameStatus.playerStatuses[player1Id];
+    const player2Status = this.cardGameStatus.playerStatuses[player2Id];
 
-  //   if (player1Card.power > player2Card.power) {
-  //     player2Status.hp -= 1;
-  //     // リスキーの追加ダメージ
-  //     if (this.selectedCards.get(player1Id)?.itemId === 3) {
-  //       player2Status.hp -= 1;
-  //     }
-  //   } else if (player1Card.power < player2Card.power) {
-  //     player1Status.hp -= 1;
-  //     // リスキーの追加ダメージ
-  //     if (this.selectedCards.get(player2Id)?.itemId === 3) {
-  //       player1Status.hp -= 1;
-  //     }
-  //   }
+    const { card: player1SelectedCard, item: player1SelectedItem } =
+      player1Cards;
+    const { card: player2SelectedCard, item: player2SelectedItem } =
+      player2Cards;
 
-  //   // 勝敗判定
-  //   if (player1Status.hp <= 0 || player2Status.hp <= 0) {
-  //     this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
-  //   }
-  // }
+    if (player1SelectedCard.power > player2SelectedCard.power) {
+      player2Status.hp -= 1;
+      // // リスキーの追加ダメージ
+      // if (this.selectedCards.get(player1Id)?.itemId === 3) {
+      //   player2Status.hp -= 1;
+      // }
+    } else if (player1SelectedCard.power < player2SelectedCard.power) {
+      player1Status.hp -= 1;
+      // // リスキーの追加ダメージ
+      // if (this.selectedCards.get(player2Id)?.itemId === 3) {
+      //   player1Status.hp -= 1;
+      // }
+    } else {
+      player1Status.hp -= 1;
+      player2Status.hp -= 1;
+    }
+
+    // 勝敗判定
+    if (player1Status.hp <= 0 || player2Status.hp <= 0) {
+      this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
+    }
+  }
 }
