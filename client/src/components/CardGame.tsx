@@ -249,7 +249,7 @@ const OpponentCardComponent = () => {
   );
 };
 
-const RevealedCardComponent = (props: { power: number }) => {
+export const RevealedCardComponent = (props: { power: number }) => {
   return (
     <div
       className={`
