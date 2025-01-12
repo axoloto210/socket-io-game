@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
-import { MessageArea } from "./MessageArea";
+import { CardGame } from "./CardGame";
+
 
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const Room = () => {
   const [roomId, setRoomId] = useState<string>("");
 
-  const { currentRoomId, joinRoom, leaveRoom } = useRoom(socket);
+  const { currentRoomId, errorMessage, joinRoom, leaveRoom } = useRoom(socket);
 
   const clickJoinHandler = () => {
     joinRoom(roomId);
   };
 
+  const isInRoom = currentRoomId && !errorMessage
   return (
     <>
       <div className="p-4">
@@ -39,7 +41,10 @@ const Room = () => {
             </button>
           </div>
         )}
-        {currentRoomId && (
+        {errorMessage && (
+          <div className="text-red-500">{errorMessage}</div>
+        )}
+        {isInRoom && (
           <div className="mb-4 flex">
             <p className="mr-4">現在のルーム: {currentRoomId}</p>
             <button
@@ -51,8 +56,8 @@ const Room = () => {
           </div>
         )}
       </div>
-      {currentRoomId && (
-        <MessageArea socket={socket} currentRoomId={currentRoomId} />
+      {isInRoom && (
+        <CardGame socket={socket} currentRoomId={currentRoomId}/>
       )}
     </>
   );

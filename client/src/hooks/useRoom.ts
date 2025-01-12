@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { UserContext } from "../contexts/UserContext";
 import { ROOM_EVENTS } from "../common/src/const/room";
@@ -7,6 +7,22 @@ export const useRoom = (socket: Socket) => {
   const user = useContext(UserContext);
 
   const [currentRoomId, setCurrentRoomId] = useState<string>("");
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  useEffect(() => {
+    socket.on(ROOM_EVENTS.ROOM_FULL, ({ message }) => {
+      setErrorMessage(message);
+    });
+
+    socket.on(ROOM_EVENTS.ROOM_DISMISS, ({ message }) => {
+      setErrorMessage(message);
+    });
+    return () => {
+      socket.off(ROOM_EVENTS.ROOM_FULL);
+      socket.off(ROOM_EVENTS.ROOM_DISMISS);
+    };
+  }, [socket]);
 
   // ルーム参加処理
   const joinRoom = (roomId: string) => {
@@ -27,6 +43,7 @@ export const useRoom = (socket: Socket) => {
 
   return {
     currentRoomId,
+    errorMessage,
     joinRoom,
     leaveRoom,
   };

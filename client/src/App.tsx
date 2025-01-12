@@ -13,6 +13,13 @@ function App() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   return (
     <UserContext.Provider value={{ userName, setUserName }}>
       <div className="min-h-screen bg-gray-50">
@@ -35,7 +42,7 @@ function App() {
                   onChange={(e) => setUserName(e.target.value)}
                   className="flex-1 border rounded-md px-3 py-2"
                   placeholder="ユーザー名"
-                  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                  onKeyDown={handleKeyDown}
                 />
                 <button
                   onClick={handleLogin}
