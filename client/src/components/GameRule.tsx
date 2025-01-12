@@ -81,7 +81,7 @@ export const GameRule = () => {
                 <div className="space-y-3">
                   <div>
                     <h4 className="font-semibold">グウスウ</h4>
-                    <p>場に出た偶数カードの値を+2します。</p>
+                    <p>場に出たお互いの偶数カードの値を+2します。</p>
                   </div>
                   <div>
                     <h4 className="font-semibold">ムコウカ</h4>
@@ -90,7 +90,7 @@ export const GameRule = () => {
                   <div>
                     <h4 className="font-semibold">リスキー</h4>
                     <p>
-                      カードの値が-2されますが、勝利した時に2ダメージを与えります。引き分けの時には効果がありません。
+                      自分のカードの値が-2されますが、勝利した時に2ダメージを与えります。引き分けの時には効果がありません。
                     </p>
                   </div>
                 </div>
