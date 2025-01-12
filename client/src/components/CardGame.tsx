@@ -63,11 +63,13 @@ export const CardGame = (props: CardGameProps) => {
     <>
       {gameResult !== GAME_RESULTS.IN_GAME && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className={`text-8xl font-bold animate-bounce ${
-            gameResult === GAME_RESULTS.WIN 
-              ? "text-yellow-300" 
-              : "text-blue-500"
-          }`}>
+          <div
+            className={`text-8xl font-bold animate-bounce ${
+              gameResult === GAME_RESULTS.WIN
+                ? "text-yellow-300"
+                : "text-blue-500"
+            }`}
+          >
             {gameResult === GAME_RESULTS.WIN ? "YOU WIN!" : "YOU LOSE.."}
           </div>
         </div>
@@ -152,6 +154,7 @@ export const CardGame = (props: CardGameProps) => {
                 <CardComponent
                   {...hand}
                   currentCardId={selectedCardId}
+                  currentItemId={selectedItemId}
                   onClick={setSelectedCardId}
                 />
               );
@@ -162,6 +165,7 @@ export const CardGame = (props: CardGameProps) => {
               return (
                 <ItemConponent
                   {...item}
+                  currentCardId={selectedCardId}
                   currentItemId={selectedItemId}
                   onClick={clickItemHandler}
                 />
@@ -183,15 +187,19 @@ export const CardGame = (props: CardGameProps) => {
 const CardComponent = (
   props: Card & {
     currentCardId: number;
+    currentItemId?: number;
     onClick: Dispatch<SetStateAction<number>>;
   }
 ) => {
   const { cardId, power } = props;
   const cardText = power;
 
+  const isRestrictedPair = props.currentItemId === 2 && props.cardId === 5; //TODO 定数化
+
   return (
     <button
       onClick={() => props.onClick(cardId)}
+      disabled={isRestrictedPair}
       className={`
         w-32 h-48 
         rounded-lg 
@@ -290,11 +298,13 @@ const CardComponentArea = () => {
 };
 
 type ItemConponentProps = Item & {
+  currentCardId?: number;
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
 
 const ItemConponent = (props: ItemConponentProps) => {
+  const isRestrictedPair = props.currentCardId === 5 && props.itemId === 2;
   return (
     <button
       onClick={() => props.onClick(props.itemId)}
@@ -308,6 +318,7 @@ const ItemConponent = (props: ItemConponentProps) => {
   cursor-pointer hover:shadow-xl hover:bg-sky-500
   ${props.currentItemId === props.itemId ? "bg-sky-300" : " bg-white"}
 `}
+      disabled={isRestrictedPair}
     >
       {props.itemName}
     </button>

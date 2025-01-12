@@ -120,6 +120,8 @@ export const GameRule = () => {
                       <h4 className="font-bold text-gray-900 mb-2">ムコウカ</h4>
                       <p className="text-gray-700">
                         アイテム効果を適用せずに勝敗を決定します。
+                        <br/>
+                        5と一緒につかうことはできません。
                       </p>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -134,6 +136,8 @@ export const GameRule = () => {
                       <h4 className="font-bold text-gray-900 mb-2">アベコベ</h4>
                       <p className="text-gray-700">
                         カードの勝敗が逆転します。
+                        <br/>
+                        お互いに使用すると通常の勝敗判定となります。
                       </p>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
