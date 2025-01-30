@@ -8,6 +8,7 @@ import { Card, Item } from "../common/src/types";
 import { Dispatch, SetStateAction } from "react";
 import { Heart } from "./Heart";
 import { LoadingOverlay } from "./LoadingOverlay";
+import {CardGameTable} from "./CardGameTable";
 
 type CardGameProps = {
   socket: Socket;
@@ -66,7 +67,7 @@ export const CardGame = (props: CardGameProps) => {
   };
 
   return (
-    <>
+    <CardGameTable>
       {gameResult !== GAME_RESULTS.IN_GAME && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div
@@ -97,7 +98,7 @@ export const CardGame = (props: CardGameProps) => {
             ))}
           </div>
           <div className="flex flex-col items-center justify-center">
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-4">
               {opponentSelectedCards?.card ? (
                 <div>
                   <RevealedCardComponent
@@ -121,7 +122,6 @@ export const CardGame = (props: CardGameProps) => {
                 </div>
               )}
             </div>
-            <div className="text-center">VS</div>
             <div className="flex justify-center">
               {playerSelectedCards?.card ? (
                 <div>
@@ -190,7 +190,7 @@ export const CardGame = (props: CardGameProps) => {
           </LoadingOverlay>
         </>
       )}
-    </>
+    </CardGameTable>
   );
 };
 
