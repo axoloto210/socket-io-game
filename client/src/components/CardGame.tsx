@@ -7,6 +7,9 @@ import {
 import { Card, Item } from "../common/src/types";
 import { Dispatch, SetStateAction } from "react";
 import { Heart } from "./Heart";
+import { LoadingOverlay } from "./LoadingOverlay";
+import { CardGameTable } from "./CardGameTable";
+import { PlayerNamePlate } from "./PlayerNamePlate";
 
 type CardGameProps = {
   socket: Socket;
@@ -23,6 +26,8 @@ export const CardGame = (props: CardGameProps) => {
     setSelectedCardId,
     selectedItemId,
     setSelectedItemId,
+    isCardDecided,
+    setIsCardDecided,
     getGameResult,
   } = useCardGame(socket);
 
@@ -44,14 +49,17 @@ export const CardGame = (props: CardGameProps) => {
 
   const gameResult = getGameResult(opponentStatus?.hp);
 
-  const clickDecideHandler = () => {
+  const handleDecideClick = () => {
     if (selectedCardId === DEFAULT_CARD_ID) {
       return;
     }
-    selectCard(selectedCardId, selectedItemId);
+    setIsCardDecided(true);
+    setTimeout(() => {
+      selectCard(selectedCardId, selectedItemId);
+    }, 500);
   };
 
-  const clickItemHandler = (itemId: number) => {
+  const handleItemClick = (itemId: number) => {
     if (itemId === selectedItemId) {
       setSelectedItemId(undefined);
     } else {
@@ -60,7 +68,7 @@ export const CardGame = (props: CardGameProps) => {
   };
 
   return (
-    <>
+    <CardGameTable>
       {gameResult !== GAME_RESULTS.IN_GAME && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div
@@ -76,21 +84,22 @@ export const CardGame = (props: CardGameProps) => {
       )}
       {playerStatus && (
         <>
-          <div className="flex">あいて：{opponentStatus.userName}</div>
-          <div className="flex">
-            {[...Array(opponentStatus.hp)].map(() => (
-              <div className="w-8 h-8">
-                <Heart />
-              </div>
-            ))}
-          </div>
           <div className="flex m-12">
             {[...Array(opponentStatus.hands.length)].map(() => {
               return <OpponentCardComponent />;
             })}
           </div>
+          <div className="flex">
+            <PlayerNamePlate playerName={opponentStatus.userName}>
+              {[...Array(opponentStatus.hp)].map(() => (
+                <div className="w-8 h-8">
+                  <Heart />
+                </div>
+              ))}
+            </PlayerNamePlate>
+          </div>
           <div className="flex flex-col items-center justify-center">
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-4">
               {opponentSelectedCards?.card ? (
                 <div>
                   <RevealedCardComponent
@@ -102,19 +111,16 @@ export const CardGame = (props: CardGameProps) => {
                   <CardComponentArea />
                 </div>
               )}
-              {opponentSelectedCards?.item ? (
-                <div>
+              <div className="flex">
+                {opponentSelectedCards?.item ? (
                   <RevealedItemComponent
                     itemName={opponentSelectedCards.item.itemName}
                   />
-                </div>
-              ) : (
-                <div>
+                ) : (
                   <ItemComponentArea />
-                </div>
-              )}
+                )}
+              </div>
             </div>
-            <div className="text-center">VS</div>
             <div className="flex justify-center">
               {playerSelectedCards?.card ? (
                 <div>
@@ -127,60 +133,61 @@ export const CardGame = (props: CardGameProps) => {
                   <CardComponentArea />
                 </div>
               )}
-              {playerSelectedCards?.item ? (
-                <div>
+              <div className="flex justify-center">
+                {playerSelectedCards?.item ? (
                   <RevealedItemComponent
                     itemName={playerSelectedCards.item.itemName}
                   />
-                </div>
-              ) : (
-                <div>
+                ) : (
                   <ItemComponentArea />
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex">じぶん：{playerStatus.userName}</div>
           <div className="flex">
-            {[...Array(playerStatus.hp)].map(() => (
-              <div className="w-8 h-8">
-                <Heart />
-              </div>
-            ))}
+            <PlayerNamePlate playerName={playerStatus.userName}>
+              {[...Array(playerStatus.hp)].map(() => (
+                <div className="w-8 h-8">
+                  <Heart />
+                </div>
+              ))}
+            </PlayerNamePlate>
           </div>
-          <div className="flex m-12">
-            {playerStatus.hands.map((hand) => {
-              return (
-                <CardComponent
-                  {...hand}
-                  currentCardId={selectedCardId}
-                  currentItemId={selectedItemId}
-                  onClick={setSelectedCardId}
-                />
-              );
-            })}
-          </div>
-          <div className="flex m-4">
-            {playerStatus.items.map((item) => {
-              return (
-                <ItemConponent
-                  {...item}
-                  currentCardId={selectedCardId}
-                  currentItemId={selectedItemId}
-                  onClick={clickItemHandler}
-                />
-              );
-            })}
-          </div>
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={clickDecideHandler}
-          >
-            けってい
-          </button>
+          <LoadingOverlay isLoading={isCardDecided}>
+            <div className="flex m-12">
+              {playerStatus.hands.map((hand) => {
+                return (
+                  <CardComponent
+                    {...hand}
+                    currentCardId={selectedCardId}
+                    currentItemId={selectedItemId}
+                    onClick={setSelectedCardId}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex m-4">
+              {playerStatus.items.map((item) => {
+                return (
+                  <ItemConponent
+                    {...item}
+                    currentCardId={selectedCardId}
+                    currentItemId={selectedItemId}
+                    onClick={handleItemClick}
+                  />
+                );
+              })}
+            </div>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={handleDecideClick}
+            >
+              けってい
+            </button>
+          </LoadingOverlay>
         </>
       )}
-    </>
+    </CardGameTable>
   );
 };
 
@@ -239,15 +246,12 @@ const OpponentCardComponent = () => {
         transition-all duration-300 
       `}
     >
-      {/* Center number */}
       <span className="text-5xl font-bold text-gray-900">?</span>
 
-      {/* Top left number */}
       <span className="absolute top-2 left-2 text-xl font-semibold text-gray-900">
         ?
       </span>
 
-      {/* Bottom right number (rotated) */}
       <span className="absolute bottom-2 right-2 text-xl font-semibold rotate-180 text-gray-900">
         ?
       </span>
@@ -267,15 +271,12 @@ export const RevealedCardComponent = (props: { power: number }) => {
         transition-all duration-300 
       `}
     >
-      {/* Center number */}
       <span className="text-5xl font-bold text-gray-900">{props.power}</span>
 
-      {/* Top left number */}
       <span className="absolute top-2 left-2 text-xl font-semibold text-gray-900">
         {props.power}
       </span>
 
-      {/* Bottom right number (rotated) */}
       <span className="absolute bottom-2 right-2 text-xl font-semibold rotate-180 text-gray-900">
         {props.power}
       </span>

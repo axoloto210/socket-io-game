@@ -21,6 +21,8 @@ export const useCardGame = (socket: Socket) => {
 
   const [selectedItemId, setSelectedItemId] = useState<number | undefined>();
 
+  const [isCardDecided, setIsCardDecided] = useState(false)
+
   const isGameEnd = cardGameStatus.status === CARD_GAME_EVENTS.GAME_END;
 
   const getGameResult = (opponentHp?: number) => {
@@ -41,6 +43,7 @@ export const useCardGame = (socket: Socket) => {
   useEffect(() => {
     socket.on(CARD_GAME_EVENTS.RECEIVE_CARD_GAME, (data) => {
       setCardGameStatus(data);
+      setIsCardDecided(false)
     });
 
     return () => {
@@ -63,6 +66,8 @@ export const useCardGame = (socket: Socket) => {
     setSelectedCardId,
     selectedItemId,
     setSelectedItemId,
+    isCardDecided,
+    setIsCardDecided,
     getGameResult,
   };
 };
