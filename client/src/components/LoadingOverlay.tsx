@@ -7,7 +7,7 @@ type Props = {
 
 export const LoadingOverlay = ({ children, isLoading = false }: Props) => {
   return (
-    <div className="relative p-8">
+    <div className="relative">
       {children}
       {isLoading && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">

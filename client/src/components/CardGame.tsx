@@ -84,7 +84,7 @@ export const CardGame = (props: CardGameProps) => {
       )}
       {playerStatus && (
         <>
-          <div className="flex m-12">
+          <div className="flex items-center justify-center ml-2 mr-2 mb-2">
             {[...Array(opponentStatus.hands.length)].map(() => {
               return <OpponentCardComponent />;
             })}
@@ -92,7 +92,7 @@ export const CardGame = (props: CardGameProps) => {
           <div className="flex">
             <PlayerNamePlate playerName={opponentStatus.userName}>
               {[...Array(opponentStatus.hp)].map(() => (
-                <div className="w-8 h-8">
+                <div className="w-8 h-8 max-md:w-4 max-md:h-4">
                   <Heart />
                 </div>
               ))}
@@ -147,14 +147,20 @@ export const CardGame = (props: CardGameProps) => {
           <div className="flex">
             <PlayerNamePlate playerName={playerStatus.userName}>
               {[...Array(playerStatus.hp)].map(() => (
-                <div className="w-8 h-8">
+                <div className="w-8 h-8 max-md:w-4 max-md:h-4">
                   <Heart />
                 </div>
               ))}
             </PlayerNamePlate>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded ml-auto"
+              onClick={handleDecideClick}
+            >
+              けってい
+            </button>
           </div>
           <LoadingOverlay isLoading={isCardDecided}>
-            <div className="flex m-12">
+            <div className="flex items-center justify-center ml-2 mr-2 mb-2">
               {playerStatus.hands.map((hand) => {
                 return (
                   <CardComponent
@@ -166,7 +172,7 @@ export const CardGame = (props: CardGameProps) => {
                 );
               })}
             </div>
-            <div className="flex m-4">
+            <div className="flex ml-2 mr-2 mt-2">
               {playerStatus.items.map((item) => {
                 return (
                   <ItemConponent
@@ -178,12 +184,6 @@ export const CardGame = (props: CardGameProps) => {
                 );
               })}
             </div>
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={handleDecideClick}
-            >
-              けってい
-            </button>
           </LoadingOverlay>
         </>
       )}
@@ -208,7 +208,8 @@ const CardComponent = (
       onClick={() => props.onClick(cardId)}
       disabled={isRestrictedPair}
       className={`
-        w-32 h-48 
+        w-32 h-48
+        max-md:w-16 max-md:h-24 
         rounded-lg 
         shadow-lg border-2 border-gray-200 
         flex items-center justify-center 
@@ -218,16 +219,13 @@ const CardComponent = (
         ${cardId === props.currentCardId ? "bg-sky-300" : " bg-white"}
       `}
     >
-      {/* Center number */}
-      <span className="text-5xl font-bold text-gray-900">{cardText}</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">{cardText}</span>
 
-      {/* Top left number */}
-      <span className="absolute top-2 left-2 text-xl font-semibold text-gray-900">
+      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         {cardText}
       </span>
 
-      {/* Bottom right number (rotated) */}
-      <span className="absolute bottom-2 right-2 text-xl font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 text-xl max-md:text-base  font-semibold rotate-180 text-gray-900">
         {cardText}
       </span>
     </button>
@@ -238,7 +236,8 @@ const OpponentCardComponent = () => {
   return (
     <div
       className={`
-        w-32 h-48 
+        w-32 h-48
+        max-md:w-16 max-md:h-24 
         bg-white rounded-lg 
         shadow-lg border-2 border-gray-200 
         flex items-center justify-center 
@@ -246,13 +245,13 @@ const OpponentCardComponent = () => {
         transition-all duration-300 
       `}
     >
-      <span className="text-5xl font-bold text-gray-900">?</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">?</span>
 
-      <span className="absolute top-2 left-2 text-xl font-semibold text-gray-900">
+      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         ?
       </span>
 
-      <span className="absolute bottom-2 right-2 text-xl font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 text-xl max-md:text-base font-semibold rotate-180 text-gray-900">
         ?
       </span>
     </div>
@@ -263,7 +262,8 @@ export const RevealedCardComponent = (props: { power: number }) => {
   return (
     <div
       className={`
-        w-32 h-48 
+        w-32 h-48
+        max-md:w-16 max-md:h-24 
         bg-white rounded-lg 
         shadow-lg border-2 border-gray-200 
         flex items-center justify-center 
@@ -271,13 +271,13 @@ export const RevealedCardComponent = (props: { power: number }) => {
         transition-all duration-300 
       `}
     >
-      <span className="text-5xl font-bold text-gray-900">{props.power}</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">{props.power}</span>
 
-      <span className="absolute top-2 left-2 text-xl font-semibold text-gray-900">
+      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         {props.power}
       </span>
 
-      <span className="absolute bottom-2 right-2 text-xl font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 text-xl max-md:text-base font-semibold rotate-180 text-gray-900">
         {props.power}
       </span>
     </div>
@@ -288,7 +288,8 @@ const CardComponentArea = () => {
   return (
     <div
       className={`
-        w-32 h-48 
+        w-32 h-48
+        max-md:w-16 max-md:h-24 
         rounded-lg 
         border-2 border-dashed border-gray-200 
         flex items-center justify-center 
