@@ -89,75 +89,70 @@ export const CardGame = (props: CardGameProps) => {
               return <OpponentCardComponent />;
             })}
           </div>
-          <div className="flex">
-            <PlayerNamePlate playerName={opponentStatus.userName}>
-              {[...Array(opponentStatus.hp)].map(() => (
-                <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                  <Heart />
-                </div>
-              ))}
-            </PlayerNamePlate>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <div className="flex justify-center mb-4">
-              {opponentSelectedCards?.card ? (
-                <div>
+          <div className="flex flex-col items-center justify-center mb-2">
+            <div className="flex justify-center mt-4 min-w-full">
+              <PlayerNamePlate playerName={opponentStatus.userName}>
+                {[...Array(opponentStatus.hp)].map(() => (
+                  <div className="w-8 h-8 max-md:w-4 max-md:h-4">
+                    <Heart />
+                  </div>
+                ))}
+              </PlayerNamePlate>
+              <div className="flex justify-center ml-auto mr-auto">
+                {opponentSelectedCards?.card ? (
                   <RevealedCardComponent
                     power={opponentSelectedCards.card.power}
                   />
-                </div>
-              ) : (
-                <div>
-                  <CardComponentArea />
-                </div>
-              )}
-              <div className="flex">
-                {opponentSelectedCards?.item ? (
-                  <RevealedItemComponent
-                    itemName={opponentSelectedCards.item.itemName}
-                  />
                 ) : (
-                  <ItemComponentArea />
+                  <CardComponentArea />
                 )}
+                <div className="flex justify-center">
+                  {opponentSelectedCards?.item ? (
+                    <RevealedItemComponent
+                      itemName={opponentSelectedCards.item.itemName}
+                    />
+                  ) : (
+                    <ItemComponentArea />
+                  )}
+                </div>
               </div>
+              <button className="px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4">
+                {"　　　　"}
+              </button>
             </div>
-            <div className="flex justify-center">
-              {playerSelectedCards?.card ? (
-                <div>
+            <div className="flex min-w-full mt-2">
+              <PlayerNamePlate playerName={playerStatus.userName}>
+                {[...Array(playerStatus.hp)].map(() => (
+                  <div className="w-8 h-8 max-md:w-4 max-md:h-4">
+                    <Heart />
+                  </div>
+                ))}
+              </PlayerNamePlate>
+              <div className="flex justify-center ml-auto mr-auto">
+                {playerSelectedCards?.card ? (
                   <RevealedCardComponent
                     power={playerSelectedCards.card.power}
                   />
-                </div>
-              ) : (
-                <div>
-                  <CardComponentArea />
-                </div>
-              )}
-              <div className="flex justify-center">
-                {playerSelectedCards?.item ? (
-                  <RevealedItemComponent
-                    itemName={playerSelectedCards.item.itemName}
-                  />
                 ) : (
-                  <ItemComponentArea />
+                  <CardComponentArea />
                 )}
-              </div>
-            </div>
-          </div>
-          <div className="flex">
-            <PlayerNamePlate playerName={playerStatus.userName}>
-              {[...Array(playerStatus.hp)].map(() => (
-                <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                  <Heart />
+                <div className="flex justify-center">
+                  {playerSelectedCards?.item ? (
+                    <RevealedItemComponent
+                      itemName={playerSelectedCards.item.itemName}
+                    />
+                  ) : (
+                    <ItemComponentArea />
+                  )}
                 </div>
-              ))}
-            </PlayerNamePlate>
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded ml-auto"
-              onClick={handleDecideClick}
-            >
-              けってい
-            </button>
+              </div>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
+                onClick={handleDecideClick}
+              >
+                けってい
+              </button>
+            </div>
           </div>
           <LoadingOverlay isLoading={isCardDecided}>
             <div className="flex items-center justify-center ml-2 mr-2 mb-2">
@@ -219,7 +214,9 @@ const CardComponent = (
         ${cardId === props.currentCardId ? "bg-sky-300" : " bg-white"}
       `}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">{cardText}</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+        {cardText}
+      </span>
 
       <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         {cardText}
@@ -245,7 +242,9 @@ const OpponentCardComponent = () => {
         transition-all duration-300 
       `}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">?</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+        ?
+      </span>
 
       <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         ?
@@ -271,7 +270,9 @@ export const RevealedCardComponent = (props: { power: number }) => {
         transition-all duration-300 
       `}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">{props.power}</span>
+      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+        {props.power}
+      </span>
 
       <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
         {props.power}
