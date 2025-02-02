@@ -10,6 +10,7 @@ import { Heart } from "./Heart";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./PlayerNamePlate";
+import { WaitingOpponent } from "./WaitingOpponent";
 
 type CardGameProps = {
   socket: Socket;
@@ -68,121 +69,126 @@ export const CardGame = (props: CardGameProps) => {
   };
 
   return (
-    <CardGameTable>
-      {gameResult !== GAME_RESULTS.IN_GAME && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className={`text-8xl font-bold animate-bounce ${
-              gameResult === GAME_RESULTS.WIN
-                ? "text-yellow-300"
-                : "text-blue-500"
-            }`}
-          >
-            {gameResult === GAME_RESULTS.WIN ? "YOU WIN!" : "YOU LOSE.."}
-          </div>
-        </div>
-      )}
-      {playerStatus && (
+    <>
+      {playerStatus ? (
         <>
-          <div className="flex items-center justify-center ml-2 mr-2 mb-2">
-            {[...Array(opponentStatus.hands.length)].map(() => {
-              return <OpponentCardComponent />;
-            })}
-          </div>
-          <div className="flex flex-col items-center justify-center mb-2">
-            <div className="flex justify-center mt-4 min-w-full">
-              <PlayerNamePlate playerName={opponentStatus.userName}>
-                {[...Array(opponentStatus.hp)].map(() => (
-                  <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                    <Heart />
-                  </div>
-                ))}
-              </PlayerNamePlate>
-              <div className="flex justify-center ml-auto mr-auto">
-                {opponentSelectedCards?.card ? (
-                  <RevealedCardComponent
-                    power={opponentSelectedCards.card.power}
-                  />
-                ) : (
-                  <CardComponentArea />
-                )}
-                <div className="flex justify-center">
-                  {opponentSelectedCards?.item ? (
-                    <RevealedItemComponent
-                      itemName={opponentSelectedCards.item.itemName}
-                    />
-                  ) : (
-                    <ItemComponentArea />
-                  )}
+          <CardGameTable>
+            {gameResult !== GAME_RESULTS.IN_GAME && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div
+                  className={`text-8xl font-bold animate-bounce ${
+                    gameResult === GAME_RESULTS.WIN
+                      ? "text-yellow-300"
+                      : "text-blue-500"
+                  }`}
+                >
+                  {gameResult === GAME_RESULTS.WIN ? "YOU WIN!" : "YOU LOSE.."}
                 </div>
               </div>
-              <button className="px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4">
-                {"　　　　"}
-              </button>
-            </div>
-            <div className="flex min-w-full mt-2">
-              <PlayerNamePlate playerName={playerStatus.userName}>
-                {[...Array(playerStatus.hp)].map(() => (
-                  <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                    <Heart />
-                  </div>
-                ))}
-              </PlayerNamePlate>
-              <div className="flex justify-center ml-auto mr-auto">
-                {playerSelectedCards?.card ? (
-                  <RevealedCardComponent
-                    power={playerSelectedCards.card.power}
-                  />
-                ) : (
-                  <CardComponentArea />
-                )}
-                <div className="flex justify-center">
-                  {playerSelectedCards?.item ? (
-                    <RevealedItemComponent
-                      itemName={playerSelectedCards.item.itemName}
-                    />
-                  ) : (
-                    <ItemComponentArea />
-                  )}
-                </div>
-              </div>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
-                onClick={handleDecideClick}
-              >
-                けってい
-              </button>
-            </div>
-          </div>
-          <LoadingOverlay isLoading={isCardDecided}>
+            )}
+
             <div className="flex items-center justify-center ml-2 mr-2 mb-2">
-              {playerStatus.hands.map((hand) => {
-                return (
-                  <CardComponent
-                    {...hand}
-                    currentCardId={selectedCardId}
-                    currentItemId={selectedItemId}
-                    onClick={setSelectedCardId}
-                  />
-                );
+              {[...Array(opponentStatus.hands.length)].map(() => {
+                return <OpponentCardComponent />;
               })}
             </div>
-            <div className="flex ml-2 mr-2 mt-2">
-              {playerStatus.items.map((item) => {
-                return (
-                  <ItemConponent
-                    {...item}
-                    currentCardId={selectedCardId}
-                    currentItemId={selectedItemId}
-                    onClick={handleItemClick}
-                  />
-                );
-              })}
+            <div className="flex flex-col items-center justify-center mb-2">
+              <div className="flex justify-center mt-4 min-w-full">
+                <PlayerNamePlate playerName={opponentStatus.userName}>
+                  {[...Array(opponentStatus.hp)].map(() => (
+                    <div className="w-8 h-8 max-md:w-4 max-md:h-4">
+                      <Heart />
+                    </div>
+                  ))}
+                </PlayerNamePlate>
+                <div className="flex justify-center ml-auto mr-auto">
+                  {opponentSelectedCards?.card ? (
+                    <RevealedCardComponent
+                      power={opponentSelectedCards.card.power}
+                    />
+                  ) : (
+                    <CardComponentArea />
+                  )}
+                  <div className="flex justify-center">
+                    {opponentSelectedCards?.item ? (
+                      <RevealedItemComponent
+                        itemName={opponentSelectedCards.item.itemName}
+                      />
+                    ) : (
+                      <ItemComponentArea />
+                    )}
+                  </div>
+                </div>
+                <button className="px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4">
+                  {"　　　　"}
+                </button>
+              </div>
+              <div className="flex min-w-full mt-2">
+                <PlayerNamePlate playerName={playerStatus.userName}>
+                  {[...Array(playerStatus.hp)].map(() => (
+                    <div className="w-8 h-8 max-md:w-4 max-md:h-4">
+                      <Heart />
+                    </div>
+                  ))}
+                </PlayerNamePlate>
+                <div className="flex justify-center ml-auto mr-auto">
+                  {playerSelectedCards?.card ? (
+                    <RevealedCardComponent
+                      power={playerSelectedCards.card.power}
+                    />
+                  ) : (
+                    <CardComponentArea />
+                  )}
+                  <div className="flex justify-center">
+                    {playerSelectedCards?.item ? (
+                      <RevealedItemComponent
+                        itemName={playerSelectedCards.item.itemName}
+                      />
+                    ) : (
+                      <ItemComponentArea />
+                    )}
+                  </div>
+                </div>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
+                  onClick={handleDecideClick}
+                >
+                  けってい
+                </button>
+              </div>
             </div>
-          </LoadingOverlay>
+            <LoadingOverlay isLoading={isCardDecided}>
+              <div className="flex items-center justify-center ml-2 mr-2 mb-2">
+                {playerStatus.hands.map((hand) => {
+                  return (
+                    <CardComponent
+                      {...hand}
+                      currentCardId={selectedCardId}
+                      currentItemId={selectedItemId}
+                      onClick={setSelectedCardId}
+                    />
+                  );
+                })}
+              </div>
+              <div className="flex ml-2 mr-2 mt-2">
+                {playerStatus.items.map((item) => {
+                  return (
+                    <ItemConponent
+                      {...item}
+                      currentCardId={selectedCardId}
+                      currentItemId={selectedItemId}
+                      onClick={handleItemClick}
+                    />
+                  );
+                })}
+              </div>
+            </LoadingOverlay>
+          </CardGameTable>
         </>
+      ) : (
+        <WaitingOpponent />
       )}
-    </CardGameTable>
+    </>
   );
 };
 
