@@ -93,7 +93,7 @@ export const CardGame = (props: CardGameProps) => {
               })}
             </div>
             <div className="flex flex-col items-center justify-center mb-2">
-              <div className="flex justify-center mt-4 min-w-full">
+              <div className="flex justify-center mt-4 min-w-full relative">
                 <PlayerNamePlate playerName={opponentStatus.userName}>
                   {[...Array(opponentStatus.hp)].map(() => (
                     <div className="w-8 h-8 max-md:w-4 max-md:h-4">
@@ -101,7 +101,7 @@ export const CardGame = (props: CardGameProps) => {
                     </div>
                   ))}
                 </PlayerNamePlate>
-                <div className="flex justify-center ml-auto mr-auto">
+                <div className="flex justify-center mx-auto pl-12">
                   {opponentSelectedCards?.card ? (
                     <RevealedCardComponent
                       power={opponentSelectedCards.card.power}
@@ -109,7 +109,7 @@ export const CardGame = (props: CardGameProps) => {
                   ) : (
                     <CardComponentArea />
                   )}
-                  <div className="flex justify-center">
+                  <div>
                     {opponentSelectedCards?.item ? (
                       <RevealedItemComponent
                         itemName={opponentSelectedCards.item.itemName}
@@ -119,11 +119,8 @@ export const CardGame = (props: CardGameProps) => {
                     )}
                   </div>
                 </div>
-                <button className="px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4">
-                  {"　　　　"}
-                </button>
               </div>
-              <div className="flex min-w-full mt-2">
+              <div className="flex min-w-full mt-2 relative">
                 <PlayerNamePlate playerName={playerStatus.userName}>
                   {[...Array(playerStatus.hp)].map(() => (
                     <div className="w-8 h-8 max-md:w-4 max-md:h-4">
@@ -131,7 +128,7 @@ export const CardGame = (props: CardGameProps) => {
                     </div>
                   ))}
                 </PlayerNamePlate>
-                <div className="flex justify-center ml-auto mr-auto">
+                <div className="flex justify-center mx-auto pl-12">
                   {playerSelectedCards?.card ? (
                     <RevealedCardComponent
                       power={playerSelectedCards.card.power}
@@ -139,7 +136,7 @@ export const CardGame = (props: CardGameProps) => {
                   ) : (
                     <CardComponentArea />
                   )}
-                  <div className="flex justify-center">
+                  <div>
                     {playerSelectedCards?.item ? (
                       <RevealedItemComponent
                         itemName={playerSelectedCards.item.itemName}
@@ -150,10 +147,10 @@ export const CardGame = (props: CardGameProps) => {
                   </div>
                 </div>
                 <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
+                  className="absolute right-2 max-md:right-[-12px] top-1/2 -translate-y-1/2 bg-blue-500 text-white h-12 w-16 max-md:text-[16px] px-4 max-md:px-2 py-2 max-md:py-1 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
                   onClick={handleDecideClick}
                 >
-                  けってい
+                  SET
                 </button>
               </div>
             </div>
