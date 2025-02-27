@@ -1,4 +1,4 @@
-//TODO: モノレポ化
+// Types shared between client and server
 
 import { CARD_GAME_EVENTS } from "./const/room";
 

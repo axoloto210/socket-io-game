@@ -3,7 +3,8 @@ import { DefaultEventsMap, Server } from "socket.io";
 import { ROOM_EVENTS } from "../common/src/const/room";
 import { CardGameHandler } from "../feature/cardGameHandler";
 
-export const roomServer = (
+// Function to setup all socket.io handlers - exported for testing
+export const setupSocketHandlers = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   const rooms = new Map(); // roomId -> Set()

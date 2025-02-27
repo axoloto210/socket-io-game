@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import dotenv from 'dotenv'
-import { roomServer } from "./room/roomServer";
+import { setupSocketHandlers } from "./room/roomServer";
 
 dotenv.config()
 
@@ -15,7 +15,8 @@ const io = new Server(httpServer, {
   },
 });
 
-roomServer(io)
+// Initialize socket handlers
+setupSocketHandlers(io)
 
 
 

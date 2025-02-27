@@ -1,8 +1,28 @@
 ## カードゲーム
 `socket.io`を使用したカードゲームです。
-`client`側は`Vite`+`React`+`TypeScript`
-`server`側は`Express`+`TypeScript` 
-で構成されています。
+
+- `client`: `Vite`+`React`+`TypeScript`
+- `server`: `Express`+`TypeScript`
+- `common`: 共通の型定義とイベント定義
+
+## 開発方法
+
+```bash
+# パッケージのインストール
+pnpm install
+
+# 共通モジュールのビルド
+pnpm --filter "@socket-io-game/common" build
+
+# サーバーの起動
+pnpm dev:server
+
+# クライアントの起動（別ターミナルで）
+pnpm dev:client
+
+# テストの実行
+pnpm test
+```
 
 ### ルール
 勝利条件は、相手の体力を0にすることです。
