@@ -1,6 +1,6 @@
 import { DefaultEventsMap, Server } from "socket.io";
 
-import { ROOM_EVENTS } from "../common/src/const/room";
+import { ROOM_EVENTS } from "@socket-io-game/common";
 import { CardGameHandler } from "../feature/cardGameHandler";
 
 // Function to setup all socket.io handlers - exported for testing

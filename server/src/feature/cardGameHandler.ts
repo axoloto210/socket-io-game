@@ -1,13 +1,13 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { CARD_GAME_EVENTS, ROOM_EVENTS } from "../common/src/const/room";
+import { CARD_GAME_EVENTS, ROOM_EVENTS } from "@socket-io-game/common";
 import {
   Card,
   CardGameStatus,
   Item,
   PlayerStatus,
   PlayerStatuses,
-} from "../common/src/types";
+} from "@socket-io-game/common";
 import { Items } from "./Items";
 
 const INITIAL_HP = 3;
