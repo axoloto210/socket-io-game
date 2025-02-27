@@ -44,6 +44,7 @@ export const useCardGame = (socket: Socket) => {
     socket.on(CARD_GAME_EVENTS.RECEIVE_CARD_GAME, (data) => {
       setCardGameStatus(data);
       setIsCardDecided(false)
+      setSelectedCardId(DEFAULT_CARD_ID)
     });
 
     return () => {
