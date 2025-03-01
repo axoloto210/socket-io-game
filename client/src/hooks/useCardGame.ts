@@ -1,7 +1,9 @@
+import { CARD_GAME_EVENTS } from "@socket-io-game/common/src/const/room";
+import { CardGameStatus } from "@socket-io-game/common/src/types";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { CARD_GAME_EVENTS } from "../common/src/const/room";
-import { CardGameStatus } from "../common/src/types";
+
+
 
 export const DEFAULT_CARD_ID = -1;
 
