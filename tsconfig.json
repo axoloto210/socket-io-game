@@ -8,7 +8,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@socket-io-game/common/*": ["./packages/common/dist/*"]
+    }
   },
   "files": [],
   "references": [
