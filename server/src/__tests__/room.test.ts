@@ -1,4 +1,7 @@
-
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { io as Client } from 'socket.io-client';
+import { CARD_GAME_EVENTS, ROOM_EVENTS } from '../common/src/const/room';
 
 describe('Room functionality', () => {
   test('should handle room capacity', () => {
