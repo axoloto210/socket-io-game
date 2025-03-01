@@ -1,8 +1,7 @@
-import { MESSAGE_EVENTS } from "@socket-io-game/common/src/const/room";
-import { Message } from "@socket-io-game/common/src/types";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-
+import { Message } from "@socket-io-game/common";
+import { MESSAGE_EVENTS } from "@socket-io-game/common";
 
 
 

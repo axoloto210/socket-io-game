@@ -1,5 +1,4 @@
-import { Card, Item } from "@socket-io-game/common/src/types";
-
+import { Card, Item, PlayerStatus } from "@socket-io-game/common";
 
 export class Items {
   private INITIAL_ITEMS = [
