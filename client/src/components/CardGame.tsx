@@ -4,14 +4,13 @@ import {
   GAME_RESULTS,
   useCardGame,
 } from "../hooks/useCardGame";
-
+import { Card, Item } from "../common/src/types";
 import { Dispatch, SetStateAction } from "react";
 import { Heart } from "./Heart";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./PlayerNamePlate";
 import { WaitingOpponent } from "./WaitingOpponent";
-import { Card, Item } from "@socket-io-game/common/src/types";
 
 type CardGameProps = {
   socket: Socket;

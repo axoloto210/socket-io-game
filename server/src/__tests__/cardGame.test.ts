@@ -1,9 +1,8 @@
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { io as Client } from 'socket.io-client';
-
+import { CARD_GAME_EVENTS, ROOM_EVENTS } from '../common/src/const/room';
 import { CardGameHandler } from '../feature/cardGameHandler';
-import { CARD_GAME_EVENTS, ROOM_EVENTS } from '@socket-io-game/common/src/const/room';
 
 describe('Card Game functionality', () => {
   let io: Server;
