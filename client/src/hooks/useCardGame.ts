@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { CARD_GAME_EVENTS } from "../common/src/const/room";
-import { CardGameStatus } from "../common/src/types";
+import { CARD_GAME_EVENTS } from "@socket-io-game/common";
+import { CardGameStatus } from "@socket-io-game/common";
 
 export const DEFAULT_CARD_ID = -1;
 
@@ -21,7 +21,7 @@ export const useCardGame = (socket: Socket) => {
 
   const [selectedItemId, setSelectedItemId] = useState<number | undefined>();
 
-  const [isCardDecided, setIsCardDecided] = useState(false)
+  const [isCardDecided, setIsCardDecided] = useState(false);
 
   const isGameEnd = cardGameStatus.status === CARD_GAME_EVENTS.GAME_END;
 
@@ -43,8 +43,8 @@ export const useCardGame = (socket: Socket) => {
   useEffect(() => {
     socket.on(CARD_GAME_EVENTS.RECEIVE_CARD_GAME, (data) => {
       setCardGameStatus(data);
-      setIsCardDecided(false)
-      setSelectedCardId(DEFAULT_CARD_ID)
+      setIsCardDecided(false);
+      setSelectedCardId(DEFAULT_CARD_ID);
     });
 
     return () => {

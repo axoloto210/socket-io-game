@@ -1,8 +1,5 @@
-import { Server } from 'socket.io';
-import { createServer } from 'http';
-import { io as Client } from 'socket.io-client';
-import { CARD_GAME_EVENTS, ROOM_EVENTS } from '../common/src/const/room';
-import { CardGameStatus } from '../common/src/types';
+
+import { CARD_GAME_EVENTS } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
 
 // Test for gameplay logic using mocks
