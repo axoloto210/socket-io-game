@@ -1,5 +1,5 @@
 import { Items } from '../feature/Items';
-import { Card, Item } from '../common/src/types';
+import { Card, Item } from '@socket-io-game/common';
 
 describe('Item Effects', () => {
   let items: Items;

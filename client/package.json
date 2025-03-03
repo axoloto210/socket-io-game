@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "cd ../common && pnpm build",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "start": "vite preview --port 5173"

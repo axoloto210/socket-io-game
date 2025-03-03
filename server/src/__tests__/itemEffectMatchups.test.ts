@@ -1,6 +1,7 @@
+import { Card, Item } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
 import { Items } from '../feature/Items';
-import { Card, Item } from '../common/src/types';
+
 
 describe('Item Effect Matchups', () => {
   let io: any;
