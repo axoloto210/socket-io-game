@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { CARD_GAME_EVENTS, ROOM_EVENTS } from "@socket-io-game/common";
+import { CARD_GAME_EVENTS, MAX_HP, ROOM_EVENTS } from "@socket-io-game/common";
 import {
   Card,
   CardGameStatus,
@@ -10,7 +10,6 @@ import {
 } from "@socket-io-game/common";
 import { Items } from "./Items";
 
-const INITIAL_HP = 3;
 
 const INITIAL_HANDS: Card[] = [
   {
@@ -44,7 +43,7 @@ const items = new Items();
 export class CardGameHandler {
   private readonly MAX_PLAYERS = 2;
   private gameStarted: boolean = false;
-  private players: Map<string, string> = new Map(); // socket.io -> userName
+  private playerMap: Map<string, string> = new Map(); // socket.io -> userName
   private cardGameStatus: CardGameStatus = {
     playerStatuses: {},
     status: CARD_GAME_EVENTS.PENDING,
@@ -61,7 +60,7 @@ export class CardGameHandler {
   ) {}
 
   canJoin(socket: Socket): boolean {
-    if (this.players.size < this.MAX_PLAYERS) {
+    if (this.playerMap.size < this.MAX_PLAYERS) {
       return true;
     } else {
       socket.emit(ROOM_EVENTS.ROOM_FULL, {
@@ -72,14 +71,14 @@ export class CardGameHandler {
   }
 
   setupSocket(socket: Socket, userName: string): boolean {
-    this.players.set(socket.id, userName);
+    this.playerMap.set(socket.id, userName);
 
     socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
       this.handleCardSelect(socket, data);
     });
 
     // 2人揃ったらゲーム開始
-    if (this.players.size === this.MAX_PLAYERS) {
+    if (this.playerMap.size === this.MAX_PLAYERS) {
       this.startGame();
     }
 
@@ -89,18 +88,18 @@ export class CardGameHandler {
   private startGame() {
     this.gameStarted = true;
     this.io.to(this.roomId).emit(CARD_GAME_EVENTS.START, {
-      players: Array.from(this.players.values()),
+      players: Array.from(this.playerMap.values()),
     });
     // ゲーム開始時の初期化処理
 
     const newPlayerStatuses: PlayerStatuses = Array.from(
-      this.players.keys()
+      this.playerMap.keys()
     ).reduce((previousValue, currentValue) => {
       return {
         ...previousValue,
         [currentValue]: {
-          userName: this.players.get(currentValue),
-          hp: INITIAL_HP,
+          userName: this.playerMap.get(currentValue),
+          hp: MAX_HP,
           hands: structuredClone(INITIAL_HANDS),
           items: structuredClone(items.getInitialItems()),
         },
@@ -124,7 +123,7 @@ export class CardGameHandler {
     this.io.to(this.roomId).emit(ROOM_EVENTS.ROOM_DISMISS, {
       message: `部屋:${this.roomId}が解散されました。`,
     });
-    this.players.clear();
+    this.playerMap.clear();
     this.selectedCards.clear();
     this.gameStarted = false;
   }
@@ -135,7 +134,7 @@ export class CardGameHandler {
     const playerId = socket.id;
 
     // プレイヤーが存在するか確認
-    if (!this.players.has(playerId) || !this.gameStarted) {
+    if (!this.playerMap.has(playerId) || !this.gameStarted) {
       return;
     }
 
@@ -229,9 +228,6 @@ export class CardGameHandler {
       return;
     }
 
-    // // アイテム効果の適用
-    // this.applyItemEffects();
-
     // 勝敗判定
     this.determineBattleResult(
       player1Key,
@@ -276,8 +272,6 @@ export class CardGameHandler {
 
     //カードの勝敗判定とダメージ適用
     this.applyDamage({
-      player1Id,
-      player2Id,
       player1SelectedCard,
       player2SelectedCard,
       player1SelectedItem,
@@ -311,9 +305,6 @@ export class CardGameHandler {
       return;
     }
 
-    // const player1Status = this.cardGameStatus.playerStatuses[player1Id];
-    // const player2Status = this.cardGameStatus.playerStatuses[player2Id];
-
     // グウスウ
     if (player1SelectedItem?.itemId === 1) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
@@ -332,8 +323,6 @@ export class CardGameHandler {
   }
 
   private applyDamage({
-    player1Id,
-    player2Id,
     player1SelectedCard,
     player2SelectedCard,
     player1SelectedItem,
@@ -341,8 +330,6 @@ export class CardGameHandler {
     player1Status,
     player2Status,
   }: {
-    player1Id: string;
-    player2Id: string;
     player1SelectedCard: Card;
     player2SelectedCard: Card;
     player1SelectedItem?: Item;
@@ -351,7 +338,6 @@ export class CardGameHandler {
     player2Status: PlayerStatus;
   }) {
     //player1 勝利時
-    // if (player1SelectedCard.power > player2SelectedCard.power) {
     if (
       this.isFirstPlayerWin({
         firstPlayerSelectedCard: player1SelectedCard,
