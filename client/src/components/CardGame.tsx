@@ -6,11 +6,11 @@ import {
 } from "../hooks/useCardGame";
 import { Card, Item } from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
-import { Heart } from "./Heart";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./PlayerNamePlate";
 import { WaitingOpponent } from "./WaitingOpponent";
+import { Hearts } from "./Hearts";
 
 type CardGameProps = {
   socket: Socket;
@@ -95,11 +95,7 @@ export const CardGame = (props: CardGameProps) => {
             <div className="flex flex-col items-center justify-center mb-2">
               <div className="flex justify-center mt-4 min-w-full relative">
                 <PlayerNamePlate playerName={opponentStatus.userName}>
-                  {[...Array(opponentStatus.hp)].map(() => (
-                    <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                      <Heart />
-                    </div>
-                  ))}
+                  <Hearts hp={opponentStatus.hp} />
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {opponentSelectedCards?.card ? (
@@ -122,11 +118,7 @@ export const CardGame = (props: CardGameProps) => {
               </div>
               <div className="flex min-w-full mt-2 relative">
                 <PlayerNamePlate playerName={playerStatus.userName}>
-                  {[...Array(playerStatus.hp)].map(() => (
-                    <div className="w-8 h-8 max-md:w-4 max-md:h-4">
-                      <Heart />
-                    </div>
-                  ))}
+                  <Hearts hp={playerStatus.hp} />
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {playerSelectedCards?.card ? (

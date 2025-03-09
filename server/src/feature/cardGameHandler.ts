@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { CARD_GAME_EVENTS, ROOM_EVENTS } from "@socket-io-game/common";
+import { CARD_GAME_EVENTS, MAX_HP, ROOM_EVENTS } from "@socket-io-game/common";
 import {
   Card,
   CardGameStatus,
@@ -10,7 +10,6 @@ import {
 } from "@socket-io-game/common";
 import { Items } from "./Items";
 
-const INITIAL_HP = 3;
 
 const INITIAL_HANDS: Card[] = [
   {
@@ -100,7 +99,7 @@ export class CardGameHandler {
         ...previousValue,
         [currentValue]: {
           userName: this.players.get(currentValue),
-          hp: INITIAL_HP,
+          hp: MAX_HP,
           hands: structuredClone(INITIAL_HANDS),
           items: structuredClone(items.getInitialItems()),
         },
