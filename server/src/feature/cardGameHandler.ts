@@ -228,9 +228,6 @@ export class CardGameHandler {
       return;
     }
 
-    // // アイテム効果の適用
-    // this.applyItemEffects();
-
     // 勝敗判定
     this.determineBattleResult(
       player1Key,
@@ -275,8 +272,6 @@ export class CardGameHandler {
 
     //カードの勝敗判定とダメージ適用
     this.applyDamage({
-      player1Id,
-      player2Id,
       player1SelectedCard,
       player2SelectedCard,
       player1SelectedItem,
@@ -310,9 +305,6 @@ export class CardGameHandler {
       return;
     }
 
-    // const player1Status = this.cardGameStatus.playerStatuses[player1Id];
-    // const player2Status = this.cardGameStatus.playerStatuses[player2Id];
-
     // グウスウ
     if (player1SelectedItem?.itemId === 1) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
@@ -331,8 +323,6 @@ export class CardGameHandler {
   }
 
   private applyDamage({
-    player1Id,
-    player2Id,
     player1SelectedCard,
     player2SelectedCard,
     player1SelectedItem,
@@ -340,8 +330,6 @@ export class CardGameHandler {
     player1Status,
     player2Status,
   }: {
-    player1Id: string;
-    player2Id: string;
     player1SelectedCard: Card;
     player2SelectedCard: Card;
     player1SelectedItem?: Item;
@@ -350,7 +338,6 @@ export class CardGameHandler {
     player2Status: PlayerStatus;
   }) {
     //player1 勝利時
-    // if (player1SelectedCard.power > player2SelectedCard.power) {
     if (
       this.isFirstPlayerWin({
         firstPlayerSelectedCard: player1SelectedCard,
