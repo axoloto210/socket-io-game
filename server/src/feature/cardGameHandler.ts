@@ -43,7 +43,7 @@ const items = new Items();
 export class CardGameHandler {
   private readonly MAX_PLAYERS = 2;
   private gameStarted: boolean = false;
-  private players: Map<string, string> = new Map(); // socket.io -> userName
+  private playerMap: Map<string, string> = new Map(); // socket.io -> userName
   private cardGameStatus: CardGameStatus = {
     playerStatuses: {},
     status: CARD_GAME_EVENTS.PENDING,
@@ -60,7 +60,7 @@ export class CardGameHandler {
   ) {}
 
   canJoin(socket: Socket): boolean {
-    if (this.players.size < this.MAX_PLAYERS) {
+    if (this.playerMap.size < this.MAX_PLAYERS) {
       return true;
     } else {
       socket.emit(ROOM_EVENTS.ROOM_FULL, {
@@ -71,14 +71,14 @@ export class CardGameHandler {
   }
 
   setupSocket(socket: Socket, userName: string): boolean {
-    this.players.set(socket.id, userName);
+    this.playerMap.set(socket.id, userName);
 
     socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
       this.handleCardSelect(socket, data);
     });
 
     // 2人揃ったらゲーム開始
-    if (this.players.size === this.MAX_PLAYERS) {
+    if (this.playerMap.size === this.MAX_PLAYERS) {
       this.startGame();
     }
 
@@ -88,17 +88,17 @@ export class CardGameHandler {
   private startGame() {
     this.gameStarted = true;
     this.io.to(this.roomId).emit(CARD_GAME_EVENTS.START, {
-      players: Array.from(this.players.values()),
+      players: Array.from(this.playerMap.values()),
     });
     // ゲーム開始時の初期化処理
 
     const newPlayerStatuses: PlayerStatuses = Array.from(
-      this.players.keys()
+      this.playerMap.keys()
     ).reduce((previousValue, currentValue) => {
       return {
         ...previousValue,
         [currentValue]: {
-          userName: this.players.get(currentValue),
+          userName: this.playerMap.get(currentValue),
           hp: MAX_HP,
           hands: structuredClone(INITIAL_HANDS),
           items: structuredClone(items.getInitialItems()),
@@ -123,7 +123,7 @@ export class CardGameHandler {
     this.io.to(this.roomId).emit(ROOM_EVENTS.ROOM_DISMISS, {
       message: `部屋:${this.roomId}が解散されました。`,
     });
-    this.players.clear();
+    this.playerMap.clear();
     this.selectedCards.clear();
     this.gameStarted = false;
   }
@@ -134,7 +134,7 @@ export class CardGameHandler {
     const playerId = socket.id;
 
     // プレイヤーが存在するか確認
-    if (!this.players.has(playerId) || !this.gameStarted) {
+    if (!this.playerMap.has(playerId) || !this.gameStarted) {
       return;
     }
 
