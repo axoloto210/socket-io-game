@@ -14,7 +14,6 @@ import { Hearts } from "./Hearts";
 
 type CardGameProps = {
   socket: Socket;
-  currentRoomId: string;
 };
 
 export const CardGame = (props: CardGameProps) => {

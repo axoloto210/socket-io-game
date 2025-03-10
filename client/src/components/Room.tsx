@@ -57,7 +57,7 @@ const Room = () => {
         )}
       </div>
       {isInRoom && (
-        <CardGame socket={socket} currentRoomId={currentRoomId}/>
+        <CardGame socket={socket}/>
       )}
     </>
   );
