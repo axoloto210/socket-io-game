@@ -3,7 +3,6 @@ import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
 
-
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const Room = () => {
@@ -15,7 +14,7 @@ const Room = () => {
     joinRoom(roomId);
   };
 
-  const isInRoom = currentRoomId && !errorMessage
+  const isInRoom = currentRoomId && !errorMessage;
   return (
     <>
       <div className="p-4">
@@ -42,7 +41,13 @@ const Room = () => {
           </div>
         )}
         {errorMessage && (
-          <div className="text-red-500">{errorMessage}</div>
+          <>
+            <div className="text-red-500">{errorMessage}</div>
+            <button
+              onClick={() => (window.location.href = "/")}
+              className="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300"
+            >トップページへ戻る</button>
+          </>
         )}
         {isInRoom && (
           <div className="mb-4 flex">
@@ -56,9 +61,7 @@ const Room = () => {
           </div>
         )}
       </div>
-      {isInRoom && (
-        <CardGame socket={socket}/>
-      )}
+      {isInRoom && <CardGame socket={socket} />}
     </>
   );
 };
