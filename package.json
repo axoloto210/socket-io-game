@@ -9,6 +9,7 @@
     "common"
   ],
   "scripts": {
+    "dev":"concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
     "dev:client": "pnpm --filter \"@socket-io-game/client\" dev",
     "dev:server": "pnpm --filter \"@socket-io-game/server\" dev",
     "build": "pnpm -r build",
@@ -17,5 +18,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
