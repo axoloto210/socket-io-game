@@ -2,6 +2,7 @@ import { DefaultEventsMap, Server } from "socket.io";
 
 import { ROOM_EVENTS } from "@socket-io-game/common";
 import { CardGameHandler } from "../feature/cardGameHandler";
+import { RandomRoomIdMaker } from "./RandomRoomIdMaker";
 
 // Function to setup all socket.io handlers - exported for testing
 export const setupSocketHandlers = (
@@ -12,8 +13,16 @@ export const setupSocketHandlers = (
 
   const cardGameHandlers = new Map<string, CardGameHandler>(); //roomId -> CardGameHandler
 
+  const randomRoomIdMaker = new RandomRoomIdMaker();
+
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
+
+    socket.on(ROOM_EVENTS.JOIN_RANDOM_ROOM, () => {
+      const randomRoomId = randomRoomIdMaker.fetchRoomId();
+
+      io.to(socket.id).emit(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, randomRoomId);
+    });
 
     socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {
       // ゲーム処理用のインスタンスを部屋ごとに作成
@@ -32,7 +41,7 @@ export const setupSocketHandlers = (
         );
         cardGameHandler.setupSocket(socket, userName);
       } else {
-        console.log(`ルーム:${roomId} は満員。`)
+        console.log(`ルーム:${roomId} は満員。`);
         return;
       }
 
@@ -44,7 +53,6 @@ export const setupSocketHandlers = (
       if (!users.has(socket.id)) {
         users.set(socket.id, userName);
       }
-
     });
 
     socket.on(ROOM_EVENTS.LEAVE_ROOM, (roomId) => {
@@ -58,7 +66,6 @@ export const setupSocketHandlers = (
         if (users.get(socket.id)) {
           users.delete(socket.id);
         }
-
       }
       console.log(`ユーザー ${socket.id} がルーム ${roomId} から退出しました`);
     });

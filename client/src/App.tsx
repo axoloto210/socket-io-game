@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Room from "./components/Room";
 import { UserContext } from "./contexts/UserContext";
 import { GameRule } from "./components/GameRule";
+import { RoomModeSelector } from "./components/RoomModeSelector";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
@@ -57,7 +57,7 @@ function App() {
               </div>
             </div>
           ) : (
-            <Room />
+            <RoomModeSelector/>
           )}
         </main>
       </div>

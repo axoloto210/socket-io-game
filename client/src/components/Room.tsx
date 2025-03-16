@@ -2,15 +2,30 @@ import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
+import { ReturnTopButton } from "./ui/ReturnTopButton";
 
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
+const isValidRoomId = (roomId:string) => {
+  if(roomId.startsWith('random-')){
+    return false
+  }
+  return true
+}
+
 const Room = () => {
   const [roomId, setRoomId] = useState<string>("");
+  const [roomIdError, setRoomIdError] = useState<string>("");
+
 
   const { currentRoomId, errorMessage, joinRoom, leaveRoom } = useRoom(socket);
 
   const clickJoinHandler = () => {
+    if(!isValidRoomId(roomId)){
+      setRoomIdError('このルームは使用できません。')
+      return ;
+    }
+    setRoomIdError("")
     joinRoom(roomId);
   };
 
@@ -40,13 +55,11 @@ const Room = () => {
             </button>
           </div>
         )}
+        {roomIdError && <div className="text-red-500">{roomIdError}</div>}
         {errorMessage && (
           <>
             <div className="text-red-500">{errorMessage}</div>
-            <button
-              onClick={() => (window.location.href = "/")}
-              className="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300"
-            >トップページへ戻る</button>
+            <ReturnTopButton/>
           </>
         )}
         {isInRoom && (
