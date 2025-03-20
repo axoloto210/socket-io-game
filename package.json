@@ -9,13 +9,18 @@
     "common"
   ],
   "scripts": {
+    "dev":"concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
     "dev:client": "pnpm --filter \"@socket-io-game/client\" dev",
     "dev:server": "pnpm --filter \"@socket-io-game/server\" dev",
     "build": "pnpm -r build",
+    "start":"concurrently \"cd client && pnpm start\" \"cd server && pnpm start\"",
     "test": "pnpm -r test",
     "clean": "pnpm -r exec rm -rf node_modules dist .turbo && rm -rf node_modules"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

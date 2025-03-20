@@ -2,20 +2,34 @@ import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
-
+import { ReturnTopButton } from "./ui/ReturnTopButton";
 
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
+const isValidRoomId = (roomId:string) => {
+  if(roomId.startsWith('random-')){
+    return false
+  }
+  return true
+}
+
 const Room = () => {
   const [roomId, setRoomId] = useState<string>("");
+  const [roomIdError, setRoomIdError] = useState<string>("");
+
 
   const { currentRoomId, errorMessage, joinRoom, leaveRoom } = useRoom(socket);
 
   const clickJoinHandler = () => {
+    if(!isValidRoomId(roomId)){
+      setRoomIdError('このルームは使用できません。')
+      return ;
+    }
+    setRoomIdError("")
     joinRoom(roomId);
   };
 
-  const isInRoom = currentRoomId && !errorMessage
+  const isInRoom = currentRoomId && !errorMessage;
   return (
     <>
       <div className="p-4">
@@ -41,8 +55,12 @@ const Room = () => {
             </button>
           </div>
         )}
+        {roomIdError && <div className="text-red-500">{roomIdError}</div>}
         {errorMessage && (
-          <div className="text-red-500">{errorMessage}</div>
+          <>
+            <div className="text-red-500">{errorMessage}</div>
+            <ReturnTopButton/>
+          </>
         )}
         {isInRoom && (
           <div className="mb-4 flex">
@@ -56,9 +74,7 @@ const Room = () => {
           </div>
         )}
       </div>
-      {isInRoom && (
-        <CardGame socket={socket} currentRoomId={currentRoomId}/>
-      )}
+      {isInRoom && <CardGame socket={socket} />}
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Heart } from "./Heart";
+import { Heart } from "./ui/Heart";
 import { RevealedCardComponent } from "./CardGame";
 
 export const GameRule = () => {
