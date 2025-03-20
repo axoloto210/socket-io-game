@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Room from "./Room";
 import { RandomMatchRoom } from "./RandomMatchRoom";
+import { RoomModeButton } from "./ui/RoomModeButton";
 
 type RoomMode = typeof ROOM_MODE[keyof typeof ROOM_MODE]
 
@@ -16,10 +17,18 @@ export const RoomModeSelector = () => {
     <>
       {!selectedMode && 
       <>
-      {/* TODO:地球のアイコンなどを文字の上に入れてワールドワイドに戦う感じを出す。 */}
-      <button onClick={()=>setSelectedMode(ROOM_MODE.RANDOM)}>だれかと</button>
-      
-      <button onClick={()=>setSelectedMode(ROOM_MODE.ROOM_ID)}>部屋であつまる</button>
+      <div className="flex flex-col justify-center">
+        <div className="m-4 flex justify-center">
+      <RoomModeButton icon={'earth'} onClick={()=>setSelectedMode(ROOM_MODE.RANDOM)}>
+      だれかと
+      </RoomModeButton>
+      </div>
+      <div className="m-4 flex justify-center">
+      <RoomModeButton icon={'persons'} onClick={()=>setSelectedMode(ROOM_MODE.ROOM_ID)}>
+      部屋であつまる
+      </RoomModeButton>
+      </div>
+      </div>
       </>}
       {selectedMode === ROOM_MODE.RANDOM ? (
         <RandomMatchRoom />
