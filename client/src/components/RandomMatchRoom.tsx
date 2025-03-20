@@ -5,6 +5,7 @@ import { ReturnTopButton } from "./ui/ReturnTopButton";
 import { useEffect } from "react";
 import { ROOM_EVENTS } from "@socket-io-game/common";
 
+//TODO: devで2回作成されてしまうので修正
 const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 export const RandomMatchRoom = () => {
