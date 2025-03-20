@@ -43,6 +43,7 @@ function App() {
                 <input
                   type="text"
                   value={userName}
+                  maxLength={12}
                   onChange={(e) => setUserName(e.target.value)}
                   className="flex-1 border rounded-md px-3 py-2"
                   placeholder="ユーザー名"
