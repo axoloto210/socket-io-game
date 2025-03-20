@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node src/index.ts",
+    "prebuild": "cd ../common && pnpm build",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest"
