@@ -1,12 +1,10 @@
-import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
 import { useEffect } from "react";
 import { ROOM_EVENTS } from "@socket-io-game/common";
+import { socket } from "../socket";
 
-//TODO: devで2回作成されてしまうので修正
-const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 export const RandomMatchRoom = () => {
   const { currentRoomId, errorMessage, joinRoom } = useRoom(socket);
