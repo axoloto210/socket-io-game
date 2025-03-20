@@ -6,11 +6,11 @@ import {
 } from "../hooks/useCardGame";
 import { Card, Item } from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
-import { LoadingOverlay } from "./LoadingOverlay";
+import { LoadingOverlay } from "./ui/LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
-import { PlayerNamePlate } from "./PlayerNamePlate";
-import { WaitingOpponent } from "./WaitingOpponent";
-import { Hearts } from "./Hearts";
+import { PlayerNamePlate } from "./ui/PlayerNamePlate";
+import { WaitingOpponent } from "./ui/WaitingOpponent";
+import { Hearts } from "./ui/Hearts";
 
 type CardGameProps = {
   socket: Socket;
