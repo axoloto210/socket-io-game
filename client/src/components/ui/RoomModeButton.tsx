@@ -18,8 +18,8 @@ export const RoomModeButton = (props: RoomModeButtonProps) => {
         onBlur={() => setIsHovered(false)}  // フォーカスが外れた時にホバー状態を解除
         onClick={props.onClick}
         style={{
-          transform: isHovered ? 'translateX(12px)' : 'translateX(0)',
-          transition: 'transform 0.2s ease',
+          transform: isHovered ? 'translateX(36px)' : 'translateX(0)',
+          transition: 'transform 0.3s ease',
           background: 'transparent',
           border: 'none'
         }}

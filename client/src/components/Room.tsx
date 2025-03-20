@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { io, Socket } from "socket.io-client";
 import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
+import { socket } from "../socket";
 
-const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const isValidRoomId = (roomId:string) => {
   if(roomId.startsWith('random-')){
