@@ -18,4 +18,12 @@ export class RandomRoomIdMaker {
     this.renewRoomId();
     return roomId;
   }
+
+  renewRoomIdWhenDisconnected() {
+    if (this.roomIdIndex % 2 === 0) {
+      return;
+    } else {
+      this.renewRoomId()
+    }
+  }
 }

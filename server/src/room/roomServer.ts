@@ -80,6 +80,7 @@ export const setupSocketHandlers = (
           }
         }
       });
+      randomRoomIdMaker.renewRoomIdWhenDisconnected();
       console.log(
         `ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`
       );
