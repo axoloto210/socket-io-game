@@ -2,7 +2,6 @@
   "name": "socket-io-game",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.6.5",
   "workspaces": [
     "client",
     "server",
@@ -18,8 +17,7 @@
     "clean": "pnpm -r exec rm -rf node_modules dist .turbo && rm -rf node_modules"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": "10.6.5"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
