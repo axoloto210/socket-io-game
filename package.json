@@ -2,18 +2,18 @@
   "name": "socket-io-game",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.10.5",
+  "packageManager": "pnpm@10.6.5",
   "workspaces": [
     "client",
     "server",
     "common"
   ],
   "scripts": {
-    "dev":"concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
+    "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
     "dev:client": "pnpm --filter \"@socket-io-game/client\" dev",
     "dev:server": "pnpm --filter \"@socket-io-game/server\" dev",
     "build": "pnpm -r build",
-    "start":"concurrently \"cd client && pnpm start\" \"cd server && pnpm start\"",
+    "start": "concurrently \"cd client && pnpm start\" \"cd server && pnpm start\"",
     "test": "pnpm -r test",
     "clean": "pnpm -r exec rm -rf node_modules dist .turbo && rm -rf node_modules"
   },
