@@ -78,6 +78,9 @@ importers:
       vite:
         specifier: ^6.0.5
         version: 6.2.3(@types/node@22.13.13)(jiti@1.21.7)(sass@1.86.0)(yaml@2.7.0)
+      vite-plugin-sitemap:
+        specifier: ^0.7.1
+        version: 0.7.1
 
   common:
     dependencies:
@@ -2787,6 +2790,9 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vite-plugin-sitemap@0.7.1:
+    resolution: {integrity: sha512-4NRTkiWytLuAmcikckrLcLl9iYA20+5v6l8XshcOrzxH1WR8H0O3S6sTQYfjMrE8su/LG6Y0cTodvOdcOIxaLw==}
 
   vite@6.2.3:
     resolution: {integrity: sha512-IzwM54g4y9JA/xAeBPNaDXiBF8Jsgl3VBQ2YQ/wOY6fyW3xMdSoltIV3Bo59DErdqdE6RxUfv8W69DvUorE4Eg==}
@@ -5847,6 +5853,8 @@ snapshots:
       convert-source-map: 2.0.0
 
   vary@1.1.2: {}
+
+  vite-plugin-sitemap@0.7.1: {}
 
   vite@6.2.3(@types/node@22.13.13)(jiti@1.21.7)(sass@1.86.0)(yaml@2.7.0):
     dependencies:
