@@ -56,7 +56,7 @@ function App() {
                     onClick={handleLogin}
                     className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
                   >
-                    開始
+                  けってい
                   </button>
                 </div>
               </div>
