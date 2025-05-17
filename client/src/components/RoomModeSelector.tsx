@@ -8,6 +8,7 @@ type RoomMode = typeof ROOM_MODE[keyof typeof ROOM_MODE]
 const ROOM_MODE = {
   RANDOM: "random",
   ROOM_ID: "room_id",
+  BOT: "bot"
 } as const;
 
 export const RoomModeSelector = () => {
@@ -26,6 +27,11 @@ export const RoomModeSelector = () => {
       <div className="m-4 flex justify-center">
       <RoomModeButton icon={'persons'} onClick={()=>setSelectedMode(ROOM_MODE.ROOM_ID)}>
       部屋であつまる
+      </RoomModeButton>
+      </div>
+      <div className="m-4 flex justify-center">
+      <RoomModeButton icon={'bot'} onClick={()=>setSelectedMode(ROOM_MODE.BOT)}>
+      CPU戦
       </RoomModeButton>
       </div>
       </div>
