@@ -1,4 +1,4 @@
-import { Items } from '../feature/Items';
+import { Items } from '../feature/tmp_items';
 import { Card, Item } from '@socket-io-game/common';
 
 describe('Item Effects', () => {

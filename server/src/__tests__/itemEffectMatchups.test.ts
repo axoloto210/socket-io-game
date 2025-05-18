@@ -1,6 +1,6 @@
 import { Card, Item } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
-import { Items } from '../feature/Items';
+import { Items } from '../feature/tmp_items';
 
 
 describe('Item Effect Matchups', () => {

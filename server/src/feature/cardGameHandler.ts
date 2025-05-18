@@ -8,7 +8,7 @@ import {
   PlayerStatus,
   PlayerStatuses,
 } from "@socket-io-game/common";
-import { Items } from "./Items";
+import { Items } from "./tmp_items";
 
 
 const INITIAL_HANDS: Card[] = [
