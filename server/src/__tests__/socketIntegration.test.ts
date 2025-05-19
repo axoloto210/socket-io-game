@@ -93,7 +93,7 @@ describe('Socket.io Integration Tests', () => {
   
   test('game should start when room has two players', () => {
     const roomId = 'game-room';
-    const cardGameHandler = new CardGameHandler(io, roomId);
+    const cardGameHandler = new CardGameHandler({io, roomId});
     
     // Mock sockets for two players
     const player1Socket = { 

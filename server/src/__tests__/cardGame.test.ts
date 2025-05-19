@@ -15,7 +15,7 @@ describe('Card Game functionality', () => {
       emit: jest.fn()
     } as any;
     
-    cardGameHandler = new CardGameHandler(io, roomId);
+    cardGameHandler = new CardGameHandler({io, roomId});
   });
 
   test('should allow two players to join', () => {

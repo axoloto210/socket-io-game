@@ -13,7 +13,7 @@ describe('Card Game Matchups', () => {
       emit: jest.fn()
     };
     
-    cardGameHandler = new CardGameHandler(io as any, roomId);
+    cardGameHandler = new CardGameHandler({io, roomId});
   });
   
   test('High card beats low card in normal condition', () => {

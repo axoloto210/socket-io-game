@@ -16,7 +16,7 @@ describe('Item Effect Matchups', () => {
       emit: jest.fn()
     };
     
-    cardGameHandler = new CardGameHandler(io, roomId);
+    cardGameHandler = new CardGameHandler({io, roomId});
     items = new Items();
   });
   

@@ -12,9 +12,9 @@ export const BotRoom = () => {
 
   useEffect(() => {
     socket.on(ROOM_EVENTS.BOT_ROOM_ASSIGNED, (roomId: string) => {
-      joinRoom(roomId);
+      joinRoom({roomId, isBotMatch: false});
     });
-    socket.emit(ROOM_EVENTS.JOIN_BOT_ROOM)
+    socket.emit(ROOM_EVENTS.ASSIGN_BOT_ROOM_ID)
     return () => {
       socket.off(ROOM_EVENTS.BOT_ROOM_ASSIGNED)
     }

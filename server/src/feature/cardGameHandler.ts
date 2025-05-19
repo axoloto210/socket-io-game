@@ -10,7 +10,6 @@ import {
 } from "@socket-io-game/common";
 import { Items } from "./items";
 
-
 const INITIAL_HANDS: Card[] = [
   {
     cardId: 1,
@@ -40,8 +39,17 @@ type SelectedCardsMap = Map<string, Cards>;
 
 const items = new Items();
 
+interface CardGameHandlerConfig {
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  roomId: string;
+  isBotMatch?: boolean;
+}
+
 export class CardGameHandler {
-  private readonly MAX_PLAYERS = 2;
+  private io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  private roomId: string;
+  private isBotMatch: boolean;
+  private readonly maxPlayers: number = 2;
   private gameStarted: boolean = false;
   private playerMap: Map<string, string> = new Map(); // socket.io -> userName
   private cardGameStatus: CardGameStatus = {
@@ -49,18 +57,18 @@ export class CardGameHandler {
     status: CARD_GAME_EVENTS.PENDING,
   };
 
-  constructor(
-    private io: Server<
-      DefaultEventsMap,
-      DefaultEventsMap,
-      DefaultEventsMap,
-      any
-    >,
-    private roomId: string
-  ) {}
+  constructor(config: CardGameHandlerConfig) {
+    const { io, roomId, isBotMatch = false } = config;
+    this.io = io;
+    this.roomId = roomId;
+    this.isBotMatch = isBotMatch;
+    if (isBotMatch) {
+      this.maxPlayers = 1;
+    }
+  }
 
   canJoin(socket: Socket): boolean {
-    if (this.playerMap.size < this.MAX_PLAYERS) {
+    if (this.playerMap.size < this.maxPlayers) {
       return true;
     } else {
       socket.emit(ROOM_EVENTS.ROOM_FULL, {
@@ -78,7 +86,7 @@ export class CardGameHandler {
     });
 
     // 2人揃ったらゲーム開始
-    if (this.playerMap.size === this.MAX_PLAYERS) {
+    if (this.playerMap.size === this.maxPlayers) {
       this.startGame();
     }
 
@@ -173,7 +181,7 @@ export class CardGameHandler {
     );
 
     // 全プレイヤーがカードを選択したか確認
-    if (this.selectedCards.size === this.MAX_PLAYERS) {
+    if (this.selectedCards.size === this.maxPlayers) {
       this.resolveSelectedCards();
     }
   }

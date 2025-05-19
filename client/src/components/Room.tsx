@@ -26,7 +26,7 @@ const Room = () => {
       return ;
     }
     setRoomIdError("")
-    joinRoom(roomId);
+    joinRoom({roomId, isBotMatch: false});
   };
 
   const isInRoom = currentRoomId && !errorMessage;

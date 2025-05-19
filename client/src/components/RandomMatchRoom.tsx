@@ -12,9 +12,9 @@ export const RandomMatchRoom = () => {
 
   useEffect(() => {
     socket.on(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, (roomId: string) => {
-      joinRoom(roomId);
+      joinRoom({roomId, isBotMatch: false});
     });
-    socket.emit(ROOM_EVENTS.JOIN_RANDOM_ROOM)
+    socket.emit(ROOM_EVENTS.ASSIGN_RANDOM_ROOM_ID)
     return () => {
       socket.off(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED)
     }
