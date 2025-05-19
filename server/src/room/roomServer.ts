@@ -81,7 +81,7 @@ export const setupSocketHandlers = (
         console.log(
           `${userName}：${socket.id} がルーム ${roomId} に参加しました。`
         );
-        cardGameHandler.setupSocket(socket, userName);
+        cardGameHandler.setupBotMatchSocket(socket, userName);
       } else {
         console.log(`ルーム:${roomId} は満員。`);
         return;

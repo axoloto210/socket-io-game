@@ -39,6 +39,8 @@ type SelectedCardsMap = Map<string, Cards>;
 
 const items = new Items();
 
+const BOT_NAME = "BOT🤖";
+
 interface CardGameHandlerConfig {
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   roomId: string;
@@ -49,6 +51,7 @@ export class CardGameHandler {
   private io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   private roomId: string;
   private isBotMatch: boolean;
+  private botId?: string;
   private readonly maxPlayers: number = 2;
   private gameStarted: boolean = false;
   private playerMap: Map<string, string> = new Map(); // socket.io -> userName
@@ -64,6 +67,7 @@ export class CardGameHandler {
     this.isBotMatch = isBotMatch;
     if (isBotMatch) {
       this.maxPlayers = 1;
+      this.botId = "botId-" + this.roomId;
     }
   }
 
@@ -89,6 +93,22 @@ export class CardGameHandler {
     if (this.playerMap.size === this.maxPlayers) {
       this.startGame();
     }
+
+    return true;
+  }
+
+  setupBotMatchSocket(socket: Socket, userName: string): boolean {
+    if (!this.isBotMatch) {
+      return false;
+    }
+    this.playerMap.set(socket.id, userName);
+    this.playerMap.set(this.botId!, BOT_NAME);
+
+    socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
+      this.handleCardSelect(socket, data);
+    });
+
+    this.startGame();
 
     return true;
   }
