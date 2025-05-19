@@ -3,6 +3,8 @@ export const ROOM_EVENTS = {
   JOIN_ROOM: "join_room",
   JOIN_RANDOM_ROOM: "join_random_room",
   RANDOM_ROOM_ASSIGNED:"random_room_assigned",
+  JOIN_BOT_ROOM: "join_bot_room",
+  BOT_ROOM_ASSIGNED: "bot_room_assigned",
   LEAVE_ROOM: "leave_room",
   DISCONNECT: "disconnect",
   ROOM_FULL: "room_full",

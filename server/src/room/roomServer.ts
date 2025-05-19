@@ -3,6 +3,7 @@ import { DefaultEventsMap, Server } from "socket.io";
 import { ROOM_EVENTS } from "@socket-io-game/common";
 import { CardGameHandler } from "../feature/cardGameHandler";
 import { RandomRoomIdMaker } from "./RandomRoomIdMaker";
+import { BotRoomIdMaker } from "./botRoomIdMaker";
 
 // Function to setup all socket.io handlers - exported for testing
 export const setupSocketHandlers = (
@@ -15,6 +16,9 @@ export const setupSocketHandlers = (
 
   const randomRoomIdMaker = new RandomRoomIdMaker();
 
+  const botRoomIdMaker = new BotRoomIdMaker();
+
+
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
@@ -22,6 +26,13 @@ export const setupSocketHandlers = (
       const randomRoomId = randomRoomIdMaker.fetchRoomId();
 
       io.to(socket.id).emit(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, randomRoomId);
+    });
+
+    // Bot戦用のroomIdを割り当てる
+    socket.on(ROOM_EVENTS.JOIN_BOT_ROOM, () => {
+      const botRoomId = botRoomIdMaker.fetchRoomId();
+
+      io.to(socket.id).emit(ROOM_EVENTS.BOT_ROOM_ASSIGNED, botRoomId);
     });
 
     socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {

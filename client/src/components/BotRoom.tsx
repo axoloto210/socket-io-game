@@ -11,12 +11,12 @@ export const BotRoom = () => {
   const isInRoom = currentRoomId && !errorMessage;
 
   useEffect(() => {
-    socket.on(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, (roomId: string) => {
+    socket.on(ROOM_EVENTS.BOT_ROOM_ASSIGNED, (roomId: string) => {
       joinRoom(roomId);
     });
-    socket.emit(ROOM_EVENTS.JOIN_RANDOM_ROOM)
+    socket.emit(ROOM_EVENTS.JOIN_BOT_ROOM)
     return () => {
-      socket.off(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED)
+      socket.off(ROOM_EVENTS.BOT_ROOM_ASSIGNED)
     }
   }, []);
 

@@ -3,10 +3,11 @@ import { useRoom } from "../hooks/useRoom";
 import { CardGame } from "./CardGame";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
 import { socket } from "../socket";
+import { BOT_ROOM_PREFIX, RANDOM_ROOM_PREFIX } from "@socket-io-game/common";
 
 
 const isValidRoomId = (roomId:string) => {
-  if(roomId.startsWith('random-')){
+  if(roomId.startsWith(RANDOM_ROOM_PREFIX) || roomId.startsWith(BOT_ROOM_PREFIX)){
     return false
   }
   return true

@@ -1,3 +1,5 @@
+import { RANDOM_ROOM_PREFIX } from "@socket-io-game/common";
+
 export class RandomRoomIdMaker {
   private roomIdIndex;
 
@@ -6,7 +8,7 @@ export class RandomRoomIdMaker {
   }
 
   private getRoomId() {
-    return `random-${Math.floor(this.roomIdIndex / 2)}`;
+    return `${RANDOM_ROOM_PREFIX}${Math.floor(this.roomIdIndex / 2)}`;
   }
 
   private renewRoomId() {
