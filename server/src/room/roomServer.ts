@@ -9,8 +9,8 @@ import { BotRoomIdMaker } from "./botRoomIdMaker";
 export const setupSocketHandlers = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  const rooms = new Map(); // roomId -> Set()
-  const users = new Map(); // socket.id -> userName
+  const rooms = new Map<string, Set<string>>(); // roomId -> Set()
+  const users = new Map<string, string>(); // socket.id -> userName
 
   const cardGameHandlers = new Map<string, CardGameHandler>(); //roomId -> CardGameHandler
 
@@ -22,8 +22,11 @@ export const setupSocketHandlers = (
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
+    // ランダムマッチ用のroomIdを割り当てる
     socket.on(ROOM_EVENTS.JOIN_RANDOM_ROOM, () => {
       const randomRoomId = randomRoomIdMaker.fetchRoomId();
+
+      randomRoomIdMaker.joinRoom(socket.id)
 
       io.to(socket.id).emit(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, randomRoomId);
     });
@@ -59,7 +62,7 @@ export const setupSocketHandlers = (
       if (!rooms.has(roomId)) {
         rooms.set(roomId, new Set());
       }
-      rooms.get(roomId).add(socket.id);
+      rooms.get(roomId)!.add(socket.id);
 
       if (!users.has(socket.id)) {
         users.set(socket.id, userName);
@@ -70,8 +73,8 @@ export const setupSocketHandlers = (
       socket.leave(roomId);
       cardGameHandlers.get(roomId)?.cleanupRoom();
       if (rooms.has(roomId)) {
-        rooms.get(roomId).delete(socket.id);
-        if (rooms.get(roomId).size === 0) {
+        rooms.get(roomId)?.delete(socket.id);
+        if (rooms.get(roomId)!.size === 0) {
           rooms.delete(roomId);
         }
         if (users.get(socket.id)) {
@@ -91,7 +94,8 @@ export const setupSocketHandlers = (
           }
         }
       });
-      randomRoomIdMaker.renewRoomIdWhenDisconnected();
+      // ランダムマッチで待機中に切断されるとその後マッチしない部屋ができてしまうため、roomIdを更新する
+      randomRoomIdMaker.renewRoomIdWhenDisconnected(socket.id);
       console.log(
         `ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`
       );
