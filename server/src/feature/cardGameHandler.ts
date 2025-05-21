@@ -86,7 +86,7 @@ export class CardGameHandler {
     this.playerMap.set(socket.id, userName);
 
     socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-      this.handleCardSelect(socket, data);
+      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
     });
 
     // 2人揃ったらゲーム開始
@@ -105,12 +105,45 @@ export class CardGameHandler {
     this.playerMap.set(this.botId!, BOT_NAME);
 
     socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-      this.handleCardSelect(socket, data);
+      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
     });
 
     this.startGame();
 
     return true;
+  }
+
+  /**
+   * Botにカード選択を行わせる
+   */
+  private scheduleBotMove() {
+    if (this.botId && this.gameStarted) {
+      const botStatus = this.cardGameStatus.playerStatuses[this.botId];
+      if (botStatus && botStatus.hands.length > 0) {
+        // ランダムに手札から1枚選択
+        const randomCardIndex = Math.floor(
+          Math.random() * botStatus.hands.length
+        );
+        const randomCard = botStatus.hands[randomCardIndex];
+
+        let itemId = undefined;
+        if (botStatus.items.length > 0) {
+          const randomItemIndex = Math.floor(
+            Math.random() * botStatus.items.length
+          );
+          itemId = botStatus.items[randomItemIndex].itemId;
+        }
+
+        this.handleCardSelect({
+          socketId: this.botId,
+          data: {
+            cardId: randomCard.cardId,
+            itemId,
+          },
+          isBot: true,
+        });
+      }
+    }
   }
 
   private startGame() {
@@ -139,6 +172,10 @@ export class CardGameHandler {
     };
 
     this.sendGameStatusToClient();
+    // Botにカード選択を行わせる。
+    if (this.isBotMatch) {
+      this.scheduleBotMove();
+    }
   }
 
   sendGameStatusToClient() {
@@ -158,8 +195,16 @@ export class CardGameHandler {
 
   private selectedCards: SelectedCardsMap = new Map();
 
-  handleCardSelect(socket: Socket, data: { cardId: number; itemId?: number }) {
-    const playerId = socket.id;
+  handleCardSelect({
+    socketId,
+    data,
+    isBot,
+  }: {
+    socketId: string;
+    data: { cardId: number; itemId?: number };
+    isBot: boolean;
+  }) {
+    const playerId = isBot ? this.botId! : socketId;
 
     // プレイヤーが存在するか確認
     if (!this.playerMap.has(playerId) || !this.gameStarted) {
@@ -181,7 +226,6 @@ export class CardGameHandler {
 
     // 選択したカードが手札に存在しない場合は処理しない
     if (!selectedCard) {
-      console.log(`selectedCard がみつかりません。`);
       return;
     }
 
@@ -201,7 +245,12 @@ export class CardGameHandler {
     );
 
     // 全プレイヤーがカードを選択したか確認
-    if (this.selectedCards.size === this.maxPlayers) {
+    //Bot戦の場合はBotが選択済みかも確認する
+    if (
+      this.isBotMatch
+        ? this.selectedCards.size === this.maxPlayers + 1
+        : this.selectedCards.size === this.maxPlayers
+    ) {
       this.resolveSelectedCards();
     }
   }
@@ -274,6 +323,9 @@ export class CardGameHandler {
           : CARD_GAME_EVENTS.RESOLVE,
     };
     this.sendGameStatusToClient();
+    if (this.isBotMatch) {
+      this.scheduleBotMove();
+    }
   }
 
   private determineBattleResult(
