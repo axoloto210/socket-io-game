@@ -16,7 +16,8 @@ export type Card = {
 export type Item = {
   itemId: number,
   itemName: string,
-  itemEffect: string
+  itemEffect: string,
+  itemImageUrl: string,
 }
 
 export type PlayerStatus = {

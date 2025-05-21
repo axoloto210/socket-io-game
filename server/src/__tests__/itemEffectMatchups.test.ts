@@ -28,7 +28,8 @@ describe('Item Effect Matchups', () => {
     const abekobe: Item = { 
       itemId: 4, 
       itemName: 'アベコベ', 
-      itemEffect: '数字の大小が逆転する' 
+      itemEffect: '数字の大小が逆転する' ,
+      itemImageUrl: 'abekobe.webp'
     };
     
     // First player has lower card but uses abekobe
@@ -68,7 +69,8 @@ describe('Item Effect Matchups', () => {
     const riskyItem: Item = { 
       itemId: 3, 
       itemName: 'リスキー', 
-      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' 
+      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' ,
+      itemImageUrl: 'risky.webp',
     };
     
     // Create mock player statuses
@@ -97,13 +99,15 @@ describe('Item Effect Matchups', () => {
     const mukou: Item = { 
       itemId: 2, 
       itemName: 'ムコウカ', 
-      itemEffect: '相手のアイテム効果を無効にする' 
+      itemEffect: '相手のアイテム効果を無効にする' ,
+      itemImageUrl: 'mukouka.webp',
     };
     
     const risky: Item = { 
       itemId: 3, 
       itemName: 'リスキー', 
-      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' 
+      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' ,
+      itemImageUrl: 'risky.webp',
     };
     
     // Test mukou nullifies other effects
