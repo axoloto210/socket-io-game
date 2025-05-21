@@ -108,6 +108,7 @@ export const CardGame = (props: CardGameProps) => {
                     {opponentSelectedCards?.item ? (
                       <RevealedItemComponent
                         itemName={opponentSelectedCards.item.itemName}
+                        itemImageUrl={opponentSelectedCards.item.itemImageUrl}
                       />
                     ) : (
                       <ItemComponentArea />
@@ -131,6 +132,7 @@ export const CardGame = (props: CardGameProps) => {
                     {playerSelectedCards?.item ? (
                       <RevealedItemComponent
                         itemName={playerSelectedCards.item.itemName}
+                        itemImageUrl={playerSelectedCards.item.itemImageUrl}
                       />
                     ) : (
                       <ItemComponentArea />
@@ -161,7 +163,7 @@ export const CardGame = (props: CardGameProps) => {
               <div className="flex ml-2 mr-2 mt-2">
                 {playerStatus.items.map((item) => {
                   return (
-                    <ItemConponent
+                    <ItemComponent
                       {...item}
                       currentCardId={selectedCardId}
                       currentItemId={selectedItemId}
@@ -294,35 +296,52 @@ const CardComponentArea = () => {
   );
 };
 
-type ItemConponentProps = Item & {
+type ItemComponentProps = Item & {
   currentCardId?: number;
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
 
-const ItemConponent = (props: ItemConponentProps) => {
+const ItemComponent = (props: ItemComponentProps) => {
   const isRestrictedPair = props.currentCardId === 5 && props.itemId === 2;
   return (
-    <button
-      onClick={() => props.onClick(props.itemId)}
-      className={`
+    <>
+      <button
+        onClick={() => props.onClick(props.itemId)}
+        className={`
   w-12 h-12 
+  bg-white
   rounded-lg 
   shadow-lg border-2 border-gray-200 
   flex items-center justify-center 
   relative 
   transition-all duration-300 
-  cursor-pointer hover:shadow-xl hover:bg-sky-500
-  ${props.currentItemId === props.itemId ? "bg-sky-300" : " bg-white"}
-`}
-      disabled={isRestrictedPair}
-    >
-      {props.itemName}
-    </button>
+  cursor-pointer overflow-hidden
+        hover:shadow-xl 
+        hover:border-sky-500 
+        hover:border-4
+        ${
+          props.currentItemId === props.itemId
+            ? "border-sky-500 border-4"
+            : "border-gray-200"
+        }
+      `}
+        disabled={isRestrictedPair}
+      >
+        <img
+          src={props.itemImageUrl}
+          alt={props.itemName}
+          className="w-14 h-14 object-cover"
+        />
+      </button>
+    </>
   );
 };
 
-const RevealedItemComponent = (props: { itemName: string }) => {
+const RevealedItemComponent = (props: {
+  itemName: string;
+  itemImageUrl: string;
+}) => {
   return (
     <div
       className={`
@@ -333,9 +352,14 @@ shadow-lg border-2 border-gray-200
 flex items-center justify-center 
 relative 
 transition-all duration-300 
+overflow-hidden
 `}
     >
-      {props.itemName}
+      <img
+        src={props.itemImageUrl}
+        alt={props.itemName}
+        className="w-14 h-14 object-cover"
+      />
     </div>
   );
 };
