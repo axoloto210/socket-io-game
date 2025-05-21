@@ -50,13 +50,25 @@ export const GameRule = () => {
           <h3 className="text-xl font-bold text-gray-900 mb-4">アイテム</h3>
           <div className="space-y-4">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">グウスウ</h4>
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img src="gusu.webp" width={40} height={40} className="mr-4" />
+                グウスウ
+              </h4>
+
               <p className="text-gray-700">
                 場に出たお互いの偶数カードの値を+2します。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">ムコウカ</h4>
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="mukouka.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                ムコウカ
+              </h4>
               <p className="text-gray-700">
                 アイテム効果を適用せずに勝敗を決定します。
                 <br />
@@ -64,7 +76,10 @@ export const GameRule = () => {
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">リスキー</h4>
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img src="risky.webp" width={40} height={40} className="mr-4" />
+                リスキー
+              </h4>
               <p className="text-gray-700">
                 自分のカードの値が-2されますが、勝利した時に2ダメージを与えます。
                 <br />
@@ -72,7 +87,15 @@ export const GameRule = () => {
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">アベコベ</h4>
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="abekobe.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                アベコベ
+              </h4>
               <p className="text-gray-700">
                 カードの勝敗が逆転します。
                 <br />
@@ -80,7 +103,15 @@ export const GameRule = () => {
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-2">ウラギリ</h4>
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="uragiri.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                ウラギリ
+              </h4>
               <p className="text-gray-700">
                 引き分けたときに、相手に2ダメージを与え、自分へはダメージを与えません。
                 <br />
