@@ -209,19 +209,8 @@ export class CardGameHandler {
   private resolveSelectedCards() {
     const players = Array.from(this.selectedCards.entries());
 
-    const selectedCardsInfo = players.reduce(
-      (acc, [playerId, _]) => {
-        const playerStatus = this.cardGameStatus.playerStatuses[playerId];
-        const selectedCards = this.selectedCards.get(playerId);
-
-        acc[playerId] = {
-          playerName: playerStatus?.userName,
-          card: selectedCards?.card,
-          item: selectedCards?.item,
-        };
-        return acc;
-      },
-      {} as Record<
+    const selectedCardsInfo = players.reduce<
+      Record<
         string,
         {
           playerName?: string;
@@ -229,7 +218,17 @@ export class CardGameHandler {
           item?: Item;
         }
       >
-    );
+    >((acc, [playerId, _]) => {
+      const playerStatus = this.cardGameStatus.playerStatuses[playerId];
+      const selectedCards = this.selectedCards.get(playerId);
+
+      acc[playerId] = {
+        playerName: playerStatus?.userName,
+        card: selectedCards?.card,
+        item: selectedCards?.item,
+      };
+      return acc;
+    }, {});
 
     // カードゲームのステータスを更新
     this.cardGameStatus = {
