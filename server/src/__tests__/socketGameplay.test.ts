@@ -39,7 +39,7 @@ describe('Socket.io Gameplay Test', () => {
     };
     
     // Create card game handler
-    cardGameHandler = new CardGameHandler(io as any, roomId);
+    cardGameHandler = new CardGameHandler({io, roomId});
   });
   
   test('card selection should trigger battle resolution', () => {

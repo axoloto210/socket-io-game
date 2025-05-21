@@ -1,6 +1,6 @@
 import { Card, Item } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
-import { Items } from '../feature/Items';
+import { Items } from '../feature/items';
 
 
 describe('Item Effect Matchups', () => {
@@ -16,7 +16,7 @@ describe('Item Effect Matchups', () => {
       emit: jest.fn()
     };
     
-    cardGameHandler = new CardGameHandler(io, roomId);
+    cardGameHandler = new CardGameHandler({io, roomId});
     items = new Items();
   });
   

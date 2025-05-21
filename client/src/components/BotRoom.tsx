@@ -6,17 +6,17 @@ import { ROOM_EVENTS } from "@socket-io-game/common";
 import { socket } from "../socket";
 
 
-export const RandomMatchRoom = () => {
+export const BotRoom = () => {
   const { currentRoomId, errorMessage, joinRoom } = useRoom(socket);
   const isInRoom = currentRoomId && !errorMessage;
 
   useEffect(() => {
-    socket.on(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, (roomId: string) => {
-      joinRoom({roomId, isBotMatch: false});
+    socket.on(ROOM_EVENTS.BOT_ROOM_ASSIGNED, (roomId: string) => {
+      joinRoom({roomId, isBotMatch: true});
     });
-    socket.emit(ROOM_EVENTS.ASSIGN_RANDOM_ROOM_ID)
+    socket.emit(ROOM_EVENTS.ASSIGN_BOT_ROOM_ID)
     return () => {
-      socket.off(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED)
+      socket.off(ROOM_EVENTS.BOT_ROOM_ASSIGNED)
     }
   }, []);
 

@@ -3,25 +3,38 @@ import { DefaultEventsMap, Server } from "socket.io";
 import { ROOM_EVENTS } from "@socket-io-game/common";
 import { CardGameHandler } from "../feature/cardGameHandler";
 import { RandomRoomIdMaker } from "./RandomRoomIdMaker";
+import { BotRoomIdMaker } from "./botRoomIdMaker";
 
 // Function to setup all socket.io handlers - exported for testing
 export const setupSocketHandlers = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  const rooms = new Map(); // roomId -> Set()
-  const users = new Map(); // socket.id -> userName
+  const rooms = new Map<string, Set<string>>(); // roomId -> Set()
+  const users = new Map<string, string>(); // socket.id -> userName
 
   const cardGameHandlers = new Map<string, CardGameHandler>(); //roomId -> CardGameHandler
 
   const randomRoomIdMaker = new RandomRoomIdMaker();
 
+  const botRoomIdMaker = new BotRoomIdMaker();
+
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on(ROOM_EVENTS.JOIN_RANDOM_ROOM, () => {
+    // ランダムマッチ用のroomIdを割り当てる
+    socket.on(ROOM_EVENTS.ASSIGN_RANDOM_ROOM_ID, () => {
       const randomRoomId = randomRoomIdMaker.fetchRoomId();
 
+      randomRoomIdMaker.joinRoom(socket.id);
+
       io.to(socket.id).emit(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, randomRoomId);
+    });
+
+    // Bot戦用のroomIdを割り当てる
+    socket.on(ROOM_EVENTS.ASSIGN_BOT_ROOM_ID, () => {
+      const botRoomId = botRoomIdMaker.fetchRoomId();
+
+      io.to(socket.id).emit(ROOM_EVENTS.BOT_ROOM_ASSIGNED, botRoomId);
     });
 
     socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {
@@ -29,7 +42,7 @@ export const setupSocketHandlers = (
       let cardGameHandler = cardGameHandlers.get(roomId);
 
       if (!cardGameHandler) {
-        cardGameHandler = new CardGameHandler(io, roomId);
+        cardGameHandler = new CardGameHandler({ io, roomId });
         cardGameHandlers.set(roomId, cardGameHandler);
       }
 
@@ -48,7 +61,38 @@ export const setupSocketHandlers = (
       if (!rooms.has(roomId)) {
         rooms.set(roomId, new Set());
       }
-      rooms.get(roomId).add(socket.id);
+      rooms.get(roomId)!.add(socket.id);
+
+      if (!users.has(socket.id)) {
+        users.set(socket.id, userName);
+      }
+    });
+
+    // Bot戦用のルーム参加処理
+    socket.on(ROOM_EVENTS.JOIN_BOT_ROOM, ({ roomId, userName }) => {
+      const cardGameHandler = new CardGameHandler({
+        io,
+        roomId,
+        isBotMatch: true,
+      });
+      cardGameHandlers.set(roomId, cardGameHandler);
+
+      // ルームが満員でない場合のみ参加処理
+      if (cardGameHandler.canJoin(socket)) {
+        socket.join(roomId);
+        console.log(
+          `${userName}：${socket.id} がルーム ${roomId} に参加しました。`
+        );
+        cardGameHandler.setupBotMatchSocket(socket, userName);
+      } else {
+        console.log(`ルーム:${roomId} は満員。`);
+        return;
+      }
+
+      if (!rooms.has(roomId)) {
+        rooms.set(roomId, new Set());
+      }
+      rooms.get(roomId)!.add(socket.id);
 
       if (!users.has(socket.id)) {
         users.set(socket.id, userName);
@@ -59,8 +103,8 @@ export const setupSocketHandlers = (
       socket.leave(roomId);
       cardGameHandlers.get(roomId)?.cleanupRoom();
       if (rooms.has(roomId)) {
-        rooms.get(roomId).delete(socket.id);
-        if (rooms.get(roomId).size === 0) {
+        rooms.get(roomId)?.delete(socket.id);
+        if (rooms.get(roomId)!.size === 0) {
           rooms.delete(roomId);
         }
         if (users.get(socket.id)) {
@@ -80,7 +124,8 @@ export const setupSocketHandlers = (
           }
         }
       });
-      randomRoomIdMaker.renewRoomIdWhenDisconnected();
+      // ランダムマッチで待機中に切断されるとその後マッチしない部屋ができてしまうため、roomIdを更新する
+      randomRoomIdMaker.renewRoomIdWhenDisconnected(socket.id);
       console.log(
         `ユーザー${users.get(socket.id)}:${socket.id}が切断しました。`
       );

@@ -3,7 +3,6 @@ import { Socket } from "socket.io-client";
 import { UserContext } from "../contexts/UserContext";
 import { ROOM_EVENTS } from "@socket-io-game/common";
 
-
 export const useRoom = (socket: Socket) => {
   const user = useContext(UserContext);
 
@@ -26,15 +25,21 @@ export const useRoom = (socket: Socket) => {
   }, [socket]);
 
   // ルーム参加処理
-  const joinRoom = useCallback((roomId: string) => {
-    if (roomId && roomId.trim()) {
-      if (currentRoomId) {
-        socket.emit(ROOM_EVENTS.LEAVE_ROOM, currentRoomId);
+  const joinRoom = useCallback(
+    ({ roomId, isBotMatch }: { roomId: string; isBotMatch: boolean }) => {
+      if (roomId && roomId.trim()) {
+        if (currentRoomId) {
+          socket.emit(ROOM_EVENTS.LEAVE_ROOM, currentRoomId);
+        }
+        socket.emit(
+          isBotMatch ? ROOM_EVENTS.JOIN_BOT_ROOM : ROOM_EVENTS.JOIN_ROOM,
+          { roomId, userName: user.userName }
+        );
+        setCurrentRoomId(roomId);
       }
-      socket.emit(ROOM_EVENTS.JOIN_ROOM, { roomId, userName: user.userName });
-      setCurrentRoomId(roomId);
-    }
-  },[currentRoomId, socket, user.userName]);
+    },
+    [currentRoomId, socket, user.userName]
+  );
 
   // ルーム退室処理
   const leaveRoom = () => {

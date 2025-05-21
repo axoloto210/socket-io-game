@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { UserContext } from "./contexts/UserContext";
-import { GameRule } from "./components/GameRule";
+import { GameRuleModal } from "./components/GameRuleModal";
 import { RoomModeSelector } from "./components/RoomModeSelector";
 
 import { Analytics } from "@vercel/analytics/react";
+import { GameRule } from "./components/GameRule";
 
 function App() {
   const [userName, setUserName] = useState<string>("");
@@ -33,14 +34,15 @@ function App() {
                 <h1 className="text-2xl font-semibold text-gray-900">
                   うぱゲーカードバトル
                 </h1>
-                <GameRule />
+                <GameRuleModal />
               </div>
             </div>
           </header>
 
           <main className="max-w-4xl mx-auto">
             {!isAuthenticated ? (
-              <div className="bg-white shadow rounded-lg p-6">
+              <>
+              <div className="bg-white shadow rounded-lg p-6 mt-2">
                 <h2 className="text-lg font-medium mb-4">ユーザー名を入力</h2>
                 <div className="flex gap-4">
                   <input
@@ -56,10 +58,14 @@ function App() {
                     onClick={handleLogin}
                     className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
                   >
-                    開始
+                  けってい
                   </button>
                 </div>
               </div>
+              <div className="bg-white shadow rounded-lg p-6 mt-2">
+              <GameRule/>
+              </div>
+              </>
             ) : (
               <RoomModeSelector />
             )}

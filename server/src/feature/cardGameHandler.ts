@@ -8,8 +8,7 @@ import {
   PlayerStatus,
   PlayerStatuses,
 } from "@socket-io-game/common";
-import { Items } from "./Items";
-
+import { Items } from "./items";
 
 const INITIAL_HANDS: Card[] = [
   {
@@ -40,8 +39,20 @@ type SelectedCardsMap = Map<string, Cards>;
 
 const items = new Items();
 
+const BOT_NAME = "BOT🤖";
+
+interface CardGameHandlerConfig {
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  roomId: string;
+  isBotMatch?: boolean;
+}
+
 export class CardGameHandler {
-  private readonly MAX_PLAYERS = 2;
+  private io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  private roomId: string;
+  private isBotMatch: boolean;
+  private botId?: string;
+  private readonly maxPlayers: number = 2;
   private gameStarted: boolean = false;
   private playerMap: Map<string, string> = new Map(); // socket.io -> userName
   private cardGameStatus: CardGameStatus = {
@@ -49,18 +60,19 @@ export class CardGameHandler {
     status: CARD_GAME_EVENTS.PENDING,
   };
 
-  constructor(
-    private io: Server<
-      DefaultEventsMap,
-      DefaultEventsMap,
-      DefaultEventsMap,
-      any
-    >,
-    private roomId: string
-  ) {}
+  constructor(config: CardGameHandlerConfig) {
+    const { io, roomId, isBotMatch = false } = config;
+    this.io = io;
+    this.roomId = roomId;
+    this.isBotMatch = isBotMatch;
+    if (isBotMatch) {
+      this.maxPlayers = 1;
+      this.botId = "botId-" + this.roomId;
+    }
+  }
 
   canJoin(socket: Socket): boolean {
-    if (this.playerMap.size < this.MAX_PLAYERS) {
+    if (this.playerMap.size < this.maxPlayers) {
       return true;
     } else {
       socket.emit(ROOM_EVENTS.ROOM_FULL, {
@@ -74,15 +86,64 @@ export class CardGameHandler {
     this.playerMap.set(socket.id, userName);
 
     socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-      this.handleCardSelect(socket, data);
+      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
     });
 
     // 2人揃ったらゲーム開始
-    if (this.playerMap.size === this.MAX_PLAYERS) {
+    if (this.playerMap.size === this.maxPlayers) {
       this.startGame();
     }
 
     return true;
+  }
+
+  setupBotMatchSocket(socket: Socket, userName: string): boolean {
+    if (!this.isBotMatch) {
+      return false;
+    }
+    this.playerMap.set(socket.id, userName);
+    this.playerMap.set(this.botId!, BOT_NAME);
+
+    socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
+      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
+    });
+
+    this.startGame();
+
+    return true;
+  }
+
+  /**
+   * Botにカード選択を行わせる
+   */
+  private scheduleBotMove() {
+    if (this.botId && this.gameStarted) {
+      const botStatus = this.cardGameStatus.playerStatuses[this.botId];
+      if (botStatus && botStatus.hands.length > 0) {
+        // ランダムに手札から1枚選択
+        const randomCardIndex = Math.floor(
+          Math.random() * botStatus.hands.length
+        );
+        const randomCard = botStatus.hands[randomCardIndex];
+
+        let itemId = undefined;
+        if (botStatus.items.length > 0) {
+          const randomItemIndex = Math.floor(
+            Math.random() * botStatus.items.length
+          );
+          itemId = botStatus.items[randomItemIndex].itemId;
+        }
+
+        this.handleCardSelect({
+          socketId: this.botId,
+          data: {
+            cardId: randomCard.cardId,
+            itemId,
+          },
+          isBot: true,
+        });
+      }
+    }
   }
 
   private startGame() {
@@ -111,6 +172,10 @@ export class CardGameHandler {
     };
 
     this.sendGameStatusToClient();
+    // Botにカード選択を行わせる。
+    if (this.isBotMatch) {
+      this.scheduleBotMove();
+    }
   }
 
   sendGameStatusToClient() {
@@ -130,8 +195,16 @@ export class CardGameHandler {
 
   private selectedCards: SelectedCardsMap = new Map();
 
-  handleCardSelect(socket: Socket, data: { cardId: number; itemId?: number }) {
-    const playerId = socket.id;
+  handleCardSelect({
+    socketId,
+    data,
+    isBot,
+  }: {
+    socketId: string;
+    data: { cardId: number; itemId?: number };
+    isBot: boolean;
+  }) {
+    const playerId = isBot ? this.botId! : socketId;
 
     // プレイヤーが存在するか確認
     if (!this.playerMap.has(playerId) || !this.gameStarted) {
@@ -153,7 +226,6 @@ export class CardGameHandler {
 
     // 選択したカードが手札に存在しない場合は処理しない
     if (!selectedCard) {
-      console.log(`selectedCard がみつかりません。`);
       return;
     }
 
@@ -173,7 +245,12 @@ export class CardGameHandler {
     );
 
     // 全プレイヤーがカードを選択したか確認
-    if (this.selectedCards.size === this.MAX_PLAYERS) {
+    //Bot戦の場合はBotが選択済みかも確認する
+    if (
+      this.isBotMatch
+        ? this.selectedCards.size === this.maxPlayers + 1
+        : this.selectedCards.size === this.maxPlayers
+    ) {
       this.resolveSelectedCards();
     }
   }
@@ -181,19 +258,8 @@ export class CardGameHandler {
   private resolveSelectedCards() {
     const players = Array.from(this.selectedCards.entries());
 
-    const selectedCardsInfo = players.reduce(
-      (acc, [playerId, _]) => {
-        const playerStatus = this.cardGameStatus.playerStatuses[playerId];
-        const selectedCards = this.selectedCards.get(playerId);
-
-        acc[playerId] = {
-          playerName: playerStatus?.userName,
-          card: selectedCards?.card,
-          item: selectedCards?.item,
-        };
-        return acc;
-      },
-      {} as Record<
+    const selectedCardsInfo = players.reduce<
+      Record<
         string,
         {
           playerName?: string;
@@ -201,7 +267,17 @@ export class CardGameHandler {
           item?: Item;
         }
       >
-    );
+    >((acc, [playerId, _]) => {
+      const playerStatus = this.cardGameStatus.playerStatuses[playerId];
+      const selectedCards = this.selectedCards.get(playerId);
+
+      acc[playerId] = {
+        playerName: playerStatus?.userName,
+        card: selectedCards?.card,
+        item: selectedCards?.item,
+      };
+      return acc;
+    }, {});
 
     // カードゲームのステータスを更新
     this.cardGameStatus = {
@@ -247,6 +323,9 @@ export class CardGameHandler {
           : CARD_GAME_EVENTS.RESOLVE,
     };
     this.sendGameStatusToClient();
+    if (this.isBotMatch) {
+      this.scheduleBotMove();
+    }
   }
 
   private determineBattleResult(
