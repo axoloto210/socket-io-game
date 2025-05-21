@@ -317,13 +317,14 @@ const ItemComponent = (props: ItemComponentProps) => {
   relative 
   transition-all duration-300 
   cursor-pointer overflow-hidden
-        hover:shadow-xl 
-        hover:border-sky-500 
-        hover:border-4
         ${
-          props.currentItemId === props.itemId
-            ? "border-sky-500 border-4"
-            : "border-gray-200"
+          isRestrictedPair
+            ? "border-red-500 border-4"
+            : `hover:shadow-xl ${
+                props.currentItemId === props.itemId
+                  ? "border-sky-500 border-4"
+                  : "border-gray-200 hover:border-sky-500 hover:border-4"
+              }`
         }
       `}
         disabled={isRestrictedPair}
