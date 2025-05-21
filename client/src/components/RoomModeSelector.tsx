@@ -63,10 +63,10 @@ export const RoomModeSelector = () => {
               </RoomModeButton>
             </div>
           </div>
+          <ReturnTopButton />
         </>
       )}
       {selectedMode && getRoomComponent(selectedMode)}
-      <ReturnTopButton />
     </>
   );
 };
