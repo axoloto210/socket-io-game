@@ -18,7 +18,6 @@ export const setupSocketHandlers = (
 
   const botRoomIdMaker = new BotRoomIdMaker();
 
-
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
 
@@ -26,7 +25,7 @@ export const setupSocketHandlers = (
     socket.on(ROOM_EVENTS.ASSIGN_RANDOM_ROOM_ID, () => {
       const randomRoomId = randomRoomIdMaker.fetchRoomId();
 
-      randomRoomIdMaker.joinRoom(socket.id)
+      randomRoomIdMaker.joinRoom(socket.id);
 
       io.to(socket.id).emit(ROOM_EVENTS.RANDOM_ROOM_ASSIGNED, randomRoomId);
     });
@@ -43,7 +42,7 @@ export const setupSocketHandlers = (
       let cardGameHandler = cardGameHandlers.get(roomId);
 
       if (!cardGameHandler) {
-        cardGameHandler = new CardGameHandler({io, roomId});
+        cardGameHandler = new CardGameHandler({ io, roomId });
         cardGameHandlers.set(roomId, cardGameHandler);
       }
 
@@ -70,11 +69,14 @@ export const setupSocketHandlers = (
     });
 
     // Bot戦用のルーム参加処理
-      socket.on(ROOM_EVENTS.JOIN_BOT_ROOM, ({ roomId, userName }) => {
+    socket.on(ROOM_EVENTS.JOIN_BOT_ROOM, ({ roomId, userName }) => {
+      const cardGameHandler = new CardGameHandler({
+        io,
+        roomId,
+        isBotMatch: true,
+      });
+      cardGameHandlers.set(roomId, cardGameHandler);
 
-        const cardGameHandler = new CardGameHandler({io, roomId, isBotMatch:true});
-        cardGameHandlers.set(roomId, cardGameHandler);
-      
       // ルームが満員でない場合のみ参加処理
       if (cardGameHandler.canJoin(socket)) {
         socket.join(roomId);
@@ -96,7 +98,6 @@ export const setupSocketHandlers = (
         users.set(socket.id, userName);
       }
     });
-
 
     socket.on(ROOM_EVENTS.LEAVE_ROOM, (roomId) => {
       socket.leave(roomId);
