@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import {
+  ALL_ITEMS,
   CARD_GAME_EVENTS,
   MAX_HP,
   RESTRICTED_CARD_AND_ITEM_PAIRS,
@@ -401,19 +402,19 @@ export class CardGameHandler {
       return;
     }
 
-    // グウスウ
-    if (player1SelectedItem?.itemId === 1) {
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
-    if (player2SelectedItem?.itemId === 1) {
+    if (player2SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
 
-    // リスキー
-    if (player1SelectedItem?.itemId === 3) {
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       items.applyRiskyEffect(player1SelectedCard);
     }
-    if (player2SelectedItem?.itemId === 3) {
+    if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       items.applyRiskyEffect(player2SelectedCard);
     }
   }
@@ -449,7 +450,7 @@ export class CardGameHandler {
 
       // アイテム処理
       // リスキー
-      if (player1SelectedItem?.itemId === 3) {
+      if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
         player2Status.hp -= 1;
         if (player2Status.hp < 0) {
           player2Status.hp = 0;

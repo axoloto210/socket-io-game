@@ -1,3 +1,4 @@
+import { ALL_ITEMS } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
 
 
@@ -53,7 +54,7 @@ describe('Card Game Matchups', () => {
     const isFirstPlayerWin = (cardGameHandler as any).isFirstPlayerWin.bind(cardGameHandler);
     
     // Create an abekobe item
-    const abekobe = { itemId: 4, itemName: 'アベコベ', itemEffect: '数字の大小が逆転する' };
+    const abekobe = ALL_ITEMS.ABEKOBE;
     
     // Test with player1=1 vs player2=5, but player1 has abekobe (reverse) item
     const result = isFirstPlayerWin({

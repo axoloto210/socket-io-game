@@ -1,5 +1,5 @@
 import { Items } from "../feature/items";
-import { Card, Item } from "@socket-io-game/common";
+import { ALL_ITEMS, Card, Item } from "@socket-io-game/common";
 
 describe("Item Effects", () => {
   let items: Items;
@@ -9,22 +9,12 @@ describe("Item Effects", () => {
   });
 
   test("should detect when mukouEffect applies", () => {
-    const mukou: Item = {
-      itemId: 2,
-      itemName: "ムコウカ",
-      itemEffect: "相手のアイテム効果を無効にする",
-      itemImageUrl: "mukouka.webp",
-    };
-    const risky: Item = {
-      itemId: 3,
-      itemName: "リスキー",
-      itemEffect: "勝った場合、相手に追加で1ダメージ",
-      itemImageUrl: "risky.webp",
-    };
+    const mukouka: Item = ALL_ITEMS.MUKOUKA;
+    const risky: Item = ALL_ITEMS.RISKY;
 
     // When one player has mukou
-    expect(items.isMukouEffect(mukou, risky)).toBe(true);
-    expect(items.isMukouEffect(risky, mukou)).toBe(true);
+    expect(items.isMukouEffect(mukouka, risky)).toBe(true);
+    expect(items.isMukouEffect(risky, mukouka)).toBe(true);
 
     // When neither player has mukou
     expect(items.isMukouEffect(risky, undefined)).toBe(false);
@@ -56,18 +46,8 @@ describe("Item Effects", () => {
   });
 
   test("should detect abekobe effect correctly", () => {
-    const abekobe: Item = {
-      itemId: 4,
-      itemName: "アベコベ",
-      itemEffect: "数字の大小が逆転する",
-      itemImageUrl: "abekobe.webp",
-    };
-    const risky: Item = {
-      itemId: 3,
-      itemName: "リスキー",
-      itemEffect: "勝った場合、相手に追加で1ダメージ",
-      itemImageUrl: "risky.webp",
-    };
+    const abekobe: Item = ALL_ITEMS.ABEKOBE;
+    const risky: Item = ALL_ITEMS.RISKY;
 
     // When one player has abekobe
     expect(items.isAbekobe(abekobe, undefined)).toBe(true);
@@ -84,12 +64,7 @@ describe("Item Effects", () => {
 
   test("should get correct base point for draw situations", () => {
     const basePoint = 1;
-    const risky: Item = {
-      itemId: 3,
-      itemName: "リスキー",
-      itemEffect: "勝った場合、相手に追加で1ダメージ",
-      itemImageUrl: "risky.webp",
-    };
+    const risky: Item = ALL_ITEMS.RISKY;
 
     // Normal draw (both take 1 damage)
     const normalResult = items.getDrawBasePoint(
