@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+// import { any } from "socket.io/dist/typed-events";
 import { Message } from "@socket-io-game/common";
 import { MESSAGE_EVENTS } from "@socket-io-game/common";
 
@@ -10,9 +10,9 @@ export class MessageHandler {
 
   constructor(
     private io: Server<
-      DefaultEventsMap,
-      DefaultEventsMap,
-      DefaultEventsMap,
+      any,
+      any,
+      any,
       any
     >,
     private users: Map<string, string>

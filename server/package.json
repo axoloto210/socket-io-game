@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "prebuild": "cd ../common && pnpm build",
-    "build": "tsc",
+    "build": "tsgo",
     "start": "node dist/index.js",
     "test": "jest"
   },
@@ -22,6 +22,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.4",
     "@types/supertest": "^6.0.2",
+    "@typescript/native-preview": "7.0.0-dev.20250522.2",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "socket.io-client": "^4.8.1",

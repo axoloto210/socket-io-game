@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+// import { any } from "socket.io/dist/typed-events";
 import {
   ALL_ITEMS,
   CARD_GAME_EVENTS,
@@ -48,13 +48,13 @@ const items = new Items();
 const BOT_NAME = "BOT🤖";
 
 interface CardGameHandlerConfig {
-  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  io: Server<any, any, any, any>;
   roomId: string;
   isBotMatch?: boolean;
 }
 
 export class CardGameHandler {
-  private io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  private io: Server<any, any, any, any>;
   private roomId: string;
   private isBotMatch: boolean;
   private botId?: string;

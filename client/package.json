@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "cd ../common && pnpm build",
-    "build": "tsc -b && vite build",
+    "build": "tsgo build && vite build",
     "lint": "eslint .",
     "start": "vite preview --port 5173"
   },
@@ -22,6 +22,7 @@
     "@types/node": "^22.10.4",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@typescript/native-preview": "7.0.0-dev.20250522.2",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
