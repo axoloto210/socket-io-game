@@ -1,4 +1,4 @@
-import { Card, Item } from '@socket-io-game/common';
+import { ALL_ITEMS, Card, Item } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
 import { Items } from '../feature/items';
 
@@ -25,12 +25,7 @@ describe('Item Effect Matchups', () => {
     const isFirstPlayerWin = (cardGameHandler as any).isFirstPlayerWin.bind(cardGameHandler);
     
     // Create an abekobe (reverse) item
-    const abekobe: Item = { 
-      itemId: 4, 
-      itemName: 'アベコベ', 
-      itemEffect: '数字の大小が逆転する' ,
-      itemImageUrl: 'abekobe.webp'
-    };
+    const abekobe: Item = ALL_ITEMS.ABEKOBE;
     
     // First player has lower card but uses abekobe
     const result = isFirstPlayerWin({
@@ -66,12 +61,7 @@ describe('Item Effect Matchups', () => {
     const applyDamage = (cardGameHandler as any).applyDamage.bind(cardGameHandler);
     
     // Create risky item
-    const riskyItem: Item = { 
-      itemId: 3, 
-      itemName: 'リスキー', 
-      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' ,
-      itemImageUrl: 'risky.webp',
-    };
+    const riskyItem: Item = ALL_ITEMS.RISKY;
     
     // Create mock player statuses
     const player1Status = { hp: 3, userName: 'Player1', hands: [], items: [] };
@@ -96,22 +86,12 @@ describe('Item Effect Matchups', () => {
   
   test('mukou item should nullify opponent item effect', () => {
     // Create items
-    const mukou: Item = { 
-      itemId: 2, 
-      itemName: 'ムコウカ', 
-      itemEffect: '相手のアイテム効果を無効にする' ,
-      itemImageUrl: 'mukouka.webp',
-    };
+    const mukouka: Item = ALL_ITEMS.MUKOUKA;
     
-    const risky: Item = { 
-      itemId: 3, 
-      itemName: 'リスキー', 
-      itemEffect: 'このターンのパワー -2、勝ったら2ダメージ' ,
-      itemImageUrl: 'risky.webp',
-    };
+    const risky: Item = ALL_ITEMS.RISKY;
     
     // Test mukou nullifies other effects
-    expect(items.isMukouEffect(mukou, risky)).toBe(true);
+    expect(items.isMukouEffect(mukouka, risky)).toBe(true);
     
     // Access private method for testing damage with mukou
     const applyDamage = (cardGameHandler as any).applyDamage.bind(cardGameHandler);
@@ -127,7 +107,7 @@ describe('Item Effect Matchups', () => {
       player1SelectedCard: { cardId: 5, power: 5 },
       player2SelectedCard: { cardId: 1, power: 1 },
       player1SelectedItem: risky,
-      player2SelectedItem: mukou,
+      player2SelectedItem: mukouka,
       player1Status,
       player2Status
     });

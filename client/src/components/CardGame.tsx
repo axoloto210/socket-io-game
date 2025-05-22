@@ -4,7 +4,7 @@ import {
   GAME_RESULTS,
   useCardGame,
 } from "../hooks/useCardGame";
-import { Card, Item } from "@socket-io-game/common";
+import { Card, Item, RESTRICTED_CARD_AND_ITEM_PAIRS } from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
 import { LoadingOverlay } from "./ui/LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
@@ -192,7 +192,10 @@ const CardComponent = (
   const { cardId, power } = props;
   const cardText = power;
 
-  const isRestrictedPair = props.currentItemId === 2 && props.cardId === 5; //TODO 定数化
+  const isRestrictedPair = RESTRICTED_CARD_AND_ITEM_PAIRS.some((pair) => {
+    pair.cardId === props.cardId && pair.itemId === props.currentItemId
+  })
+  
 
   return (
     <button

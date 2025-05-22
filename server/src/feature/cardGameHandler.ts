@@ -1,6 +1,12 @@
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { CARD_GAME_EVENTS, MAX_HP, ROOM_EVENTS } from "@socket-io-game/common";
+import {
+  ALL_ITEMS,
+  CARD_GAME_EVENTS,
+  MAX_HP,
+  RESTRICTED_CARD_AND_ITEM_PAIRS,
+  ROOM_EVENTS,
+} from "@socket-io-game/common";
 import {
   Card,
   CardGameStatus,
@@ -218,11 +224,21 @@ export class CardGameHandler {
 
     const playerStatus = this.cardGameStatus.playerStatuses[playerId];
     const selectedCard = playerStatus?.hands.find(
-      (card) => card.cardId === data.cardId
+      (card) => { return card.cardId === data.cardId }
     );
-    const selectedItem = playerStatus?.items.find(
-      (item) => item.itemId === data.itemId
+    let selectedItem = playerStatus?.items.find(
+      (item) => { return item.itemId === data.itemId }
     );
+
+    // 選択したカードとアイテムの組が制約に違反している場合には、アイテムを選択していないこととする。
+    const isRestrictedPair = RESTRICTED_CARD_AND_ITEM_PAIRS.some((pair) => {
+      return selectedCard?.cardId === pair.cardId &&
+        selectedItem?.itemId === pair.itemId;
+    });
+
+    if (isRestrictedPair) {
+      selectedItem = undefined;
+    }
 
     // 選択したカードが手札に存在しない場合は処理しない
     if (!selectedCard) {
@@ -235,14 +251,16 @@ export class CardGameHandler {
       item: selectedItem,
     });
 
+
     // 選択したカードを手札から削除
     playerStatus.hands = playerStatus.hands.filter(
-      (card) => card.cardId !== data.cardId
+      (card) => { return card.cardId !== selectedCard.cardId }
     );
     // 選択したアイテムを手札から削除
-    playerStatus.items = playerStatus.items.filter(
-      (item) => item.itemId !== data.itemId
-    );
+      playerStatus.items = playerStatus.items.filter(
+        (item) => { return item.itemId !== selectedItem?.itemId }
+      );
+    
 
     // 全プレイヤーがカードを選択したか確認
     //Bot戦の場合はBotが選択済みかも確認する
@@ -384,19 +402,19 @@ export class CardGameHandler {
       return;
     }
 
-    // グウスウ
-    if (player1SelectedItem?.itemId === 1) {
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
-    if (player2SelectedItem?.itemId === 1) {
+    if (player2SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
 
-    // リスキー
-    if (player1SelectedItem?.itemId === 3) {
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       items.applyRiskyEffect(player1SelectedCard);
     }
-    if (player2SelectedItem?.itemId === 3) {
+    if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       items.applyRiskyEffect(player2SelectedCard);
     }
   }
@@ -432,7 +450,7 @@ export class CardGameHandler {
 
       // アイテム処理
       // リスキー
-      if (player1SelectedItem?.itemId === 3) {
+      if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
         player2Status.hp -= 1;
         if (player2Status.hp < 0) {
           player2Status.hp = 0;
