@@ -41,4 +41,16 @@ export const ALL_ITEMS = {
       "引き分けたときに、相手に2ダメージを与え、自分へはダメージを与えない",
     itemImageUrl: "uragiri.webp",
   },
+  TENTEKI: {
+    itemId: 6,
+    itemName: "テンテキ",
+    itemEffect: "お互いのカードの数値の差が2のときに勝利します。差が2のときに勝利すると、相手のすべての手札の数値を-1します。お互いがテンテキを使用して差が2のときには、お互いに1ダメージを与えてすべての手札の数値が-1されます。",
+    itemImageUrl: "tenteki.webp"
+  },
+  OUEN: {
+    itemId: 7,
+    itemName: "オウエン",
+    itemEffect: "自分のすべての手札の数値を+1します。3と一緒に使うとさらに+1します。",
+    itemImageUrl: "ouen.webp"
+  }
 } as const satisfies { [itemName: string]: Item };
