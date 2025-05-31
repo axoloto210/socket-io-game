@@ -1,12 +1,14 @@
 import { RevealedCardComponent } from "./CardGame";
 import { Heart } from "./ui/Heart";
 
-export const GameRule = () => {
+export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
   return (
     <div className="flex-1 overflow-y-auto p-6">
       <div className="space-y-8">
         <section>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">ルール</h3>
+          {needHeader && (
+            <h3 className="text-xl font-bold text-gray-900 mb-4">ルール</h3>
+          )}
           <div className="space-y-3 text-gray-700">
             <p>
               勝利条件は、相手の体力

@@ -56,7 +56,9 @@ export const GameRuleModal = () => {
                 ×
               </button>
             </div>
-            <GameRule />
+            <GameRule 
+            needHeader = {false}
+            />
           </div>
         </div>
       )}

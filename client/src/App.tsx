@@ -42,29 +42,28 @@ function App() {
           <main className="max-w-4xl mx-auto">
             {!isAuthenticated ? (
               <>
-              <div className="bg-white shadow rounded-lg p-6 mt-2">
-                <h2 className="text-lg font-medium mb-4">ユーザー名を入力</h2>
-                <div className="flex gap-4">
-                  <input
-                    type="text"
-                    value={userName}
-                    maxLength={12}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="flex-1 border rounded-md px-3 py-2"
-                    placeholder="ユーザー名"
-                    onKeyDown={handleKeyDown}
-                  />
-                  <button
-                    onClick={handleLogin}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-                  >
-                  けってい
-                  </button>
+                <div className="bg-white shadow rounded-lg p-6 mt-2">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      value={userName}
+                      maxLength={12}
+                      onChange={(e) => setUserName(e.target.value)}
+                      className="flex-1 border rounded-md px-3 py-2"
+                      placeholder="ユーザー名"
+                      onKeyDown={handleKeyDown}
+                    />
+                    <button
+                      onClick={handleLogin}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      けってい
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-white shadow rounded-lg p-6 mt-2">
-              <GameRule/>
-              </div>
+                <div className="bg-white shadow rounded-lg p-6 mt-2">
+                  <GameRule needHeader />
+                </div>
               </>
             ) : (
               <RoomModeSelector />
