@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { CARD_GAME_EVENTS } from "@socket-io-game/common";
+import { Card, CARD_GAME_EVENTS } from "@socket-io-game/common";
 import { CardGameStatus } from "@socket-io-game/common";
 
-export const DEFAULT_CARD_ID = -1;
+export const DEFAULT_CARD = {
+  cardId: -1,
+  power: -9999,
+};
 
 export const GAME_RESULTS = {
   IN_GAME: "in_game",
@@ -17,7 +20,7 @@ export const useCardGame = (socket: Socket) => {
     playerStatuses: {},
   });
 
-  const [selectedCardId, setSelectedCardId] = useState<number>(DEFAULT_CARD_ID);
+  const [selectedCard, setSelectedCard] = useState<Card>(DEFAULT_CARD);
 
   const [selectedItemId, setSelectedItemId] = useState<number | undefined>();
 
@@ -44,7 +47,7 @@ export const useCardGame = (socket: Socket) => {
     socket.on(CARD_GAME_EVENTS.RECEIVE_CARD_GAME, (data) => {
       setCardGameStatus(data);
       setIsCardDecided(false);
-      setSelectedCardId(DEFAULT_CARD_ID);
+      setSelectedCard(DEFAULT_CARD);
     });
 
     return () => {
@@ -52,19 +55,19 @@ export const useCardGame = (socket: Socket) => {
     };
   }, [socket]);
 
-  const selectCard = (cardId: number, itemId?: number) => {
-    if (cardId === DEFAULT_CARD_ID) {
+  const decidedCardAndItem = (card: Card, itemId?: number) => {
+    if (card.cardId === DEFAULT_CARD.cardId) {
       return;
     }
-    socket.emit(CARD_GAME_EVENTS.SELECT_CARD, { cardId, itemId });
+    socket.emit(CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM, { card, itemId });
   };
 
   return {
     cardGameStatus,
     setCardGameStatus,
-    selectCard,
-    selectedCardId,
-    setSelectedCardId,
+    decidedCardAndItem,
+    selectedCard,
+    setSelectedCard,
     selectedItemId,
     setSelectedItemId,
     isCardDecided,

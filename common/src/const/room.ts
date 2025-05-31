@@ -21,7 +21,7 @@ export const CARD_GAME_EVENTS = {
   //--- Phase ---
   PENDING: "pending",
   START: "start",
-  SELECT_CARD: "select_card",
+  DECIDE_CARD_AND_ITEM: "decide_card_and_item",
   WAITING_SELECTION: "waiting_selection",
   SHOWING_SELECTED_CARDS: "showing_select_cards",
   RESOLVE: "resolve",

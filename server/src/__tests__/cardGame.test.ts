@@ -44,7 +44,7 @@ describe('Card Game functionality', () => {
       id: 'player1-socket-id', 
       emit: jest.fn(), 
       on: jest.fn((event, callback) => {
-        if (event === CARD_GAME_EVENTS.SELECT_CARD) {
+        if (event === CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM) {
           socket1CardSelectCallback = callback;
         }
       }) 
@@ -54,7 +54,7 @@ describe('Card Game functionality', () => {
       id: 'player2-socket-id', 
       emit: jest.fn(), 
       on: jest.fn((event, callback) => {
-        if (event === CARD_GAME_EVENTS.SELECT_CARD) {
+        if (event === CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM) {
           socket2CardSelectCallback = callback;
         }
       }) 
@@ -76,8 +76,8 @@ describe('Card Game functionality', () => {
     cardGameHandler.setupSocket(mockSocket2, 'Player 2');
     
     // Players select cards (one higher than the other)
-    socket1CardSelectCallback({ cardId: 5 }); // Player 1 selects high card
-    socket2CardSelectCallback({ cardId: 1 }); // Player 2 selects low card
+    socket1CardSelectCallback({card: { cardId: 5, power: 5 }}); // Player 1 selects high card
+    socket2CardSelectCallback({card: { cardId: 1, power: 1 }}); // Player 2 selects low card
     
     // Check that resolveSelectedCards was called
     expect(resolveSpy).toHaveBeenCalled();

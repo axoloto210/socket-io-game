@@ -74,7 +74,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
               <p className="text-gray-700">
                 アイテム効果を適用せずに勝敗を決定します。
                 <br />
-                5と一緒につかうことはできません。
+                5以上の数値のカードとつかうことはできません。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">

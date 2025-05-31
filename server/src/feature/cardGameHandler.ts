@@ -4,8 +4,9 @@ import {
   ALL_ITEMS,
   CARD_GAME_EVENTS,
   MAX_HP,
-  RESTRICTED_CARD_AND_ITEM_PAIRS,
+  isRestrictedPair,
   ROOM_EVENTS,
+  DecidedCardAndItem,
 } from "@socket-io-game/common";
 import {
   Card,
@@ -91,9 +92,12 @@ export class CardGameHandler {
   setupSocket(socket: Socket, userName: string): boolean {
     this.playerMap.set(socket.id, userName);
 
-    socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
-    });
+    socket.on(
+      CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM,
+      (decidedCardAndItem: DecidedCardAndItem) => {
+        this.handleCardSelect({ socketId: socket.id, decidedCardAndItem: decidedCardAndItem, isBot: false });
+      }
+    );
 
     // 2人揃ったらゲーム開始
     if (this.playerMap.size === this.maxPlayers) {
@@ -110,8 +114,8 @@ export class CardGameHandler {
     this.playerMap.set(socket.id, userName);
     this.playerMap.set(this.botId!, BOT_NAME);
 
-    socket.on(CARD_GAME_EVENTS.SELECT_CARD, (data) => {
-      this.handleCardSelect({ socketId: socket.id, data, isBot: false });
+    socket.on(CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM, (data) => {
+      this.handleCardSelect({ socketId: socket.id, decidedCardAndItem: data, isBot: false });
     });
 
     this.startGame();
@@ -142,8 +146,8 @@ export class CardGameHandler {
 
         this.handleCardSelect({
           socketId: this.botId,
-          data: {
-            cardId: randomCard.cardId,
+          decidedCardAndItem: {
+            card: randomCard,
             itemId,
           },
           isBot: true,
@@ -203,11 +207,11 @@ export class CardGameHandler {
 
   handleCardSelect({
     socketId,
-    data,
+    decidedCardAndItem,
     isBot,
   }: {
     socketId: string;
-    data: { cardId: number; itemId?: number };
+    decidedCardAndItem: DecidedCardAndItem;
     isBot: boolean;
   }) {
     const playerId = isBot ? this.botId! : socketId;
@@ -223,26 +227,27 @@ export class CardGameHandler {
     }
 
     const playerStatus = this.cardGameStatus.playerStatuses[playerId];
-    const selectedCard = playerStatus?.hands.find(
-      (card) => { return card.cardId === data.cardId }
-    );
-    let selectedItem = playerStatus?.items.find(
-      (item) => { return item.itemId === data.itemId }
-    );
-
-    // 選択したカードとアイテムの組が制約に違反している場合には、アイテムを選択していないこととする。
-    const isRestrictedPair = RESTRICTED_CARD_AND_ITEM_PAIRS.some((pair) => {
-      return selectedCard?.cardId === pair.cardId &&
-        selectedItem?.itemId === pair.itemId;
+    const selectedCard = playerStatus.hands.find((card) => {
+      return card.cardId === decidedCardAndItem.card.cardId;
     });
 
-    if (isRestrictedPair) {
-      selectedItem = undefined;
+    if (selectedCard === undefined) {
+      console.error("カード未選択によるエラーが発生");
+      return;
     }
 
-    // 選択したカードが手札に存在しない場合は処理しない
-    if (!selectedCard) {
-      return;
+    let selectedItem = playerStatus.items.find((item) => {
+      return item.itemId === decidedCardAndItem.itemId;
+    });
+
+    // 選択したカードとアイテムの組が制約に違反している場合には、アイテムを選択していないこととする。
+    if (
+      isRestrictedPair({
+        power: selectedCard.power,
+        itemId: selectedItem?.itemId,
+      })
+    ) {
+      selectedItem = undefined;
     }
 
     // カードの選択を保存
@@ -251,16 +256,14 @@ export class CardGameHandler {
       item: selectedItem,
     });
 
-
     // 選択したカードを手札から削除
-    playerStatus.hands = playerStatus.hands.filter(
-      (card) => { return card.cardId !== selectedCard.cardId }
-    );
+    playerStatus.hands = playerStatus.hands.filter((card) => {
+      return card.cardId !== selectedCard.cardId;
+    });
     // 選択したアイテムを手札から削除
-      playerStatus.items = playerStatus.items.filter(
-        (item) => { return item.itemId !== selectedItem?.itemId }
-      );
-    
+    playerStatus.items = playerStatus.items.filter((item) => {
+      return item.itemId !== selectedItem?.itemId;
+    });
 
     // 全プレイヤーがカードを選択したか確認
     //Bot戦の場合はBotが選択済みかも確認する
@@ -402,14 +405,12 @@ export class CardGameHandler {
       return;
     }
 
-
     if (player1SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
     if (player2SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
       items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
-
 
     if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       items.applyRiskyEffect(player1SelectedCard);

@@ -40,3 +40,8 @@ export type CardGameStatus = {
   status: (typeof CARD_GAME_EVENTS)[keyof typeof CARD_GAME_EVENTS];
   selectedCards?: SelectedCards
 };
+
+export type DecidedCardAndItem = {
+  card: Card;
+  itemId: number | undefined;
+}
