@@ -32,9 +32,9 @@ export const GameRuleModal = () => {
       <button
         onClick={openModal}
         className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none transition-colors duration-200"
-        aria-label="ゲームルール"
+        aria-label="ルール"
       >
-        ゲームルール
+        ルール
       </button>
 
       {isOpen && (
@@ -47,7 +47,7 @@ export const GameRuleModal = () => {
 
           <div className="relative bg-white rounded-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
             <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">ゲームルール</h2>
+              <h2 className="text-2xl font-bold text-gray-900">ルール</h2>
               <button
                 onClick={closeModal}
                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 text-xl"
