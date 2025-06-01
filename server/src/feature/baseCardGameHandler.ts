@@ -16,13 +16,13 @@ import {
 } from "@socket-io-game/common";
 import { Items } from "./items";
 
-type Cards = { card: Card; item?: Item };
+ type Cards = { card: Card; item?: Item };
 
 type SelectedCardsMap = Map<string, Cards>;
 
 const items = new Items();
 
-interface CardGameHandlerConfig {
+export interface CardGameHandlerConfig {
   io: Server;
   roomId: string;
 }
@@ -38,8 +38,8 @@ export abstract class BaseCardGameHandler {
   };
   protected botId: string = '';
 
-  abstract readonly maxPlayers: number;
-  abstract readonly initialHands: Card[];
+  protected abstract  readonly maxPlayers: number;
+  protected abstract readonly initialCards: Card[];
   constructor(config: CardGameHandlerConfig) {
     const { io, roomId } = config;
     this.io = io;
@@ -57,26 +57,9 @@ export abstract class BaseCardGameHandler {
     }
   }
 
-//   abstract setupSocket(socket: Socket, userName: string): boolean;
-  setupSocket(socket: Socket, userName: string): boolean {
-    this.playerMap.set(socket.id, userName);
+  abstract setupSocket(socket: Socket, userName: string): boolean;
 
-    socket.on(
-      CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM,
-      (decidedCardAndItem: DecidedCardAndItem) => {
-        this.handleCardSelect({ socketId: socket.id, decidedCardAndItem: decidedCardAndItem, isBot: false });
-      }
-    );
-
-    // 2人揃ったらゲーム開始
-    if (this.playerMap.size === this.maxPlayers) {
-      this.startGame();
-    }
-
-    return true;
-  }
-
-  private startGame() {
+  protected startGame() {
     this.gameStarted = true;
     this.io.to(this.roomId).emit(CARD_GAME_EVENTS.START, {
       players: Array.from(this.playerMap.values()),
@@ -91,8 +74,8 @@ export abstract class BaseCardGameHandler {
         [currentValue]: {
           userName: this.playerMap.get(currentValue),
           hp: MAX_HP,
-          hands: structuredClone(this.initialHands),
-          items: structuredClone(items.getInitialItems()),
+          hands: structuredClone(this.initialCards),
+          items: structuredClone(items.getInitialItems()),//TODO:モードによって分けられるよう引数を持たせる。
         },
       };
     }, {});
@@ -120,7 +103,7 @@ export abstract class BaseCardGameHandler {
     this.gameStarted = false;
   }
 
-  private selectedCards: SelectedCardsMap = new Map();
+  protected selectedCards: SelectedCardsMap = new Map();
 
   handleCardSelect({
     socketId,
