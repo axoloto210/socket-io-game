@@ -9,8 +9,31 @@ export class Items {
     ALL_ITEMS.URAGIRI,
   ] as const satisfies Item[];
 
+  private INITIAL_DX_ITEMS = [
+    ALL_ITEMS.GUSU,
+    ALL_ITEMS.MUKOUKA,
+    ALL_ITEMS.RISKY,
+    ALL_ITEMS.ABEKOBE,
+    ALL_ITEMS.URAGIRI,
+    ALL_ITEMS.TENTEKI,
+    ALL_ITEMS.OUEN,
+  ]
+
   getInitialItems() {
     return structuredClone(this.INITIAL_ITEMS);
+  }
+
+  getInitialDxItems(){
+    const dxItems = structuredClone(this.INITIAL_DX_ITEMS)
+
+     // Fisher-Yatesアルゴリズムでシャッフル
+    for (let i = dxItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [dxItems[i], dxItems[j]] = [dxItems[j], dxItems[i]];
+    }
+    
+    // 最初の5つの要素を返す
+    return dxItems.slice(0, 5);
   }
 
   applyGusuEffect(player1SelectedCard: Card, player2SelectedCard: Card) {
@@ -93,5 +116,9 @@ export class Items {
       player1BasePoint: basePoint,
       player2BasePoint: basePoint,
     };
+  }
+
+  applyOuenEffect(){
+
   }
 }
