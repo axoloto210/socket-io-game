@@ -1,12 +1,10 @@
 import { Socket } from "socket.io";
+import { CARD_GAME_EVENTS, DecidedCardAndItem } from "@socket-io-game/common";
+import { Card } from "@socket-io-game/common";
 import {
-  CARD_GAME_EVENTS,
-  DecidedCardAndItem,
-} from "@socket-io-game/common";
-import {
-  Card,
-} from "@socket-io-game/common";
-import { BaseCardGameHandler, CardGameHandlerConfig } from "./baseCardGameHandler";
+  BaseCardGameHandler,
+  CardGameHandlerConfig,
+} from "./baseCardGameHandler";
 import { BASIC_INITIAL_CARDS } from "../gameConstants";
 
 export class CardGameHandler extends BaseCardGameHandler {
