@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { CARD_GAME_EVENTS } from "@socket-io-game/common";
+import { CARD_GAME_EVENTS, Item } from "@socket-io-game/common";
 import { Card } from "@socket-io-game/common";
 import {
   BaseCardGameHandler,
@@ -17,6 +17,10 @@ export class BotCardGameHandler extends BaseCardGameHandler {
   constructor(config: CardGameHandlerConfig) {
     super(config);
     this.botId = "botId-" + this.roomId;
+  }
+
+  getInitialItems(): Item[] {
+    return this.items.getInitialItems();
   }
 
   setupSocket(socket: Socket, userName: string): boolean {

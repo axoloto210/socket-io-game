@@ -16,11 +16,9 @@ import {
 } from "@socket-io-game/common";
 import { Items } from "./items";
 
- type Cards = { card: Card; item?: Item };
+type Cards = { card: Card; item?: Item };
 
 type SelectedCardsMap = Map<string, Cards>;
-
-const items = new Items();
 
 export interface CardGameHandlerConfig {
   io: Server;
@@ -36,14 +34,16 @@ export abstract class BaseCardGameHandler {
     playerStatuses: {},
     status: CARD_GAME_EVENTS.PENDING,
   };
-  protected botId: string = '';
+  protected botId: string = "";
+  protected items: Items;
 
-  protected abstract  readonly maxPlayers: number;
+  protected abstract readonly maxPlayers: number;
   protected abstract readonly initialCards: Card[];
   constructor(config: CardGameHandlerConfig) {
     const { io, roomId } = config;
     this.io = io;
     this.roomId = roomId;
+    this.items = new Items();
   }
 
   canJoin(socket: Socket): boolean {
@@ -58,6 +58,8 @@ export abstract class BaseCardGameHandler {
   }
 
   abstract setupSocket(socket: Socket, userName: string): boolean;
+
+  abstract getInitialItems(): Item[];
 
   protected startGame() {
     this.gameStarted = true;
@@ -75,7 +77,7 @@ export abstract class BaseCardGameHandler {
           userName: this.playerMap.get(currentValue),
           hp: MAX_HP,
           hands: structuredClone(this.initialCards),
-          items: structuredClone(items.getInitialItems()),//TODO:モードによって分けられるよう引数を持たせる。
+          items: structuredClone(this.getInitialItems()), //TODO:モードによって分けられるよう引数を持たせる。
         },
       };
     }, {});
@@ -302,24 +304,24 @@ export abstract class BaseCardGameHandler {
   }) {
     // アイテム処理を行わないケース
     if (
-      items.isMukouEffect(player1SelectedItem, player2SelectedItem) ||
+      this.items.isMukouEffect(player1SelectedItem, player2SelectedItem) ||
       (player1SelectedItem == null && player2SelectedItem == null)
     ) {
       return;
     }
 
     if (player1SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
-      items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
+      this.items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
     if (player2SelectedItem?.itemId === ALL_ITEMS.GUSU.itemId) {
-      items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
+      this.items.applyGusuEffect(player1SelectedCard, player2SelectedCard);
     }
 
     if (player1SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
-      items.applyRiskyEffect(player1SelectedCard);
+      this.items.applyRiskyEffect(player1SelectedCard);
     }
     if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
-      items.applyRiskyEffect(player2SelectedCard);
+      this.items.applyRiskyEffect(player2SelectedCard);
     }
   }
 
@@ -348,7 +350,7 @@ export abstract class BaseCardGameHandler {
       })
     ) {
       player2Status.hp -= 1;
-      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+      if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
       }
 
@@ -370,7 +372,7 @@ export abstract class BaseCardGameHandler {
       })
     ) {
       player1Status.hp -= 1;
-      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+      if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
       }
 
@@ -386,12 +388,12 @@ export abstract class BaseCardGameHandler {
     else {
       let basePoint = 1;
 
-      if (items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
+      if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         player1Status.hp -= basePoint;
         player2Status.hp -= basePoint;
         return;
       }
-      const { player1BasePoint, player2BasePoint } = items.getDrawBasePoint(
+      const { player1BasePoint, player2BasePoint } = this.items.getDrawBasePoint(
         basePoint,
         player1SelectedItem,
         player2SelectedItem
@@ -419,7 +421,7 @@ export abstract class BaseCardGameHandler {
     secondPlayerSelectedItem?: Item;
   }): boolean {
     if (
-      items.isMukouEffect(firstPlayerSelectedItem, secondPlayerSelectedItem)
+      this.items.isMukouEffect(firstPlayerSelectedItem, secondPlayerSelectedItem)
     ) {
       if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
         return true;
@@ -428,7 +430,7 @@ export abstract class BaseCardGameHandler {
       }
     }
 
-    if (items.isAbekobe(firstPlayerSelectedItem, secondPlayerSelectedItem)) {
+    if (this.items.isAbekobe(firstPlayerSelectedItem, secondPlayerSelectedItem)) {
       if (firstPlayerSelectedCard.power < secondPlayerSelectedCard.power) {
         return true;
       } else {
