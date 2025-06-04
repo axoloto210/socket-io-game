@@ -7,7 +7,7 @@ import { BotRoomIdMaker } from "./botRoomIdMaker";
 import { BaseCardGameHandler } from "../feature/baseCardGameHandler";
 import { BotCardGameHandler } from "../feature/botCardGameHandler";
 
-// Function to setup all socket.io handlers - exported for testing
+
 export const setupSocketHandlers = (
   io: Server
 ) => {
