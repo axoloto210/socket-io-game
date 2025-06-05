@@ -21,14 +21,13 @@ export const DeluxeRandomRoom = () => {
 
   return (
     <>
-      <div className="p-4">
-        {errorMessage && (
-          <>
-            <div className="text-red-500">{errorMessage}</div>
-            <ReturnTopButton />
-          </>
-        )}
-      </div>
+      {errorMessage && (
+        <div className="p-4">
+          <div className="text-red-500">{errorMessage}</div>
+          <ReturnTopButton />
+        </div>
+      )}
+
       {isInRoom && <CardGame socket={socket} />}
     </>
   );
