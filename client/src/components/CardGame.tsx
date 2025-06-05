@@ -1,10 +1,6 @@
 import { Socket } from "socket.io-client";
-import {
-  DEFAULT_CARD_ID,
-  GAME_RESULTS,
-  useCardGame,
-} from "../hooks/useCardGame";
-import { Card, Item, RESTRICTED_CARD_AND_ITEM_PAIRS } from "@socket-io-game/common";
+import { DEFAULT_CARD, GAME_RESULTS, useCardGame } from "../hooks/useCardGame";
+import { Card, Item, isRestrictedPair } from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
 import { LoadingOverlay } from "./ui/LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
@@ -21,9 +17,9 @@ export const CardGame = (props: CardGameProps) => {
 
   const {
     cardGameStatus,
-    selectCard,
-    selectedCardId,
-    setSelectedCardId,
+    decidedCardAndItem,
+    selectedCard,
+    setSelectedCard,
     selectedItemId,
     setSelectedItemId,
     isCardDecided,
@@ -50,12 +46,12 @@ export const CardGame = (props: CardGameProps) => {
   const gameResult = getGameResult(opponentStatus?.hp);
 
   const handleDecideClick = () => {
-    if (selectedCardId === DEFAULT_CARD_ID) {
+    if (selectedCard.cardId === DEFAULT_CARD.cardId) {
       return;
     }
     setIsCardDecided(true);
     setTimeout(() => {
-      selectCard(selectedCardId, selectedItemId);
+      decidedCardAndItem(selectedCard, selectedItemId);
     }, 500);
   };
 
@@ -152,10 +148,10 @@ export const CardGame = (props: CardGameProps) => {
                 {playerStatus.hands.map((hand) => {
                   return (
                     <CardComponent
-                      {...hand}
-                      currentCardId={selectedCardId}
+                      card={hand}
+                      currentCardId={selectedCard.cardId}
                       currentItemId={selectedItemId}
-                      onClick={setSelectedCardId}
+                      onClick={setSelectedCard}
                     />
                   );
                 })}
@@ -165,7 +161,8 @@ export const CardGame = (props: CardGameProps) => {
                   return (
                     <ItemComponent
                       {...item}
-                      currentCardId={selectedCardId}
+                      power={selectedCard.power}
+                      currentCardId={selectedCard.cardId}
                       currentItemId={selectedItemId}
                       onClick={handleItemClick}
                     />
@@ -182,25 +179,21 @@ export const CardGame = (props: CardGameProps) => {
   );
 };
 
-const CardComponent = (
-  props: Card & {
-    currentCardId: number;
-    currentItemId?: number;
-    onClick: Dispatch<SetStateAction<number>>;
-  }
-) => {
-  const { cardId, power } = props;
+const CardComponent = (props: {
+  card: Card;
+  currentCardId: number;
+  currentItemId?: number;
+  onClick: Dispatch<SetStateAction<Card>>;
+}) => {
+  const { cardId, power } = props.card;
   const cardText = power;
 
-  const isRestrictedPair = RESTRICTED_CARD_AND_ITEM_PAIRS.some((pair) => {
-    pair.cardId === props.cardId && pair.itemId === props.currentItemId
-  })
-  
+  const isRestricted = isRestrictedPair({ power, itemId: props.currentItemId });
 
   return (
     <button
-      onClick={() => props.onClick(cardId)}
-      disabled={isRestrictedPair}
+      onClick={() => props.onClick(props.card)}
+      disabled={isRestricted}
       className={`
         w-32 h-48
         max-md:w-16 max-md:h-24 
@@ -300,13 +293,14 @@ const CardComponentArea = () => {
 };
 
 type ItemComponentProps = Item & {
+  power?: number
   currentCardId?: number;
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
 
 const ItemComponent = (props: ItemComponentProps) => {
-  const isRestrictedPair = props.currentCardId === 5 && props.itemId === 2;
+  const isRestricted = isRestrictedPair({ power: props.power, itemId: props.itemId });
   return (
     <>
       <button
@@ -321,7 +315,7 @@ const ItemComponent = (props: ItemComponentProps) => {
   transition-all duration-300 
   cursor-pointer overflow-hidden
         ${
-          isRestrictedPair
+          isRestricted
             ? "border-red-500 border-4"
             : `hover:shadow-xl ${
                 props.currentItemId === props.itemId
@@ -330,7 +324,7 @@ const ItemComponent = (props: ItemComponentProps) => {
               }`
         }
       `}
-        disabled={isRestrictedPair}
+        disabled={isRestricted}
       >
         <img
           src={props.itemImageUrl}

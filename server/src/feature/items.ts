@@ -1,4 +1,4 @@
-import { ALL_ITEMS, Card, Item } from "@socket-io-game/common";
+import { ALL_ITEMS, Card, Item, PlayerStatus } from "@socket-io-game/common";
 
 export class Items {
   private INITIAL_ITEMS = [
@@ -9,8 +9,31 @@ export class Items {
     ALL_ITEMS.URAGIRI,
   ] as const satisfies Item[];
 
+  private INITIAL_DX_ITEMS = [
+    ALL_ITEMS.GUSU,
+    ALL_ITEMS.MUKOUKA,
+    ALL_ITEMS.RISKY,
+    ALL_ITEMS.ABEKOBE,
+    ALL_ITEMS.URAGIRI,
+    ALL_ITEMS.TENTEKI,
+    ALL_ITEMS.OUEN,
+  ];
+
   getInitialItems() {
     return structuredClone(this.INITIAL_ITEMS);
+  }
+
+  getInitialDxItems() {
+    const dxItems = structuredClone(this.INITIAL_DX_ITEMS);
+
+    // Fisher-Yatesアルゴリズムでシャッフル
+    for (let i = dxItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [dxItems[i], dxItems[j]] = [dxItems[j], dxItems[i]];
+    }
+
+    // 最初の5つの要素を返す
+    return dxItems.slice(0, 5);
   }
 
   applyGusuEffect(player1SelectedCard: Card, player2SelectedCard: Card) {
@@ -24,7 +47,8 @@ export class Items {
 
   isMukouEffect(player1SelectedItem?: Item, player2SelectedItem?: Item) {
     return (
-      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId || player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
     );
   }
 
@@ -93,5 +117,88 @@ export class Items {
       player1BasePoint: basePoint,
       player2BasePoint: basePoint,
     };
+  }
+
+  isFirstPlayerWinByTenteki({
+    firstPlayerSelectedCard,
+    secondPlayerSelectedCard,
+    firstPlayerSelectedItem,
+    secondPlayerSelectedItem,
+  }: {
+    firstPlayerSelectedCard: Card;
+    secondPlayerSelectedCard: Card;
+    firstPlayerSelectedItem: Item | undefined;
+    secondPlayerSelectedItem: Item | undefined;
+  }) {
+    if (
+      firstPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
+      secondPlayerSelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId &&
+      Math.abs(
+        firstPlayerSelectedCard.power - secondPlayerSelectedCard.power
+      ) === 2
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  isDoubleTenteki({
+    player1SelectedCard,
+    player2SelectedCard,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1SelectedCard: Card;
+    player2SelectedCard: Card;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (
+      player1SelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId ||
+      player2SelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId
+    ) {
+      return false;
+    }
+    if (Math.abs(player1SelectedCard.power - player2SelectedCard.power) === 2) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 場に出したカードパワーの差が2のときに、loserの手札のカードパワーを下げる。
+   */
+  applyTentekiEffectToCards({
+    loserStatus,
+    winnerSelectedCard,
+    loserSelectedCard,
+    winnerSelectedItem,
+  }: {
+    loserStatus: PlayerStatus;
+    winnerSelectedCard: Card;
+    loserSelectedCard: Card;
+    winnerSelectedItem?: Item;
+  }) {
+    if (winnerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId) {
+      if (Math.abs(winnerSelectedCard.power - loserSelectedCard.power) === 2) {
+        loserStatus.hands.forEach((card) => {
+          card.power--;
+        });
+      }
+    }
+  }
+
+  /**
+   * 手札のパワーを+1。3と一緒に使用したときにはさらに+1。
+   */
+  applyOuenEffectToCards(playerStatus: PlayerStatus, selectedCard: Card) {
+    playerStatus.hands.forEach((card) => {
+      card.power ++;
+    });
+    if (selectedCard.power === 3) {
+      playerStatus.hands.forEach((card) => {
+        card.power ++;
+      });
+    }
   }
 }

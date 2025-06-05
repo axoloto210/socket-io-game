@@ -26,16 +26,35 @@ export const useRoom = (socket: Socket) => {
 
   // ルーム参加処理
   const joinRoom = useCallback(
-    ({ roomId, isBotMatch }: { roomId: string; isBotMatch: boolean }) => {
+    ({
+      roomId,
+      isBotMatch,
+      isDeluxeMode,
+    }: {
+      roomId: string;
+      isBotMatch: boolean;
+      isDeluxeMode: boolean;
+    }) => {
       if (roomId && roomId.trim()) {
         if (currentRoomId) {
           socket.emit(ROOM_EVENTS.LEAVE_ROOM, currentRoomId);
         }
-        socket.emit(
-          isBotMatch ? ROOM_EVENTS.JOIN_BOT_ROOM : ROOM_EVENTS.JOIN_ROOM,
-          { roomId, userName: user.userName }
-        );
-        setCurrentRoomId(roomId);
+
+        if (isDeluxeMode) {
+          socket.emit(
+            isBotMatch
+              ? ROOM_EVENTS.JOIN_DELUXE_BOT_ROOM
+              : ROOM_EVENTS.JOIN_DELUXE_ROOM,
+            { roomId, userName: user.userName }
+          );
+          setCurrentRoomId(roomId);
+        } else {
+          socket.emit(
+            isBotMatch ? ROOM_EVENTS.JOIN_BOT_ROOM : ROOM_EVENTS.JOIN_ROOM,
+            { roomId, userName: user.userName }
+          );
+          setCurrentRoomId(roomId);
+        }
       }
     },
     [currentRoomId, socket, user.userName]

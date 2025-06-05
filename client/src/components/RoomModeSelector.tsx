@@ -5,6 +5,7 @@ import { RoomModeButton } from "./ui/RoomModeButton";
 import { BotRoom } from "./BotRoom";
 import { assertUnreachable } from "../utils/assertUnreachable";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
+import { DeluxeRandomRoom } from "./DeluxeRandomRoom";
 
 type RoomMode = (typeof ROOM_MODE)[keyof typeof ROOM_MODE];
 
@@ -12,6 +13,7 @@ const ROOM_MODE = {
   RANDOM: "random",
   ROOM_ID: "room_id",
   BOT: "bot",
+  DELUXE_RANDOM: "deluxe_random",
 } as const;
 
 const getRoomComponent = (roomMode: RoomMode) => {
@@ -24,6 +26,9 @@ const getRoomComponent = (roomMode: RoomMode) => {
     }
     case ROOM_MODE.BOT: {
       return <BotRoom />;
+    }
+    case ROOM_MODE.DELUXE_RANDOM: {
+      return <DeluxeRandomRoom />;
     }
     default:
       assertUnreachable(roomMode);
@@ -38,29 +43,51 @@ export const RoomModeSelector = () => {
       {!selectedMode && (
         <>
           <div className="flex flex-col justify-center">
-            <div className="m-4 flex justify-center">
-              <RoomModeButton
-                icon={"earth"}
-                onClick={() => setSelectedMode(ROOM_MODE.RANDOM)}
-              >
-                だれかと
-              </RoomModeButton>
+            <div className="mt-4 mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-b-2 border-blue-300 pb-2">
+                基本モード
+              </h2>
+              <div className="m-4 flex justify-center">
+                <RoomModeButton
+                  color="#99d9ea"
+                  icon={"earth"}
+                  onClick={() => setSelectedMode(ROOM_MODE.RANDOM)}
+                >
+                  だれかと
+                </RoomModeButton>
+              </div>
+              <div className="m-4 flex justify-center">
+                <RoomModeButton
+                  color="#99d9ea"
+                  icon={"persons"}
+                  onClick={() => setSelectedMode(ROOM_MODE.ROOM_ID)}
+                >
+                  あつまる
+                </RoomModeButton>
+              </div>
+              <div className="m-4 flex justify-center">
+                <RoomModeButton
+                  color="#99d9ea"
+                  icon={"bot"}
+                  onClick={() => setSelectedMode(ROOM_MODE.BOT)}
+                >
+                  CPU戦
+                </RoomModeButton>
+              </div>
             </div>
-            <div className="m-4 flex justify-center">
-              <RoomModeButton
-                icon={"persons"}
-                onClick={() => setSelectedMode(ROOM_MODE.ROOM_ID)}
-              >
-                部屋であつまる
-              </RoomModeButton>
-            </div>
-            <div className="m-4 flex justify-center">
-              <RoomModeButton
-                icon={"bot"}
-                onClick={() => setSelectedMode(ROOM_MODE.BOT)}
-              >
-                CPU戦
-              </RoomModeButton>
+            <div className="mt-4">
+              <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-b-2 border-red-300 pb-2">
+                DXモード
+              </h2>
+              <div className="m-4 flex justify-center">
+                <RoomModeButton
+                  color="#ff0000"
+                  icon={"earth"}
+                  onClick={() => setSelectedMode(ROOM_MODE.DELUXE_RANDOM)}
+                >
+                  だれかと
+                </RoomModeButton>
+              </div>
             </div>
           </div>
           <ReturnTopButton />

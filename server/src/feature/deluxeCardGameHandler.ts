@@ -7,7 +7,7 @@ import {
 } from "./baseCardGameHandler";
 import { BASIC_INITIAL_CARDS } from "../gameConstants";
 
-export class CardGameHandler extends BaseCardGameHandler {
+export class DeluxeCardGameHandler extends BaseCardGameHandler {
   protected readonly maxPlayers: number = 2;
   protected readonly initialCards: Card[] = BASIC_INITIAL_CARDS;
 
@@ -16,7 +16,7 @@ export class CardGameHandler extends BaseCardGameHandler {
   }
 
   getInitialItems(): Item[] {
-    return this.items.getInitialItems()
+      return this.items.getInitialDxItems();
   }
 
   setupSocket(socket: Socket, userName: string): boolean {

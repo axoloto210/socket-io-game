@@ -16,7 +16,7 @@ describe('Socket.io Gameplay Test', () => {
       id: 'player1-id',
       emit: jest.fn(),
       on: jest.fn((event: string, callback: Function) => {
-        if (event === CARD_GAME_EVENTS.SELECT_CARD) {
+        if (event === CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM) {
           socket1.selectCardCallback = callback;
         }
       })
@@ -26,7 +26,7 @@ describe('Socket.io Gameplay Test', () => {
       id: 'player2-id',
       emit: jest.fn(),
       on: jest.fn((event: string, callback: Function) => {
-        if (event === CARD_GAME_EVENTS.SELECT_CARD) {
+        if (event === CARD_GAME_EVENTS.DECIDE_CARD_AND_ITEM) {
           socket2.selectCardCallback = callback;
         }
       })
@@ -51,13 +51,13 @@ describe('Socket.io Gameplay Test', () => {
     cardGameHandler.setupSocket(socket2 as any, 'Player2');
     
     // Player 1 selects a high card
-    socket1.selectCardCallback({ cardId: 5 });
+    socket1.selectCardCallback({card:{ cardId: 5 , power: 5}});
     
     // Verify game has not resolved yet (waiting for player 2)
     expect(resolveSpy).not.toHaveBeenCalled();
     
     // Player 2 selects a low card
-    socket2.selectCardCallback({ cardId: 1 });
+    socket2.selectCardCallback({card: { cardId: 1 , power: 1}});
     
     // Verify battle resolution was triggered
     expect(resolveSpy).toHaveBeenCalled();
