@@ -285,6 +285,16 @@ export abstract class BaseCardGameHandler {
       player2Status,
     });
 
+    // 手札へのパワー増減効果を適用
+    this.applyItemEffectsToCards({
+      player1Status,
+      player2Status,
+      player1SelectedCard,
+      player2SelectedCard,
+      player1SelectedItem,
+      player2SelectedItem,
+    });
+
     // ゲームの勝敗判定
     if (player1Status.hp <= 0 || player2Status.hp <= 0) {
       this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
@@ -325,6 +335,30 @@ export abstract class BaseCardGameHandler {
     }
   }
 
+  private applyItemEffectsToCards({
+    player1Status,
+    player2Status,
+    player1SelectedCard,
+    player2SelectedCard,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+    player1SelectedCard: Card;
+    player2SelectedCard: Card;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (player1SelectedItem?.itemId === ALL_ITEMS.OUEN.itemId) {
+      this.items.applyOuenEffectToCards(player1Status, player1SelectedCard);
+    }
+    if (player2SelectedItem?.itemId === ALL_ITEMS.OUEN.itemId) {
+      this.items.applyOuenEffectToCards(player2Status, player2SelectedCard);
+    }
+
+  }
+
   private applyDamage({
     player1SelectedCard,
     player2SelectedCard,
@@ -350,6 +384,7 @@ export abstract class BaseCardGameHandler {
       })
     ) {
       player2Status.hp -= 1;
+      // ムコウカ
       if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
       }
@@ -362,6 +397,13 @@ export abstract class BaseCardGameHandler {
           player2Status.hp = 0;
         }
       }
+      //　テンテキ
+      this.items.applyTentekiEffectToCards({
+        loserStatus: player2Status,
+        winnerSelectedCard: player1SelectedCard,
+        loserSelectedCard: player2SelectedCard,
+        winnerSelectedItem: player1SelectedItem,
+      });
     } // player2 勝利時
     else if (
       this.isFirstPlayerWin({
@@ -372,32 +414,71 @@ export abstract class BaseCardGameHandler {
       })
     ) {
       player1Status.hp -= 1;
+      // ムコウカ
       if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         return;
       }
 
       // アイテム処理
       // リスキー
-      if (player2SelectedItem?.itemId === 3) {
+      if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
         player1Status.hp -= 1;
         if (player1Status.hp < 0) {
           player1Status.hp = 0;
         }
       }
+
+      // テンテキ
+      this.items.applyTentekiEffectToCards({
+        loserStatus: player1Status,
+        winnerSelectedCard: player2SelectedCard,
+        loserSelectedCard: player1SelectedCard,
+        winnerSelectedItem: player2SelectedItem,
+      });
     } // 引き分け時
     else {
       let basePoint = 1;
 
+      // ムコウカ
       if (this.items.isMukouEffect(player1SelectedItem, player2SelectedItem)) {
         player1Status.hp -= basePoint;
         player2Status.hp -= basePoint;
         return;
       }
-      const { player1BasePoint, player2BasePoint } = this.items.getDrawBasePoint(
-        basePoint,
-        player1SelectedItem,
-        player2SelectedItem
-      );
+
+      // テンテキ
+      if (
+        this.items.isDoubleTenteki({
+          player1SelectedCard,
+          player2SelectedCard,
+          player1SelectedItem,
+          player2SelectedItem,
+        })
+      ) {
+        this.items.applyTentekiEffectToCards({
+          loserStatus: player1Status,
+          winnerSelectedCard: player2SelectedCard,
+          loserSelectedCard: player1SelectedCard,
+          winnerSelectedItem: player2SelectedItem,
+        });
+        this.items.applyTentekiEffectToCards({
+          loserStatus: player2Status,
+          winnerSelectedCard: player1SelectedCard,
+          loserSelectedCard: player2SelectedCard,
+          winnerSelectedItem: player1SelectedItem,
+        });
+
+        player1Status.hp -= basePoint;
+        player2Status.hp -= basePoint;
+        return;
+      }
+
+      const { player1BasePoint, player2BasePoint } =
+        this.items.getDrawBasePoint(
+          basePoint,
+          player1SelectedItem,
+          player2SelectedItem
+        );
 
       player1Status.hp -= player1BasePoint;
       player2Status.hp -= player2BasePoint;
@@ -420,8 +501,12 @@ export abstract class BaseCardGameHandler {
     firstPlayerSelectedItem?: Item;
     secondPlayerSelectedItem?: Item;
   }): boolean {
+    // ムコウカ使用時はカードパワーのみで判定
     if (
-      this.items.isMukouEffect(firstPlayerSelectedItem, secondPlayerSelectedItem)
+      this.items.isMukouEffect(
+        firstPlayerSelectedItem,
+        secondPlayerSelectedItem
+      )
     ) {
       if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
         return true;
@@ -430,7 +515,22 @@ export abstract class BaseCardGameHandler {
       }
     }
 
-    if (this.items.isAbekobe(firstPlayerSelectedItem, secondPlayerSelectedItem)) {
+    //テンテキによる勝敗判定
+    if (
+      this.items.isFirstPlayerWinByTenteki({
+        firstPlayerSelectedCard,
+        secondPlayerSelectedCard,
+        firstPlayerSelectedItem,
+        secondPlayerSelectedItem,
+      })
+    ) {
+      return true;
+    }
+
+    // アベコベによる勝敗判定。テンテキに無効化される。
+    if (
+      this.items.isAbekobe(firstPlayerSelectedItem, secondPlayerSelectedItem)
+    ) {
       if (firstPlayerSelectedCard.power < secondPlayerSelectedCard.power) {
         return true;
       } else {
