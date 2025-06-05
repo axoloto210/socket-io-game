@@ -63,6 +63,8 @@ export const CardGame = (props: CardGameProps) => {
     }
   };
 
+  console.log(cardGameStatus)
+
   return (
     <>
       {playerStatus ? (
@@ -161,6 +163,7 @@ export const CardGame = (props: CardGameProps) => {
                   return (
                     <ItemComponent
                       {...item}
+                      power={selectedCard.power}
                       currentCardId={selectedCard.cardId}
                       currentItemId={selectedItemId}
                       onClick={handleItemClick}
@@ -292,13 +295,14 @@ const CardComponentArea = () => {
 };
 
 type ItemComponentProps = Item & {
+  power?: number
   currentCardId?: number;
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
 
 const ItemComponent = (props: ItemComponentProps) => {
-  const isRestrictedPair = props.currentCardId === 5 && props.itemId === 2;
+  const isRestricted = isRestrictedPair({ power: props.power, itemId: props.itemId });
   return (
     <>
       <button
@@ -313,7 +317,7 @@ const ItemComponent = (props: ItemComponentProps) => {
   transition-all duration-300 
   cursor-pointer overflow-hidden
         ${
-          isRestrictedPair
+          isRestricted
             ? "border-red-500 border-4"
             : `hover:shadow-xl ${
                 props.currentItemId === props.itemId
@@ -322,7 +326,7 @@ const ItemComponent = (props: ItemComponentProps) => {
               }`
         }
       `}
-        disabled={isRestrictedPair}
+        disabled={isRestricted}
       >
         <img
           src={props.itemImageUrl}

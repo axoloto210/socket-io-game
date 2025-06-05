@@ -8,10 +8,10 @@ export const isRestrictedPair = ({
   power,
   itemId,
 }: {
-  power: number;
+  power?: number;
   itemId?: number;
 }): boolean => {
-  if (itemId === undefined) {
+  if (itemId === undefined || power === undefined) {
     return false;
   }
 
