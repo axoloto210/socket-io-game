@@ -120,6 +120,39 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 お互いにウラギリを使用したときには、お互いに2ダメージが与えられます。
               </p>
             </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">DXモードアイテム</h3>
+            <p>
+              追加アイテムも含めて、各々ランダムに5つ持った状態で始まるモードです。
+            </p>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="tenteki.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                テンテキ
+              </h4>
+              <p className="text-gray-700">
+                お互いのカードの数値の差が2のときに勝利します。アベコベは無効化されます。
+                <br />
+                差が2のときに勝利すると、相手のすべての手札の数値を-1します。
+                <br />
+                お互いがテンテキを使用して差が2のときには、お互いに1ダメージを与えてすべての手札の数値が-1されます。
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img src="ouen.webp" width={40} height={40} className="mr-4" />
+                オウエン
+              </h4>
+              <p className="text-gray-700">
+                自分のすべての手札の数値を+1します。
+                <br />
+                3と一緒に使うとさらに+1します。
+              </p>
+            </div>
           </div>
         </section>
       </div>
