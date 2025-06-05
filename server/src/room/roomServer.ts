@@ -6,6 +6,8 @@ import { RandomRoomIdMaker } from "./RandomRoomIdMaker";
 import { BotRoomIdMaker } from "./botRoomIdMaker";
 import { BaseCardGameHandler } from "../feature/baseCardGameHandler";
 import { BotCardGameHandler } from "../feature/botCardGameHandler";
+import { RandomDeluxeRoomIdMaker as DeluxeRandomRoomIdMaker } from "./deluxeRandomRoomMaker";
+import { DeluxeCardGameHandler } from "../feature/deluxeCardGameHandler";
 
 
 export const setupSocketHandlers = (
@@ -19,6 +21,8 @@ export const setupSocketHandlers = (
   const randomRoomIdMaker = new RandomRoomIdMaker();
 
   const botRoomIdMaker = new BotRoomIdMaker();
+
+  const deluxeRandomRoomIdMaker = new DeluxeRandomRoomIdMaker();
 
   io.on(ROOM_EVENTS.CONNECTION, (socket) => {
     console.log("User connected:", socket.id);
@@ -39,6 +43,17 @@ export const setupSocketHandlers = (
       io.to(socket.id).emit(ROOM_EVENTS.BOT_ROOM_ASSIGNED, botRoomId);
     });
 
+    // DXランダムマッチ用のroomIdを割り当てる
+    socket.on(ROOM_EVENTS.ASSIGN_DELUXE_RANDOM_ROOM_ID, () => {
+      const deluxeRandomRoomId = deluxeRandomRoomIdMaker.fetchRoomId();
+
+      deluxeRandomRoomIdMaker.joinRoom(socket.id);
+
+      io.to(socket.id).emit(ROOM_EVENTS.DELUXE_RANDOM_ROOM_ASSIGNED, deluxeRandomRoomId);
+    });
+
+
+    // 通常マッチ用のルーム参加処理
     socket.on(ROOM_EVENTS.JOIN_ROOM, ({ roomId, userName }) => {
       // ゲーム処理用のインスタンスを部屋ごとに作成
       let cardGameHandler = cardGameHandlers.get(roomId);
@@ -99,6 +114,39 @@ export const setupSocketHandlers = (
         users.set(socket.id, userName);
       }
     });
+
+    // DXマッチ用のルーム参加処理
+    socket.on(ROOM_EVENTS.JOIN_DELUXE_ROOM, ({ roomId, userName }) => {
+      // ゲーム処理用のインスタンスを部屋ごとに作成
+      let cardGameHandler = cardGameHandlers.get(roomId);
+
+      if (!cardGameHandler) {
+        cardGameHandler = new DeluxeCardGameHandler({ io, roomId });
+        cardGameHandlers.set(roomId, cardGameHandler);
+      }
+
+      // ルームが満員でない場合のみ参加処理
+      if (cardGameHandler.canJoin(socket)) {
+        socket.join(roomId);
+        console.log(
+          `${userName}：${socket.id} がルーム ${roomId} に参加しました。`
+        );
+        cardGameHandler.setupSocket(socket, userName);
+      } else {
+        console.log(`ルーム:${roomId} は満員。`);
+        return;
+      }
+
+      if (!rooms.has(roomId)) {
+        rooms.set(roomId, new Set());
+      }
+      rooms.get(roomId)!.add(socket.id);
+
+      if (!users.has(socket.id)) {
+        users.set(socket.id, userName);
+      }
+    });
+
 
     socket.on(ROOM_EVENTS.LEAVE_ROOM, (roomId) => {
       socket.leave(roomId);

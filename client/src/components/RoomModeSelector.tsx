@@ -5,6 +5,7 @@ import { RoomModeButton } from "./ui/RoomModeButton";
 import { BotRoom } from "./BotRoom";
 import { assertUnreachable } from "../utils/assertUnreachable";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
+import { DeluxeRandomRoom } from "./DeluxeRandomRoom";
 
 type RoomMode = (typeof ROOM_MODE)[keyof typeof ROOM_MODE];
 
@@ -12,6 +13,7 @@ const ROOM_MODE = {
   RANDOM: "random",
   ROOM_ID: "room_id",
   BOT: "bot",
+  DELUXE_RANDOM: "deluxe_random",
 } as const;
 
 const getRoomComponent = (roomMode: RoomMode) => {
@@ -24,6 +26,9 @@ const getRoomComponent = (roomMode: RoomMode) => {
     }
     case ROOM_MODE.BOT: {
       return <BotRoom />;
+    }
+    case ROOM_MODE.DELUXE_RANDOM: {
+      return <DeluxeRandomRoom />;
     }
     default:
       assertUnreachable(roomMode);
@@ -38,8 +43,10 @@ export const RoomModeSelector = () => {
       {!selectedMode && (
         <>
           <div className="flex flex-col justify-center">
+            <p>基本モード</p>
             <div className="m-4 flex justify-center">
               <RoomModeButton
+                color="#99d9ea"
                 icon={"earth"}
                 onClick={() => setSelectedMode(ROOM_MODE.RANDOM)}
               >
@@ -48,6 +55,7 @@ export const RoomModeSelector = () => {
             </div>
             <div className="m-4 flex justify-center">
               <RoomModeButton
+                color="#99d9ea"
                 icon={"persons"}
                 onClick={() => setSelectedMode(ROOM_MODE.ROOM_ID)}
               >
@@ -56,10 +64,21 @@ export const RoomModeSelector = () => {
             </div>
             <div className="m-4 flex justify-center">
               <RoomModeButton
+                color="#99d9ea"
                 icon={"bot"}
                 onClick={() => setSelectedMode(ROOM_MODE.BOT)}
               >
                 CPU戦
+              </RoomModeButton>
+            </div>
+            <p>DXモード</p>
+            <div className="m-4 flex justify-center">
+              <RoomModeButton
+                color="#ff0000"
+                icon={"earth"}
+                onClick={() => setSelectedMode(ROOM_MODE.DELUXE_RANDOM)}
+              >
+                だれかと
               </RoomModeButton>
             </div>
           </div>

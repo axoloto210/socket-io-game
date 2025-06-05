@@ -63,8 +63,6 @@ export const CardGame = (props: CardGameProps) => {
     }
   };
 
-  console.log(cardGameStatus)
-
   return (
     <>
       {playerStatus ? (
