@@ -129,7 +129,7 @@ export class Items {
     secondPlayerSelectedCard: Card;
     firstPlayerSelectedItem: Item | undefined;
     secondPlayerSelectedItem: Item | undefined;
-  }) {
+  }): "win" | "lose" | "no_effect" {
     if (
       firstPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
       secondPlayerSelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId &&
@@ -137,9 +137,18 @@ export class Items {
         firstPlayerSelectedCard.power - secondPlayerSelectedCard.power
       ) === 2
     ) {
-      return true;
+      return "win";
+    } else if (
+      firstPlayerSelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
+      Math.abs(
+        firstPlayerSelectedCard.power - secondPlayerSelectedCard.power
+      ) === 2
+    ) {
+      return "lose";
+    } else {
+      return "no_effect";
     }
-    return false;
   }
 
   isDoubleTenteki({
@@ -193,11 +202,11 @@ export class Items {
    */
   applyOuenEffectToCards(playerStatus: PlayerStatus, selectedCard: Card) {
     playerStatus.hands.forEach((card) => {
-      card.power ++;
+      card.power++;
     });
     if (selectedCard.power === 3) {
       playerStatus.hands.forEach((card) => {
-        card.power ++;
+        card.power++;
       });
     }
   }
