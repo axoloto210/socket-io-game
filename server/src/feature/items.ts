@@ -129,7 +129,7 @@ export class Items {
     secondPlayerSelectedCard: Card;
     firstPlayerSelectedItem: Item | undefined;
     secondPlayerSelectedItem: Item | undefined;
-  }): "win" | "lose" | "no_effect" {
+  }): "win" | "lose" | "no_effect" | "draw" {
     if (
       firstPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
       secondPlayerSelectedItem?.itemId !== ALL_ITEMS.TENTEKI.itemId &&
@@ -146,6 +146,14 @@ export class Items {
       ) === 2
     ) {
       return "lose";
+    } else if (
+      firstPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.TENTEKI.itemId &&
+      Math.abs(
+        firstPlayerSelectedCard.power - secondPlayerSelectedCard.power
+      ) === 2
+    ) {
+      return "draw";
     } else {
       return "no_effect";
     }
