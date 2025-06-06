@@ -525,6 +525,8 @@ export abstract class BaseCardGameHandler {
       return true;
     } else if (isFirstPlayerWinByTentekiFlg === "lose") {
       return false;
+    } else if (isFirstPlayerWinByTentekiFlg === "draw") {
+      return false;
     }
 
     // アベコベによる勝敗判定。テンテキに無効化される。
