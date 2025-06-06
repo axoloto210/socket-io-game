@@ -356,7 +356,6 @@ export abstract class BaseCardGameHandler {
     if (player2SelectedItem?.itemId === ALL_ITEMS.OUEN.itemId) {
       this.items.applyOuenEffectToCards(player2Status, player2SelectedCard);
     }
-
   }
 
   private applyDamage({
@@ -515,16 +514,17 @@ export abstract class BaseCardGameHandler {
       }
     }
 
+    const isFirstPlayerWinByTentekiFlg = this.items.isFirstPlayerWinByTenteki({
+      firstPlayerSelectedCard,
+      secondPlayerSelectedCard,
+      firstPlayerSelectedItem,
+      secondPlayerSelectedItem,
+    });
     //テンテキによる勝敗判定
-    if (
-      this.items.isFirstPlayerWinByTenteki({
-        firstPlayerSelectedCard,
-        secondPlayerSelectedCard,
-        firstPlayerSelectedItem,
-        secondPlayerSelectedItem,
-      })
-    ) {
+    if (isFirstPlayerWinByTentekiFlg === "win") {
       return true;
+    } else if (isFirstPlayerWinByTentekiFlg === "lose") {
+      return false;
     }
 
     // アベコベによる勝敗判定。テンテキに無効化される。
