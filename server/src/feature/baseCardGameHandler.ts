@@ -23,6 +23,7 @@ type SelectedCardsMap = Map<string, Cards>;
 export interface CardGameHandlerConfig {
   io: Server;
   roomId: string;
+  maxHp?: number;
 }
 
 export abstract class BaseCardGameHandler {
@@ -36,6 +37,7 @@ export abstract class BaseCardGameHandler {
   };
   protected botId: string = "";
   protected items: Items;
+  protected maxHp: number;
 
   protected abstract readonly maxPlayers: number;
   protected abstract readonly initialCards: Card[];
@@ -44,6 +46,7 @@ export abstract class BaseCardGameHandler {
     this.io = io;
     this.roomId = roomId;
     this.items = new Items();
+    this.maxHp = config.maxHp ?? MAX_HP
   }
 
   canJoin(socket: Socket): boolean {
@@ -75,7 +78,7 @@ export abstract class BaseCardGameHandler {
         ...previousValue,
         [currentValue]: {
           userName: this.playerMap.get(currentValue),
-          hp: MAX_HP,
+          hp: this.maxHp,
           hands: structuredClone(this.initialCards),
           items: structuredClone(this.getInitialItems()), //TODO:モードによって分けられるよう引数を持たせる。
         },
