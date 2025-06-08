@@ -8,6 +8,8 @@ export const ROOM_EVENTS = {
   RANDOM_ROOM_ASSIGNED: "random_room_assigned",
   ASSIGN_BOT_ROOM_ID: "assign_bot_room_id",
   BOT_ROOM_ASSIGNED: "bot_room_assigned",
+  DELUXE_BOT_ROOM_ASSIGNED: "deluxe_bot_room_assigned",
+  ASSIGN_DELUXE_BOT_ROOM_ID: "assign_deluxe_bot_room_id",
   ASSIGN_DELUXE_RANDOM_ROOM_ID: "assign_deluxe_random_room_id",
   DELUXE_RANDOM_ROOM_ASSIGNED: "deluxe_random_room_assigned",
   LEAVE_ROOM: "leave_room",
