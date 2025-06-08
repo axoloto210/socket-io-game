@@ -6,6 +6,7 @@ import { BotRoom } from "./BotRoom";
 import { assertUnreachable } from "../utils/assertUnreachable";
 import { ReturnTopButton } from "./ui/ReturnTopButton";
 import { DeluxeRandomRoom } from "./DeluxeRandomRoom";
+import { DeluxeBotRoom } from "./DeluxeBotRoom";
 
 type RoomMode = (typeof ROOM_MODE)[keyof typeof ROOM_MODE];
 
@@ -14,6 +15,7 @@ const ROOM_MODE = {
   ROOM_ID: "room_id",
   BOT: "bot",
   DELUXE_RANDOM: "deluxe_random",
+  DELUXE_BOT: "deluxe_bot",
 } as const;
 
 const getRoomComponent = (roomMode: RoomMode) => {
@@ -29,6 +31,9 @@ const getRoomComponent = (roomMode: RoomMode) => {
     }
     case ROOM_MODE.DELUXE_RANDOM: {
       return <DeluxeRandomRoom />;
+    }
+    case ROOM_MODE.DELUXE_BOT: {
+      return <DeluxeBotRoom/>
     }
     default:
       assertUnreachable(roomMode);
@@ -86,6 +91,15 @@ export const RoomModeSelector = () => {
                   onClick={() => setSelectedMode(ROOM_MODE.DELUXE_RANDOM)}
                 >
                   だれかと
+                </RoomModeButton>
+              </div>
+              <div className="m-4 flex justify-center">
+                <RoomModeButton
+                  color="#ff0000"
+                  icon={"bot"}
+                  onClick={() => setSelectedMode(ROOM_MODE.DELUXE_BOT)}
+                >
+                  CPU戦
                 </RoomModeButton>
               </div>
             </div>

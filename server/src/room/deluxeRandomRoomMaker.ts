@@ -1,6 +1,6 @@
 import { DELUXE_RANDOM_ROOM_PREFIX } from "@socket-io-game/common";
 
-export class RandomDeluxeRoomIdMaker {
+export class DeluxeRandomRoomIdMaker {
   private roomIdIndex;
   private inRoomUserSet: Set<string>;
 

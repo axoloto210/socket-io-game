@@ -1,5 +1,9 @@
 import { Socket } from "socket.io";
-import { CARD_GAME_EVENTS, DecidedCardAndItem, Item } from "@socket-io-game/common";
+import {
+  CARD_GAME_EVENTS,
+  DecidedCardAndItem,
+  Item,
+} from "@socket-io-game/common";
 import { Card } from "@socket-io-game/common";
 import {
   BaseCardGameHandler,
@@ -16,7 +20,7 @@ export class DeluxeCardGameHandler extends BaseCardGameHandler {
   }
 
   getInitialItems(): Item[] {
-      return this.items.getInitialDxItems();
+    return this.items.getInitialDxItems();
   }
 
   setupSocket(socket: Socket, userName: string): boolean {
