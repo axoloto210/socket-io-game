@@ -16,8 +16,8 @@ export class DeluxeBotCardGameHandler extends BaseCardGameHandler {
 
   constructor(config: CardGameHandlerConfig) {
     super(config);
-    // this.botId = "deluxe-bot-id-" + this.roomId;
-    //     this.initialCards = BASIC_INITIAL_CARDS.map((card) => {
+    this.botId = "deluxe-bot-id-" + this.roomId;
+    // this.initialCards = BASIC_INITIAL_CARDS.map((card) => {
     //   return { ...card, power: (card.power += 2) };
     // });
     // this.maxHp = 5;
