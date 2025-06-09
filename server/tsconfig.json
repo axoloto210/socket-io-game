@@ -4,6 +4,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "node",
+    "lib":["es2024"],
     "outDir": "dist",
     "rootDir": "src",
     "composite": true
