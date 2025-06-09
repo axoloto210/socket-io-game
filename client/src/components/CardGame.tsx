@@ -49,6 +49,7 @@ export const CardGame = (props: CardGameProps) => {
   const gameResult = getGameResult(playerStatus?.hp, opponentStatus?.hp);
 
   const handleDecideClick = () => {
+    // カードの選択は必須
     if (selectedCard.cardId === DEFAULT_CARD.cardId) {
       return;
     }

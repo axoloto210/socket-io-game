@@ -53,6 +53,7 @@ export const useCardGame = (socket: Socket) => {
       setCardGameStatus(data);
       setIsCardDecided(false);
       setSelectedCard(DEFAULT_CARD);
+      setSelectedItemId(undefined);
     });
 
     return () => {
