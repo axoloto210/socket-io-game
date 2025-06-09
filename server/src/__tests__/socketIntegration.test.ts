@@ -1,6 +1,3 @@
-import { Server } from 'socket.io';
-import { createServer } from 'http';
-import { io as Client } from 'socket.io-client';
 import { CARD_GAME_EVENTS, ROOM_EVENTS } from '@socket-io-game/common';
 import { CardGameHandler } from '../feature/cardGameHandler';
 
