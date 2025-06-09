@@ -14,6 +14,9 @@ type CardGameProps = {
 
 export const CardGame = (props: CardGameProps) => {
   const { socket } = props;
+  if(socket.id == null){
+    return null;
+  }
 
   const {
     cardGameStatus,
@@ -27,14 +30,14 @@ export const CardGame = (props: CardGameProps) => {
     getGameResult,
   } = useCardGame(socket);
 
-  const playerStatus = cardGameStatus.playerStatuses[socket.id!];
+  const playerStatus = cardGameStatus.playerStatuses[socket.id];
 
   const playerSelectedCards = cardGameStatus.selectedCards
-    ? cardGameStatus.selectedCards[socket.id!]
+    ? cardGameStatus.selectedCards[socket.id]
     : undefined;
 
   const opponentStatusKey = Object.keys(cardGameStatus.playerStatuses).filter(
-    (key) => key !== socket.id!
+    (key) => key !== socket.id
   )[0];
 
   const opponentStatus = cardGameStatus.playerStatuses[opponentStatusKey];
@@ -43,9 +46,10 @@ export const CardGame = (props: CardGameProps) => {
     ? cardGameStatus.selectedCards[opponentStatusKey]
     : undefined;
 
-  const gameResult = getGameResult(opponentStatus?.hp);
+  const gameResult = getGameResult(playerStatus?.hp, opponentStatus?.hp);
 
   const handleDecideClick = () => {
+    // カードの選択は必須
     if (selectedCard.cardId === DEFAULT_CARD.cardId) {
       return;
     }
@@ -74,10 +78,16 @@ export const CardGame = (props: CardGameProps) => {
                   className={`text-8xl font-bold animate-bounce ${
                     gameResult === GAME_RESULTS.WIN
                       ? "text-yellow-300"
-                      : "text-blue-500"
+                      : gameResult === GAME_RESULTS.LOSE
+                      ? "text-blue-500"
+                      : "text-green-400"
                   }`}
                 >
-                  {gameResult === GAME_RESULTS.WIN ? "YOU WIN!" : "YOU LOSE.."}
+                  {gameResult === GAME_RESULTS.WIN
+                    ? "WIN!"
+                    : gameResult === GAME_RESULTS.LOSE
+                    ? "LOSE.."
+                    : "DRAW"}
                 </div>
               </div>
             )}
@@ -293,14 +303,17 @@ const CardComponentArea = () => {
 };
 
 type ItemComponentProps = Item & {
-  power?: number
+  power?: number;
   currentCardId?: number;
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
 
 const ItemComponent = (props: ItemComponentProps) => {
-  const isRestricted = isRestrictedPair({ power: props.power, itemId: props.itemId });
+  const isRestricted = isRestrictedPair({
+    power: props.power,
+    itemId: props.itemId,
+  });
   return (
     <>
       <button
