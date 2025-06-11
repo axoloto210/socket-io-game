@@ -1,6 +1,11 @@
 import { Socket } from "socket.io-client";
 import { DEFAULT_CARD, GAME_RESULTS, useCardGame } from "../hooks/useCardGame";
-import { Card, Item, isRestrictedPair } from "@socket-io-game/common";
+import {
+  ALL_ITEMS,
+  Card,
+  Item,
+  isRestrictedPair,
+} from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
 import { LoadingOverlay } from "./ui/LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
@@ -14,7 +19,7 @@ type CardGameProps = {
 
 export const CardGame = (props: CardGameProps) => {
   const { socket } = props;
-  if(socket.id == null){
+  if (socket.id == null) {
     return null;
   }
 
@@ -104,9 +109,15 @@ export const CardGame = (props: CardGameProps) => {
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {opponentSelectedCards?.card ? (
-                    <RevealedCardComponent
-                      power={opponentSelectedCards.card.power}
-                    />
+                    <div className="relative">
+                      <RevealedCardComponent
+                        power={opponentSelectedCards.card.power}
+                      />
+                      <AnimatedPowerChange
+                        effectedPowerDiff={-2}
+                        itemId={opponentSelectedCards.item?.itemId}
+                      />
+                    </div>
                   ) : (
                     <CardComponentArea />
                   )}
@@ -128,9 +139,15 @@ export const CardGame = (props: CardGameProps) => {
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {playerSelectedCards?.card ? (
-                    <RevealedCardComponent
-                      power={playerSelectedCards.card.power}
-                    />
+                    <div className="relative">
+                      <RevealedCardComponent
+                        power={playerSelectedCards.card.power}
+                      />
+                      <AnimatedPowerChange
+                        effectedPowerDiff={-2}
+                        itemId={playerSelectedCards.item?.itemId}
+                      />
+                    </div>
                   ) : (
                     <CardComponentArea />
                   )}
@@ -385,5 +402,49 @@ flex items-center justify-center
 relative 
 `}
     ></div>
+  );
+};
+
+const AnimatedPowerChange = (props: {
+  effectedPowerDiff: number;
+  itemId?: number;
+}) => {
+  if (props.itemId !== ALL_ITEMS.RISKY.itemId) {
+    return null;
+  }
+  return (
+    <>
+      <style>
+        {`
+          @keyframes slideDownFadeOut {
+            0% { opacity: 1; transform: translateY(0);}
+            100% { opacity: 0; transform: translateY(4rem);}
+          }
+        `}
+      </style>
+      <div
+        className={`
+          absolute
+          right-2
+          bottom-2
+          w-12 h-12
+          flex items-center justify-center
+          bg-red-500 text-white text-2xl font-bold
+          rounded
+          shadow-lg
+        `}
+        style={{
+          pointerEvents: "none",
+          opacity: 0,
+          animation: "slideDownFadeOut 2s 1s forwards",
+          animationFillMode: "forwards",
+          animationDelay: "2s",
+          animationDuration: "3s",
+          animationName: "slideDownFadeOut",
+        }}
+      >
+        {props.effectedPowerDiff}
+      </div>
+    </>
   );
 };
