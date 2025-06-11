@@ -1,6 +1,11 @@
 import { Socket } from "socket.io-client";
 import { DEFAULT_CARD, GAME_RESULTS, useCardGame } from "../hooks/useCardGame";
-import { Card, Item, isRestrictedPair } from "@socket-io-game/common";
+import {
+  Card,
+  Item,
+  calculatePowerDiff,
+  isRestrictedPair,
+} from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
 import { LoadingOverlay } from "./ui/LoadingOverlay";
 import { CardGameTable } from "./CardGameTable";
@@ -14,7 +19,7 @@ type CardGameProps = {
 
 export const CardGame = (props: CardGameProps) => {
   const { socket } = props;
-  if(socket.id == null){
+  if (socket.id == null) {
     return null;
   }
 
@@ -104,9 +109,22 @@ export const CardGame = (props: CardGameProps) => {
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {opponentSelectedCards?.card ? (
-                    <RevealedCardComponent
-                      power={opponentSelectedCards.card.power}
-                    />
+                    <div className="relative">
+                      <RevealedCardComponent
+                        power={opponentSelectedCards.card.power}
+                      />
+                      <AnimatedPowerChange
+                        playerSelectedCardPower={
+                          opponentSelectedCards.card.power
+                        }
+                        playerSelectedItemId={
+                          opponentSelectedCards.item?.itemId
+                        }
+                        opponentSelectedItemId={
+                          playerSelectedCards?.item?.itemId
+                        }
+                      />
+                    </div>
                   ) : (
                     <CardComponentArea />
                   )}
@@ -128,9 +146,18 @@ export const CardGame = (props: CardGameProps) => {
                 </PlayerNamePlate>
                 <div className="flex justify-center mx-auto pl-12">
                   {playerSelectedCards?.card ? (
-                    <RevealedCardComponent
-                      power={playerSelectedCards.card.power}
-                    />
+                    <div className="relative">
+                      <RevealedCardComponent
+                        power={playerSelectedCards.card.power}
+                      />
+                      <AnimatedPowerChange
+                        playerSelectedCardPower={playerSelectedCards.card.power}
+                        playerSelectedItemId={playerSelectedCards.item?.itemId}
+                        opponentSelectedItemId={
+                          opponentSelectedCards?.item?.itemId
+                        }
+                      />
+                    </div>
                   ) : (
                     <CardComponentArea />
                   )}
@@ -385,5 +412,65 @@ flex items-center justify-center
 relative 
 `}
     ></div>
+  );
+};
+
+const AnimatedPowerChange = (props: {
+  playerSelectedCardPower: number;
+  playerSelectedItemId?: number;
+  opponentSelectedItemId?: number;
+}) => {
+  const powerDiff = calculatePowerDiff({ ...props });
+
+  if (powerDiff === 0) {
+    return null;
+  }
+
+  let powerDiffText = `${powerDiff}`;
+  if (powerDiff > 0) {
+    powerDiffText = "+" + powerDiffText;
+  }
+
+  const bgColor = powerDiff > 0 ? "bg-blue-500" : "bg-red-500";
+  const animationName = powerDiff > 0 ? "slideUpFadeOut" : "slideDownFadeOut";
+
+  return (
+    <>
+      <style>
+        {`
+          @keyframes slideDownFadeOut {
+            0% { opacity: 1; transform: translate(-30%, 0);}
+            100% { opacity: 0; transform: translate(-30%, 4rem);}
+          }
+          @keyframes slideUpFadeOut {
+            0% { opacity: 1; transform: translate(-30%, 0);}
+            100% { opacity: 0; transform: translate(-30%, -6rem);}
+          }
+        `}
+      </style>
+      <div
+        className={`
+    absolute
+    top-1/2
+    left-0
+    w-12 h-12
+    flex items-center justify-center
+    ${bgColor} text-white text-2xl font-bold
+    rounded
+    shadow-lg
+    pointer-events-none
+  `}
+        style={{
+          opacity: 0,
+          transform: "translate(-50%, -50%)",
+          animationFillMode: "forwards",
+          animationDelay: "2s",
+          animationDuration: "2s",
+          animationName,
+        }}
+      >
+        {powerDiffText}
+      </div>
+    </>
   );
 };

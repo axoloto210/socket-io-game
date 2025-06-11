@@ -17,7 +17,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
               </span>
               を0にすることです。
             </p>
-            <p>
+            <div>
               お互いに1から5の書かれた数字のカード
               <span className="inline-block h-6 w-4 overflow-hidden ml-1 mr-1 mt-2">
                 <div className="transform scale-[0.125] origin-top-left">
@@ -31,7 +31,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 </div>
               </span>
               とアイテムを持った状態でゲームが始まります。
-            </p>
+            </div>
             <p>
               カードを選択して数字の小さい方に1ダメージが与えられます。
               <br />
