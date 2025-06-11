@@ -1,9 +1,9 @@
 import { Socket } from "socket.io-client";
 import { DEFAULT_CARD, GAME_RESULTS, useCardGame } from "../hooks/useCardGame";
 import {
-  ALL_ITEMS,
   Card,
   Item,
+  calculatePowerDiff,
   isRestrictedPair,
 } from "@socket-io-game/common";
 import { Dispatch, SetStateAction } from "react";
@@ -114,8 +114,15 @@ export const CardGame = (props: CardGameProps) => {
                         power={opponentSelectedCards.card.power}
                       />
                       <AnimatedPowerChange
-                        effectedPowerDiff={-2}
-                        itemId={opponentSelectedCards.item?.itemId}
+                        playerSelectedCardPower={
+                          opponentSelectedCards.card.power
+                        }
+                        playerSelectedItemId={
+                          opponentSelectedCards.item?.itemId
+                        }
+                        opponentSelectedItemId={
+                          playerSelectedCards?.item?.itemId
+                        }
                       />
                     </div>
                   ) : (
@@ -144,8 +151,11 @@ export const CardGame = (props: CardGameProps) => {
                         power={playerSelectedCards.card.power}
                       />
                       <AnimatedPowerChange
-                        effectedPowerDiff={-2}
-                        itemId={playerSelectedCards.item?.itemId}
+                        playerSelectedCardPower={playerSelectedCards.card.power}
+                        playerSelectedItemId={playerSelectedCards.item?.itemId}
+                        opponentSelectedItemId={
+                          opponentSelectedCards?.item?.itemId
+                        }
                       />
                     </div>
                   ) : (
@@ -406,44 +416,60 @@ relative
 };
 
 const AnimatedPowerChange = (props: {
-  effectedPowerDiff: number;
-  itemId?: number;
+  playerSelectedCardPower: number;
+  playerSelectedItemId?: number;
+  opponentSelectedItemId?: number;
 }) => {
-  if (props.itemId !== ALL_ITEMS.RISKY.itemId) {
+  const powerDiff = calculatePowerDiff({ ...props });
+
+  if (powerDiff === 0) {
     return null;
   }
+
+  let powerDiffText = `${powerDiff}`;
+  if (powerDiff > 0) {
+    powerDiffText = "+" + powerDiffText;
+  }
+
+  const bgColor = powerDiff > 0 ? "bg-blue-500" : "bg-red-500";
+  const animationName = powerDiff > 0 ? "slideUpFadeOut" : "slideDownFadeOut";
+
   return (
     <>
       <style>
         {`
           @keyframes slideDownFadeOut {
-            0% { opacity: 1; transform: translateY(0);}
-            100% { opacity: 0; transform: translateY(4rem);}
+            0% { opacity: 1; transform: translate(-30%, 0);}
+            100% { opacity: 0; transform: translate(-30%, 4rem);}
+          }
+          @keyframes slideUpFadeOut {
+            0% { opacity: 1; transform: translate(-30%, 0);}
+            100% { opacity: 0; transform: translate(-30%, -6rem);}
           }
         `}
       </style>
       <div
         className={`
-          absolute
-          right-2
-          bottom-2
-          w-12 h-12
-          flex items-center justify-center
-          bg-red-500 text-white text-2xl font-bold
-          rounded
-          shadow-lg
-        `}
+    absolute
+    top-1/2
+    left-0
+    w-12 h-12
+    flex items-center justify-center
+    ${bgColor} text-white text-2xl font-bold
+    rounded
+    shadow-lg
+    pointer-events-none
+  `}
         style={{
-          pointerEvents: "none",
           opacity: 0,
-          animation: "slideDownFadeOut 2s 1s forwards",
+          transform: "translate(-50%, -50%)",
           animationFillMode: "forwards",
           animationDelay: "2s",
-          animationDuration: "3s",
-          animationName: "slideDownFadeOut",
+          animationDuration: "2s",
+          animationName,
         }}
       >
-        {props.effectedPowerDiff}
+        {powerDiffText}
       </div>
     </>
   );

@@ -70,3 +70,42 @@ export const ALL_ITEMS = {
     itemImageUrl: "ouen.webp",
   },
 } as const satisfies { [itemName: string]: Item };
+
+export function calculatePowerDiff({
+  playerSelectedCardPower,
+  playerSelectedItemId,
+  opponentSelectedItemId,
+}: {
+  playerSelectedCardPower: number;
+  playerSelectedItemId?: number;
+  opponentSelectedItemId?: number;
+}) {
+
+  if(playerSelectedItemId === ALL_ITEMS.MUKOUKA.itemId || opponentSelectedItemId === ALL_ITEMS.MUKOUKA.itemId){
+    return 0;
+  }
+
+  let calculatedPower = playerSelectedCardPower;
+  // Gusu
+  if (playerSelectedItemId === ALL_ITEMS.GUSU.itemId) {
+    if (playerSelectedCardPower % 2 === 0) {
+      calculatedPower += 2;
+    }
+  }
+
+  if (opponentSelectedItemId === ALL_ITEMS.GUSU.itemId) {
+    if (playerSelectedCardPower % 2 === 0) {
+      calculatedPower += 2;
+    }
+  }
+
+  // Risky
+  if (playerSelectedItemId === ALL_ITEMS.RISKY.itemId) {
+    calculatedPower -= 2;
+  }
+
+  return calculatedPower - playerSelectedCardPower;
+
+
+  
+}
