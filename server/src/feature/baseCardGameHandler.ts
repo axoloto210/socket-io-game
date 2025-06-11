@@ -46,7 +46,7 @@ export abstract class BaseCardGameHandler {
     this.io = io;
     this.roomId = roomId;
     this.items = new Items();
-    this.maxHp = config.maxHp ?? MAX_HP
+    this.maxHp = config.maxHp ?? MAX_HP;
   }
 
   canJoin(socket: Socket): boolean {
@@ -353,6 +353,13 @@ export abstract class BaseCardGameHandler {
     player1SelectedItem?: Item;
     player2SelectedItem?: Item;
   }) {
+    if (
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+    ) {
+      return;
+    }
+
     if (player1SelectedItem?.itemId === ALL_ITEMS.OUEN.itemId) {
       this.items.applyOuenEffectToCards(player1Status, player1SelectedCard);
     }
