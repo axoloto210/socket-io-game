@@ -440,11 +440,11 @@ const AnimatedPowerChange = (props: {
         {`
           @keyframes slideDownFadeOut {
             0% { opacity: 1; transform: translate(-30%, 0);}
-            100% { opacity: 0; transform: translate(-30%, 4rem);}
+            100% { opacity: 0; transform: translate(-30%, 2rem);}
           }
           @keyframes slideUpFadeOut {
             0% { opacity: 1; transform: translate(-30%, 0);}
-            100% { opacity: 0; transform: translate(-30%, -6rem);}
+            100% { opacity: 0; transform: translate(-30%, -4rem);}
           }
         `}
       </style>
