@@ -224,6 +224,9 @@ export abstract class BaseCardGameHandler {
 
   private resolveRound() {
     const players = Array.from(this.selectedCards.entries());
+    if(players.length !== 2){
+      return; 
+    }
     const [
       [player1Key, player1SelectedCards],
       [player2Key, player2SelectedCards],
