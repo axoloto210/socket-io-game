@@ -19,14 +19,14 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
             </p>
             <div>
               お互いに1から5の書かれた数字のカード
-              <span className="inline-block h-6 w-4 overflow-hidden ml-1 mr-1 mt-2">
-                <div className="transform scale-[0.125] origin-top-left">
+              <span className="inline-block h-12 w-8 max-md:h-6 max-md:w-4 overflow-hidden ml-2 mr-2 align-middle">
+                <div className="transform scale-[0.25] origin-top-left">
                   <RevealedCardComponent power={1} />
                 </div>
               </span>
               <span className="ml-1 mr-1">~</span>
-              <span className="inline-block h-6 w-4 overflow-hidden ml-1 mr-1 mt-2">
-                <div className="transform scale-[0.125] origin-top-left">
+              <span className="inline-block h-12 w-8 max-md:h-6 max-md:w-4 overflow-hidden ml-2 mr-2 align-middle">
+                <div className="transform scale-[0.25] origin-top-left">
                   <RevealedCardComponent power={5} />
                 </div>
               </span>
