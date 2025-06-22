@@ -12,6 +12,7 @@ import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./ui/PlayerNamePlate";
 import { WaitingOpponent } from "./ui/WaitingOpponent";
 import { Hearts } from "./ui/Hearts";
+import { ReturnTopButton } from "./ui/ReturnTopButton";
 
 type CardGameProps = {
   socket: Socket;
@@ -94,6 +95,7 @@ export const CardGame = (props: CardGameProps) => {
                     ? "LOSE.."
                     : "DRAW"}
                 </div>
+                <ReturnTopButton/>
               </div>
             )}
 
