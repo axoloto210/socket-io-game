@@ -8,12 +8,14 @@ type ItemComponentProps = Item & {
   currentItemId: number | undefined;
   onClick: (itemId: number) => void;
 };
+
+const PRESS_DURATION = 480;
+const PROGRESS_SHOW_DELAY = 240;
+
 export const ItemComponent = (props: ItemComponentProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-  const [pressProgress, setPressProgress] = useState(0);
-
-  const PRESS_DURATION = 480;
+  const [pressedTime, setPressedTime] = useState(0);
 
   const isRestricted = isRestrictedPair({
     power: props.power,
@@ -22,7 +24,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
 
   useEffect(() => {
     if (!isPressed) {
-      setPressProgress(0);
+      setPressedTime(0);
       return;
     }
 
@@ -30,10 +32,9 @@ export const ItemComponent = (props: ItemComponentProps) => {
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const progress = Math.min((elapsed / PRESS_DURATION) * 100, 100);
-      setPressProgress(progress);
+      setPressedTime(elapsed);
 
-      if (progress >= 100) {
+      if (elapsed >= PRESS_DURATION) {
         setIsModalOpen(true);
         setIsPressed(false);
         clearInterval(interval);
@@ -43,11 +44,23 @@ export const ItemComponent = (props: ItemComponentProps) => {
     return () => clearInterval(interval);
   }, [isPressed]);
 
-  const startLongPress = () => {
+  const isProgressShown = pressedTime >= PROGRESS_SHOW_DELAY;
+  const pressProgress = isProgressShown
+    ? Math.min(
+        ((pressedTime - PROGRESS_SHOW_DELAY) /
+          (PRESS_DURATION - PROGRESS_SHOW_DELAY)) *
+          100,
+        100
+      )
+    : 0;
+
+  const handlePressStart = (e: React.PointerEvent) => {
+    e.preventDefault();
     setIsPressed(true);
   };
 
-  const endLongPress = () => {
+  const handlePressEnd = (e: React.PointerEvent) => {
+    e.preventDefault();
     setIsPressed(false);
   };
 
@@ -59,14 +72,10 @@ export const ItemComponent = (props: ItemComponentProps) => {
     <>
       <button
         onClick={() => props.onClick(props.itemId)}
-        onMouseDown={startLongPress}
-        onMouseUp={endLongPress}
-        onMouseLeave={endLongPress}
-        onTouchStart={() => {
-          startLongPress();
-        }}
-        onTouchEnd={endLongPress}
-        onTouchCancel={endLongPress}
+        onPointerDown={handlePressStart}
+        onPointerUp={handlePressEnd}
+        onPointerLeave={handlePressEnd}
+        onPointerCancel={handlePressEnd}
         onContextMenu={(e) => e.preventDefault()}
         className={`
           w-12 h-12 
@@ -89,6 +98,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
           }
         `}
         disabled={isRestricted}
+        style={{ touchAction: "manipulation" }}
       >
         <img
           src={props.itemImageUrl}
@@ -102,7 +112,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
           onDragStart={(e) => e.preventDefault()}
         />
 
-        {isPressed && (
+        {isProgressShown && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200">
             <div
               className="h-full bg-blue-500 transition-all duration-75"
@@ -111,7 +121,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
           </div>
         )}
 
-        {isPressed && (
+        {isProgressShown && (
           <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
             <div className="text-white text-xs font-medium">
               {Math.round(pressProgress)}%
@@ -123,10 +133,11 @@ export const ItemComponent = (props: ItemComponentProps) => {
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={closeModal} // モーダルの外側をクリックした時にもモーダルを閉じる
+          onClick={closeModal}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
-          onClick={(e) => e.stopPropagation()} //モーダル内のクリックでは閉じないように。
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold text-gray-800">
