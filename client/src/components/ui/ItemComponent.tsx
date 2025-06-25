@@ -63,7 +63,6 @@ export const ItemComponent = (props: ItemComponentProps) => {
         onMouseUp={endLongPress}
         onMouseLeave={endLongPress}
         onTouchStart={(e) => {
-          e.preventDefault();
           startLongPress();
         }}
         onTouchEnd={endLongPress}
