@@ -2,7 +2,6 @@ import { Socket } from "socket.io-client";
 import { DEFAULT_CARD, GAME_RESULTS, useCardGame } from "../hooks/useCardGame";
 import {
   Card,
-  Item,
   calculatePowerDiff,
   isRestrictedPair,
 } from "@socket-io-game/common";
@@ -12,7 +11,8 @@ import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./ui/PlayerNamePlate";
 import { WaitingOpponent } from "./ui/WaitingOpponent";
 import { Hearts } from "./ui/Hearts";
-import { ReturnTopButton } from "./ui/ReturnTopButton";
+import { GameEnd } from "./ui/GameEnd";
+import { ItemComponent } from "./ui/ItemComponent";
 
 type CardGameProps = {
   socket: Socket;
@@ -79,24 +79,7 @@ export const CardGame = (props: CardGameProps) => {
         <>
           <CardGameTable>
             {gameResult !== GAME_RESULTS.IN_GAME && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div
-                  className={`text-8xl font-bold animate-bounce ${
-                    gameResult === GAME_RESULTS.WIN
-                      ? "text-yellow-300"
-                      : gameResult === GAME_RESULTS.LOSE
-                      ? "text-blue-500"
-                      : "text-green-400"
-                  }`}
-                >
-                  {gameResult === GAME_RESULTS.WIN
-                    ? "WIN!"
-                    : gameResult === GAME_RESULTS.LOSE
-                    ? "LOSE.."
-                    : "DRAW"}
-                </div>
-                <ReturnTopButton/>
-              </div>
+              <GameEnd gameResult={gameResult} />
             )}
 
             <div className="flex items-center justify-center ml-2 mr-2 mb-2">
@@ -328,53 +311,6 @@ const CardComponentArea = () => {
         relative 
       `}
     ></div>
-  );
-};
-
-type ItemComponentProps = Item & {
-  power?: number;
-  currentCardId?: number;
-  currentItemId: number | undefined;
-  onClick: (itemId: number) => void;
-};
-
-const ItemComponent = (props: ItemComponentProps) => {
-  const isRestricted = isRestrictedPair({
-    power: props.power,
-    itemId: props.itemId,
-  });
-  return (
-    <>
-      <button
-        onClick={() => props.onClick(props.itemId)}
-        className={`
-  w-12 h-12 
-  bg-white
-  rounded-lg 
-  shadow-lg border-2 border-gray-200 
-  flex items-center justify-center 
-  relative 
-  transition-all duration-300 
-  cursor-pointer overflow-hidden
-        ${
-          isRestricted
-            ? "border-red-500 border-4"
-            : `hover:shadow-xl ${
-                props.currentItemId === props.itemId
-                  ? "border-sky-500 border-4"
-                  : "border-gray-200 hover:border-sky-500 hover:border-4"
-              }`
-        }
-      `}
-        disabled={isRestricted}
-      >
-        <img
-          src={props.itemImageUrl}
-          alt={props.itemName}
-          className="w-14 h-14 object-cover"
-        />
-      </button>
-    </>
   );
 };
 

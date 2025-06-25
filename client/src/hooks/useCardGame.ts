@@ -15,6 +15,8 @@ export const GAME_RESULTS = {
   DRAW: "draw",
 };
 
+export type GameResult = (typeof GAME_RESULTS)[keyof typeof GAME_RESULTS]
+
 export const useCardGame = (socket: Socket) => {
   const [cardGameStatus, setCardGameStatus] = useState<CardGameStatus>({
     status: CARD_GAME_EVENTS.PENDING,
@@ -29,10 +31,13 @@ export const useCardGame = (socket: Socket) => {
 
   const isGameEnd = cardGameStatus.status === CARD_GAME_EVENTS.GAME_END;
 
-  const getGameResult = (playerHp?: number, opponentHp?: number) => {
+  const getGameResult = (
+    playerHp?: number,
+    opponentHp?: number
+  ): GameResult => {
     if (opponentHp == null) {
       return GAME_RESULTS.IN_GAME;
-    }else if(playerHp == null){
+    } else if (playerHp == null) {
       return GAME_RESULTS.IN_GAME;
     }
 
@@ -40,8 +45,8 @@ export const useCardGame = (socket: Socket) => {
       return GAME_RESULTS.WIN;
     } else if (isGameEnd && opponentHp > 0 && playerHp <= 0) {
       return GAME_RESULTS.LOSE;
-    }else if(isGameEnd && opponentHp <= 0 && playerHp <= 0){
-      return GAME_RESULTS.DRAW
+    } else if (isGameEnd && opponentHp <= 0 && playerHp <= 0) {
+      return GAME_RESULTS.DRAW;
     }
 
     return GAME_RESULTS.IN_GAME;
