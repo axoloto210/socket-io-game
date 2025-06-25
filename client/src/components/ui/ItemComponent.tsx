@@ -156,7 +156,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
 
               {props.itemEffect && (
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                  <p className="text-gray-700 text-sm leading-relaxed">
+                  <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
                     {props.itemEffect}
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
               {!props.itemEffect && (
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <p className="text-gray-500 text-sm text-center italic">
-                    このアイテムの詳細情報はありません
+                    No Caption.
                   </p>
                 </div>
               )}
