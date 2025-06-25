@@ -12,7 +12,7 @@ import { CardGameTable } from "./CardGameTable";
 import { PlayerNamePlate } from "./ui/PlayerNamePlate";
 import { WaitingOpponent } from "./ui/WaitingOpponent";
 import { Hearts } from "./ui/Hearts";
-import { ReturnTopButton } from "./ui/ReturnTopButton";
+import { GameEnd } from "./ui/GameEnd";
 
 type CardGameProps = {
   socket: Socket;
@@ -79,24 +79,7 @@ export const CardGame = (props: CardGameProps) => {
         <>
           <CardGameTable>
             {gameResult !== GAME_RESULTS.IN_GAME && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div
-                  className={`text-8xl font-bold animate-bounce ${
-                    gameResult === GAME_RESULTS.WIN
-                      ? "text-yellow-300"
-                      : gameResult === GAME_RESULTS.LOSE
-                      ? "text-blue-500"
-                      : "text-green-400"
-                  }`}
-                >
-                  {gameResult === GAME_RESULTS.WIN
-                    ? "WIN!"
-                    : gameResult === GAME_RESULTS.LOSE
-                    ? "LOSE.."
-                    : "DRAW"}
-                </div>
-                <ReturnTopButton/>
-              </div>
+              <GameEnd gameResult={gameResult} />
             )}
 
             <div className="flex items-center justify-center ml-2 mr-2 mb-2">
