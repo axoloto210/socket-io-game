@@ -72,6 +72,30 @@ export const ALL_ITEMS = {
       "自分のすべての手札の数値を+1します。\n3と一緒に使うとさらに+1します。",
     itemImageUrl: "ouen.webp",
   },
+  KOURIN: {
+    itemId: 8,
+    itemName: "コウリン",
+    itemEffect: "自分のアイテムは全て神のアイテム2つに入れ替わる。",
+    itemImageUrl: "woop_mouse.png",
+  },
+  KOURIN_YUIGA_DOKUSON: {
+    itemId: 9,
+    itemName: "唯我独尊",
+    itemEffect: "神のアイテム。\n相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。",
+    itemImageUrl: "woop_mouse.png",
+  },
+  KOURIN_SINRYU:{
+    itemId: 10,
+    itemName: "神龍",
+    itemEffect: "神のアイテム。\n自分のカードの値を+2する。\n勝利したとき、通常ダメージの代わりに自分のカードの値と相手のカードの値の差の半分のダメージ（端数は切り上げ）を与える。",
+    itemImageUrl: "woop_mouse.png",
+  },
+  KOURIN_ZENCHI_ZENNOU:{
+    itemId: 11,
+    itemName:"全知全能",
+    itemEffect:"神のアイテム。\nライフを1回復する。自分の手札のカードと相手の手札のカードを全て入れ替える。",
+    itemImageUrl:"woop_mouse.png",
+  }
 } as const satisfies { [itemName: string]: Item };
 
 export function calculatePowerDiff({
