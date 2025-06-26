@@ -224,8 +224,8 @@ export abstract class BaseCardGameHandler {
 
   private resolveRound() {
     const players = Array.from(this.selectedCards.entries());
-    if(players.length !== 2){
-      return; 
+    if (players.length !== 2) {
+      return;
     }
     const [
       [player1Key, player1SelectedCards],
@@ -301,8 +301,13 @@ export abstract class BaseCardGameHandler {
       player2SelectedItem,
     });
 
-    // ゲームの勝敗判定
-    if (player1Status.hp <= 0 || player2Status.hp <= 0) {
+    // ゲームの終了判定
+    if (
+      player1Status.hp <= 0 ||
+      player2Status.hp <= 0 ||
+      player1Status.hands.length <= 0 ||
+      player2Status.hands.length <= 0
+    ) {
       this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
     }
   }

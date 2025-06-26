@@ -44,6 +44,8 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
             </p>
             <p>
               カード・アイテムは使用すると、手札から消費され、次のターン以降は使用できなくなります。
+              <br/>
+              出せるカードのなくなると、その時点での残り体力が多い方が勝ちとなります。
             </p>
           </div>
         </section>
