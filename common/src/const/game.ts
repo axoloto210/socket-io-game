@@ -34,7 +34,7 @@ export const ALL_ITEMS = {
     itemId: 2,
     itemName: "ムコウカ",
     itemEffect:
-      "アイテム効果を適用せずに勝敗を決定します。\n 5以上の数値のカードとつかうことはできません。",
+      "アイテム効果を適用せずに勝敗を決定します。\n5以上の数値のカードとつかうことはできません。",
     itemImageUrl: "mukouka.webp",
   },
   RISKY: {
@@ -75,7 +75,7 @@ export const ALL_ITEMS = {
   KOURIN: {
     itemId: 8,
     itemName: "コウリン",
-    itemEffect: "自分のアイテムは全て神のアイテム2つに入れ替わる。",
+    itemEffect: "自分のアイテムは全て神のアイテム2つに入れ替わる。\n4以上の数値のカードとつかうことはできません。",
     itemImageUrl: "woop_mouse.png",
   },
   KOURIN_YUIGA_DOKUSON: {
