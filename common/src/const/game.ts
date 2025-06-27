@@ -98,6 +98,7 @@ export const ALL_ITEMS = {
   }
 } as const satisfies { [itemName: string]: Item };
 
+//TODO: パワー計算ロジックが重複しているので統合する。
 export function calculatePowerDiff({
   playerSelectedCardPower,
   playerSelectedItemId,
@@ -131,6 +132,11 @@ export function calculatePowerDiff({
   // Risky
   if (playerSelectedItemId === ALL_ITEMS.RISKY.itemId) {
     calculatedPower -= 2;
+  }
+
+  // KOURIN_SINRYU
+  if(playerSelectedItemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+    calculatedPower += 2;
   }
 
   return calculatedPower - playerSelectedCardPower;

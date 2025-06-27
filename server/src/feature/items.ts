@@ -23,7 +23,7 @@ export class Items {
   private KOURIN_ITEMS = [
     ALL_ITEMS.KOURIN_YUIGA_DOKUSON,
     ALL_ITEMS.KOURIN_SINRYU,
-    ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
+    // ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
   ] as const satisfies Item[];
 
   getInitialItems() {
@@ -170,55 +170,6 @@ export class Items {
     }
   }
 
-  isFirstPlayerWinByYuigaDokuson({
-    firstPlayerSelectedCard,
-    secondPlayerSelectedCard,
-    firstPlayerSelectedItem,
-    secondPlayerSelectedItem,
-  }: {
-    firstPlayerSelectedCard: Card;
-    secondPlayerSelectedCard: Card;
-    firstPlayerSelectedItem: Item | undefined;
-    secondPlayerSelectedItem: Item | undefined;
-  }): "win" | "lose" | "no_effect" | "draw" {
-    if (
-      firstPlayerSelectedItem?.itemId ===
-        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
-      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
-    ) {
-      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
-        return "win";
-      } else if (
-        firstPlayerSelectedCard.power < secondPlayerSelectedCard.power
-      ) {
-        return "lose";
-      } else {
-        return "draw";
-      }
-    } else if (
-      firstPlayerSelectedItem?.itemId ===
-        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
-      secondPlayerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
-    ) {
-      if (firstPlayerSelectedCard.power !== secondPlayerSelectedCard.power) {
-        return "win";
-      } else {
-        return "lose";
-      }
-    } else if (
-      firstPlayerSelectedItem?.itemId !==
-        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
-      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
-    ) {
-      if (firstPlayerSelectedCard.power === secondPlayerSelectedCard.power) {
-        return "win";
-      } else {
-        return "lose";
-      }
-    }
-    return "no_effect";
-  }
-
   isDoubleTenteki({
     player1SelectedCard,
     player2SelectedCard,
@@ -281,5 +232,77 @@ export class Items {
 
   changeToKourinItems(player1Status: PlayerStatus) {
     player1Status.items = this.getKourinItems();
+  }
+
+  isFirstPlayerWinByYuigaDokuson({
+    firstPlayerSelectedCard,
+    secondPlayerSelectedCard,
+    firstPlayerSelectedItem,
+    secondPlayerSelectedItem,
+  }: {
+    firstPlayerSelectedCard: Card;
+    secondPlayerSelectedCard: Card;
+    firstPlayerSelectedItem: Item | undefined;
+    secondPlayerSelectedItem: Item | undefined;
+  }): "win" | "lose" | "no_effect" | "draw" {
+    if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
+        return "win";
+      } else if (
+        firstPlayerSelectedCard.power < secondPlayerSelectedCard.power
+      ) {
+        return "lose";
+      } else {
+        return "draw";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power !== secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId !==
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power === secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    }
+    return "no_effect";
+  }
+
+  applySinryuEffect(player1SelectedCard: Card) {
+    player1SelectedCard.power += 2;
+  }
+
+  applySinryuDamage({
+    loserStatus,
+    winnerSelectedItem,
+    winnerSelectedCard,
+    loserSelectedCard,
+  }: {
+    loserStatus: PlayerStatus,
+    winnerSelectedItem?: Item;
+    winnerSelectedCard: Card;
+    loserSelectedCard: Card;
+  }) {
+    if (winnerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_SINRYU.itemId) {
+      return;
+    }
+    const additionalDamage = Math.max(Math.ceil((Math.abs(winnerSelectedCard.power - loserSelectedCard.power))/2) - 1, 0);
+
+    loserStatus.hp -= additionalDamage;
   }
 }

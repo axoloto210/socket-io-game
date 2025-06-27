@@ -353,6 +353,14 @@ export abstract class BaseCardGameHandler {
     if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       this.items.applyRiskyEffect(player2SelectedCard);
     }
+
+    if(player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+      this.items.applySinryuEffect(player1SelectedCard);
+    }
+
+    if(player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+      this.items.applySinryuEffect(player2SelectedCard);
+    }
   }
 
   private applyItemEffectsToHands({
@@ -426,6 +434,7 @@ export abstract class BaseCardGameHandler {
     player1Status: PlayerStatus;
     player2Status: PlayerStatus;
   }) {
+    // TODO: player1,2の勝利時の処理は統合できる。
     //player1 勝利時
     if (
       this.isFirstPlayerWin({
@@ -456,6 +465,15 @@ export abstract class BaseCardGameHandler {
         loserSelectedCard: player2SelectedCard,
         winnerSelectedItem: player1SelectedItem,
       });
+
+      // 神龍
+      this.items.applySinryuDamage({
+        loserStatus: player2Status,
+        winnerSelectedItem: player1SelectedItem,
+        winnerSelectedCard: player1SelectedCard,
+        loserSelectedCard: player2SelectedCard,
+      })
+      
     } // player2 勝利時
     else if (
       this.isFirstPlayerWin({
@@ -487,6 +505,14 @@ export abstract class BaseCardGameHandler {
         loserSelectedCard: player1SelectedCard,
         winnerSelectedItem: player2SelectedItem,
       });
+
+      // 神龍
+      this.items.applySinryuDamage({
+        loserStatus: player1Status,
+        winnerSelectedItem: player2SelectedItem,
+        winnerSelectedCard: player2SelectedCard,
+        loserSelectedCard: player1SelectedCard,
+      })
     } // 引き分け時
     else {
       let basePoint = 1;
