@@ -4,6 +4,8 @@ export const MAX_HP = 3;
 
 const MUKOUKA_MAX_LIMIT_POWER = 4;
 
+const KOURIN_MAX_LIMIT_POWER = 2;
+
 export const isRestrictedPair = ({
   power,
   itemId,
@@ -15,9 +17,14 @@ export const isRestrictedPair = ({
     return false;
   }
 
-  // ムコウカはpower 5以上のカードと使用できない。
+  // ムコウカはpowerがMUKOUKA_MAX_LIMIT_POWER より大きいカードと使用できない。
   if (itemId === ALL_ITEMS.MUKOUKA.itemId) {
     return power > MUKOUKA_MAX_LIMIT_POWER;
+  }
+
+  // コウリンはpowerがMUKOUKA_MAX_LIMIT_POWER より大きいカードと使用できない。
+  if(itemId === ALL_ITEMS.KOURIN.itemId){
+    return power > KOURIN_MAX_LIMIT_POWER;
   }
 
   return false;
@@ -34,7 +41,7 @@ export const ALL_ITEMS = {
     itemId: 2,
     itemName: "ムコウカ",
     itemEffect:
-      "アイテム効果を適用せずに勝敗を決定します。\n 5以上の数値のカードとつかうことはできません。",
+      "アイテム効果を適用せずに勝敗を決定します。\n5以上の数値のカードとつかうことはできません。",
     itemImageUrl: "mukouka.webp",
   },
   RISKY: {
@@ -72,8 +79,33 @@ export const ALL_ITEMS = {
       "自分のすべての手札の数値を+1します。\n3と一緒に使うとさらに+1します。",
     itemImageUrl: "ouen.webp",
   },
+  KOURIN: {
+    itemId: 8,
+    itemName: "コウリン",
+    itemEffect: "自分のアイテムを全て失い、神のアイテム2つを得る。\n3以上の数値のカードとつかうことはできません。",
+    itemImageUrl: "kourin.webp",
+  },
+  KOURIN_YUIGA_DOKUSON: {
+    itemId: 9,
+    itemName: "唯我独尊",
+    itemEffect: "神のアイテム。\n相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。",
+    itemImageUrl: "kourin_yuiga_dokuson.webp",
+  },
+  KOURIN_SINRYU:{
+    itemId: 10,
+    itemName: "神龍",
+    itemEffect: "神のアイテム。\n自分のカードの値を+2する。\n勝利したとき、通常ダメージの代わりに自分のカードの値と相手のカードの値の差の半分のダメージ（端数は切り上げ）を与える。",
+    itemImageUrl: "kourin_sinryu.webp",
+  },
+  KOURIN_ZENCHI_ZENNOU:{
+    itemId: 11,
+    itemName:"全知全能",
+    itemEffect:"神のアイテム。\nライフを1回復する。\n自分の手札のカードと相手の手札のカードを全て入れ替える。",
+    itemImageUrl:"kourin_zenchi_zennou.webp",
+  }
 } as const satisfies { [itemName: string]: Item };
 
+//TODO: パワー計算ロジックが重複しているので統合する。
 export function calculatePowerDiff({
   playerSelectedCardPower,
   playerSelectedItemId,
@@ -107,6 +139,11 @@ export function calculatePowerDiff({
   // Risky
   if (playerSelectedItemId === ALL_ITEMS.RISKY.itemId) {
     calculatedPower -= 2;
+  }
+
+  // KOURIN_SINRYU
+  if(playerSelectedItemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+    calculatedPower += 2;
   }
 
   return calculatedPower - playerSelectedCardPower;

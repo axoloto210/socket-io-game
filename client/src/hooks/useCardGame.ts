@@ -15,7 +15,7 @@ export const GAME_RESULTS = {
   DRAW: "draw",
 };
 
-export type GameResult = (typeof GAME_RESULTS)[keyof typeof GAME_RESULTS]
+export type GameResult = (typeof GAME_RESULTS)[keyof typeof GAME_RESULTS];
 
 export const useCardGame = (socket: Socket) => {
   const [cardGameStatus, setCardGameStatus] = useState<CardGameStatus>({
@@ -33,7 +33,7 @@ export const useCardGame = (socket: Socket) => {
 
   const getGameResult = (
     playerHp?: number,
-    opponentHp?: number
+    opponentHp?: number,
   ): GameResult => {
     if (opponentHp == null) {
       return GAME_RESULTS.IN_GAME;
@@ -41,13 +41,28 @@ export const useCardGame = (socket: Socket) => {
       return GAME_RESULTS.IN_GAME;
     }
 
-    if (isGameEnd && opponentHp <= 0 && playerHp > 0) {
+    if (isGameEnd && playerHp > opponentHp) {
       return GAME_RESULTS.WIN;
-    } else if (isGameEnd && opponentHp > 0 && playerHp <= 0) {
+    } else if (isGameEnd && playerHp < opponentHp) {
       return GAME_RESULTS.LOSE;
-    } else if (isGameEnd && opponentHp <= 0 && playerHp <= 0) {
+    } else if (isGameEnd && playerHp === opponentHp) {
+      return GAME_RESULTS.DRAW;
+    } else if (isGameEnd && playerHp <= 0 && opponentHp <= 0) {
       return GAME_RESULTS.DRAW;
     }
+
+    // // 手札が無くなったときの勝敗判定
+    // if (isGameEnd && playerHands && opponentHands) {
+    //   if (playerHands.length <= 0 || opponentHands.length <= 0) {
+    //     if (playerHp > opponentHp) {
+    //       return GAME_RESULTS.WIN;
+    //     } else if (playerHp < opponentHp) {
+    //       return GAME_RESULTS.LOSE;
+    //     } else if (playerHp === opponentHp) {
+    //       return GAME_RESULTS.DRAW;
+    //     }
+    //   }
+    // }
 
     return GAME_RESULTS.IN_GAME;
   };

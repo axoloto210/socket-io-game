@@ -17,7 +17,14 @@ export class Items {
     ALL_ITEMS.URAGIRI,
     ALL_ITEMS.TENTEKI,
     ALL_ITEMS.OUEN,
-  ];
+    ALL_ITEMS.KOURIN,
+  ] as const satisfies Item[];
+
+  private KOURIN_ITEMS = [
+    ALL_ITEMS.KOURIN_YUIGA_DOKUSON,
+    ALL_ITEMS.KOURIN_SINRYU,
+    ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
+  ] as const satisfies Item[];
 
   getInitialItems() {
     return structuredClone(this.INITIAL_ITEMS);
@@ -34,6 +41,20 @@ export class Items {
 
     // 最初の5つの要素を返す
     return dxItems.slice(0, 5);
+  }
+
+  getKourinItems() {
+
+    const kourinItems = structuredClone(this.KOURIN_ITEMS);
+
+    // Fisher-Yatesアルゴリズムでシャッフル
+    for (let i = kourinItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [kourinItems[i], kourinItems[j]] = [kourinItems[j], kourinItems[i]];
+    }
+
+    // 最初の2つの要素を返す
+    return kourinItems.slice(0, 2);
   }
 
   applyGusuEffect(player1SelectedCard: Card, player2SelectedCard: Card) {
@@ -217,5 +238,97 @@ export class Items {
         card.power++;
       });
     }
+  }
+
+  changeToKourinItems(player1Status: PlayerStatus) {
+    player1Status.items = this.getKourinItems();
+  }
+
+  isFirstPlayerWinByYuigaDokuson({
+    firstPlayerSelectedCard,
+    secondPlayerSelectedCard,
+    firstPlayerSelectedItem,
+    secondPlayerSelectedItem,
+  }: {
+    firstPlayerSelectedCard: Card;
+    secondPlayerSelectedCard: Card;
+    firstPlayerSelectedItem: Item | undefined;
+    secondPlayerSelectedItem: Item | undefined;
+  }): "win" | "lose" | "no_effect" | "draw" {
+    if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
+        return "win";
+      } else if (
+        firstPlayerSelectedCard.power < secondPlayerSelectedCard.power
+      ) {
+        return "lose";
+      } else {
+        return "draw";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power !== secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId !==
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power === secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    }
+    return "no_effect";
+  }
+
+  applySinryuEffect(player1SelectedCard: Card) {
+    player1SelectedCard.power += 2;
+  }
+
+  applySinryuDamage({
+    loserStatus,
+    winnerSelectedItem,
+    winnerSelectedCard,
+    loserSelectedCard,
+  }: {
+    loserStatus: PlayerStatus;
+    winnerSelectedItem?: Item;
+    winnerSelectedCard: Card;
+    loserSelectedCard: Card;
+  }) {
+    if (winnerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_SINRYU.itemId) {
+      return;
+    }
+    const additionalDamage = Math.max(
+      Math.ceil(
+        Math.abs(winnerSelectedCard.power - loserSelectedCard.power) / 2
+      ) - 1,
+      0
+    );
+
+    loserStatus.hp -= additionalDamage;
+  }
+
+  applyZenchiZennouEffect(
+    player1Status: PlayerStatus,
+    player2Status: PlayerStatus
+  ) {
+    player1Status.hp += 1;
+
+    const tmp = player2Status.hands;
+    player2Status.hands = player1Status.hands;
+    player1Status.hands = tmp;
   }
 }

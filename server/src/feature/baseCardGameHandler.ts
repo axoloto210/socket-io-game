@@ -224,8 +224,8 @@ export abstract class BaseCardGameHandler {
 
   private resolveRound() {
     const players = Array.from(this.selectedCards.entries());
-    if(players.length !== 2){
-      return; 
+    if (players.length !== 2) {
+      return;
     }
     const [
       [player1Key, player1SelectedCards],
@@ -236,7 +236,7 @@ export abstract class BaseCardGameHandler {
       return;
     }
 
-    // 勝敗判定
+    // 勝敗判定とアイテム効果の適用
     this.determineBattleResult(
       player1Key,
       player2Key,
@@ -274,7 +274,8 @@ export abstract class BaseCardGameHandler {
     const { card: player2SelectedCard, item: player2SelectedItem } =
       player2Cards;
 
-    this.applyItemEffects({
+    // アイテムによる、場のカードのパワーへの効果を適用
+    this.applyItemEffectsToRevealedCards({
       player1SelectedCard,
       player2SelectedCard,
       player1SelectedItem,
@@ -292,7 +293,7 @@ export abstract class BaseCardGameHandler {
     });
 
     // 手札へのパワー増減効果を適用
-    this.applyItemEffectsToCards({
+    this.applyItemEffectsToHands({
       player1Status,
       player2Status,
       player1SelectedCard,
@@ -301,13 +302,34 @@ export abstract class BaseCardGameHandler {
       player2SelectedItem,
     });
 
-    // ゲームの勝敗判定
-    if (player1Status.hp <= 0 || player2Status.hp <= 0) {
+    // コウリンの適用
+    this.applyKourinEffect({
+      player1Status,
+      player2Status,
+      player1SelectedItem,
+      player2SelectedItem,
+    });
+
+    // 全知全能による体力・手札への効果適用
+    this.applyZenchiZennouEffect({
+      player1Status,
+      player2Status,
+      player1SelectedItem,
+      player2SelectedItem,
+    });
+
+    // ゲームの終了判定
+    if (
+      player1Status.hp <= 0 ||
+      player2Status.hp <= 0 ||
+      player1Status.hands.length <= 0 ||
+      player2Status.hands.length <= 0
+    ) {
       this.cardGameStatus.status = CARD_GAME_EVENTS.GAME_END;
     }
   }
 
-  private applyItemEffects({
+  private applyItemEffectsToRevealedCards({
     player1SelectedCard,
     player2SelectedCard,
     player1SelectedItem,
@@ -339,9 +361,17 @@ export abstract class BaseCardGameHandler {
     if (player2SelectedItem?.itemId === ALL_ITEMS.RISKY.itemId) {
       this.items.applyRiskyEffect(player2SelectedCard);
     }
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId) {
+      this.items.applySinryuEffect(player1SelectedCard);
+    }
+
+    if (player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId) {
+      this.items.applySinryuEffect(player2SelectedCard);
+    }
   }
 
-  private applyItemEffectsToCards({
+  private applyItemEffectsToHands({
     player1Status,
     player2Status,
     player1SelectedCard,
@@ -371,6 +401,57 @@ export abstract class BaseCardGameHandler {
     }
   }
 
+  private applyKourinEffect({
+    player1Status,
+    player2Status,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+    ) {
+      return;
+    }
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.KOURIN.itemId) {
+      this.items.changeToKourinItems(player1Status);
+    }
+    if (player2SelectedItem?.itemId === ALL_ITEMS.KOURIN.itemId) {
+      this.items.changeToKourinItems(player2Status);
+    }
+  }
+
+  private applyZenchiZennouEffect({
+    player1Status,
+    player2Status,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+    ) {
+      return;
+    }
+    if(player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_ZENCHI_ZENNOU.itemId){
+      this.items.applyZenchiZennouEffect(player1Status, player2Status)
+    }
+    if(player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_ZENCHI_ZENNOU.itemId){
+      this.items.applyZenchiZennouEffect(player2Status, player1Status)
+    }
+  }
+
   private applyDamage({
     player1SelectedCard,
     player2SelectedCard,
@@ -386,6 +467,7 @@ export abstract class BaseCardGameHandler {
     player1Status: PlayerStatus;
     player2Status: PlayerStatus;
   }) {
+    // TODO: player1,2の勝利時の処理は統合できる。
     //player1 勝利時
     if (
       this.isFirstPlayerWin({
@@ -415,6 +497,14 @@ export abstract class BaseCardGameHandler {
         winnerSelectedCard: player1SelectedCard,
         loserSelectedCard: player2SelectedCard,
         winnerSelectedItem: player1SelectedItem,
+      });
+
+      // 神龍
+      this.items.applySinryuDamage({
+        loserStatus: player2Status,
+        winnerSelectedItem: player1SelectedItem,
+        winnerSelectedCard: player1SelectedCard,
+        loserSelectedCard: player2SelectedCard,
       });
     } // player2 勝利時
     else if (
@@ -446,6 +536,14 @@ export abstract class BaseCardGameHandler {
         winnerSelectedCard: player2SelectedCard,
         loserSelectedCard: player1SelectedCard,
         winnerSelectedItem: player2SelectedItem,
+      });
+
+      // 神龍
+      this.items.applySinryuDamage({
+        loserStatus: player1Status,
+        winnerSelectedItem: player2SelectedItem,
+        winnerSelectedCard: player2SelectedCard,
+        loserSelectedCard: player1SelectedCard,
       });
     } // 引き分け時
     else {
@@ -527,13 +625,14 @@ export abstract class BaseCardGameHandler {
       }
     }
 
+    //テンテキによる勝敗判定
     const isFirstPlayerWinByTentekiFlg = this.items.isFirstPlayerWinByTenteki({
       firstPlayerSelectedCard,
       secondPlayerSelectedCard,
       firstPlayerSelectedItem,
       secondPlayerSelectedItem,
     });
-    //テンテキによる勝敗判定
+
     if (isFirstPlayerWinByTentekiFlg === "win") {
       return true;
     } else if (isFirstPlayerWinByTentekiFlg === "lose") {
@@ -541,6 +640,23 @@ export abstract class BaseCardGameHandler {
     } else if (isFirstPlayerWinByTentekiFlg === "draw") {
       return false;
     }
+
+    // 唯我独尊による勝敗判定。テンテキの勝敗判定が優先される。
+    const isFirstPlayerWinByYuigaDokusonFlg =
+      this.items.isFirstPlayerWinByYuigaDokuson({
+        firstPlayerSelectedCard,
+        secondPlayerSelectedCard,
+        firstPlayerSelectedItem,
+        secondPlayerSelectedItem,
+      });
+    if (isFirstPlayerWinByYuigaDokusonFlg === "win") {
+      return true;
+    } else if (isFirstPlayerWinByYuigaDokusonFlg === "lose") {
+      return false;
+    } else if (isFirstPlayerWinByYuigaDokusonFlg === "draw") {
+      return false;
+    }
+    // TODO: 各プレイヤーについて順次勝敗判定をしていくのは、処理が煩雑になるため統一して扱いたい。
 
     // アベコベによる勝敗判定。テンテキに無効化される。
     if (
