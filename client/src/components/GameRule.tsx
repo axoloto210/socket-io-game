@@ -44,7 +44,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
             </p>
             <p>
               カード・アイテムは使用すると、手札から消費され、次のターン以降は使用できなくなります。
-              <br/>
+              <br />
               出せるカードのなくなると、その時点での残り体力が多い方が勝ちとなります。
             </p>
           </div>
@@ -122,7 +122,9 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 お互いにウラギリを使用したときには、お互いに2ダメージが与えられます。
               </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-4">DXモードアイテム</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              DXモードアイテム
+            </h3>
             <p>
               追加アイテムも含めて、各々ランダムに5つ持った状態で始まるモードです。
             </p>
@@ -138,7 +140,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
               </h4>
               <p className="text-gray-700">
                 お互いのカードの数値の差が2のときに勝利します。
-                <br/>
+                <br />
                 差が2のとき、アベコベは無効化されます。
                 <br />
                 差が2のときに勝利すると、相手のすべての手札の数値を-1します。
@@ -157,6 +159,72 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 3と一緒に使うとさらに+1します。
               </p>
             </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="kourin.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                コウリン
+              </h4>
+              <p className="text-gray-700">
+                自分のアイテムを全て失い、神のアイテム2つを得る。
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="kourin_yuiga_dokuson.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                唯我独尊
+              </h4>
+              <p className="text-gray-700">
+                神のアイテム。
+                <br />
+                相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。
+              </p>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="kourin_sinryu.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                神龍
+              </h4>
+              <p className="text-gray-700">
+                神のアイテム。
+                <br />
+                自分のカードの値を+2する。
+                <br />
+                勝利したとき、通常ダメージの代わりに自分のカードの値と相手のカードの値の差の半分のダメージ（端数は切り上げ）を与える。
+              </p>
+            </div>
+            {/* <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <h4 className="font-bold text-gray-900 mb-2 flex items-center">
+                <img
+                  src="kourin_zenchi_zennou.webp"
+                  width={40}
+                  height={40}
+                  className="mr-4"
+                />
+                全知全能
+              </h4>
+              <p className="text-gray-700">
+                神のアイテム。
+                <br />
+                ライフを1回復する。
+                <br />
+                自分の手札のカードと相手の手札のカードを全て入れ替える。
+              </p>
+            </div> */}
           </div>
         </section>
       </div>

@@ -75,7 +75,7 @@ export const ALL_ITEMS = {
   KOURIN: {
     itemId: 8,
     itemName: "コウリン",
-    itemEffect: "自分のアイテムは全て神のアイテム2つに入れ替わる。",
+    itemEffect: "自分のアイテムを全て失い、神のアイテム2つを得る。",
     itemImageUrl: "kourin.webp",
   },
   KOURIN_YUIGA_DOKUSON: {
