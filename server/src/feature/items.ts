@@ -23,7 +23,7 @@ export class Items {
   private KOURIN_ITEMS = [
     ALL_ITEMS.KOURIN_YUIGA_DOKUSON,
     ALL_ITEMS.KOURIN_SINRYU,
-    // ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
+    ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
   ] as const satisfies Item[];
 
   getInitialItems() {
@@ -44,7 +44,17 @@ export class Items {
   }
 
   getKourinItems() {
-    return structuredClone(this.KOURIN_ITEMS);
+
+    const kourinItems = structuredClone(this.KOURIN_ITEMS);
+
+    // Fisher-Yatesアルゴリズムでシャッフル
+    for (let i = kourinItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [kourinItems[i], kourinItems[j]] = [kourinItems[j], kourinItems[i]];
+    }
+
+    // 最初の2つの要素を返す
+    return kourinItems.slice(0, 2);
   }
 
   applyGusuEffect(player1SelectedCard: Card, player2SelectedCard: Card) {
@@ -293,7 +303,7 @@ export class Items {
     winnerSelectedCard,
     loserSelectedCard,
   }: {
-    loserStatus: PlayerStatus,
+    loserStatus: PlayerStatus;
     winnerSelectedItem?: Item;
     winnerSelectedCard: Card;
     loserSelectedCard: Card;
@@ -301,8 +311,24 @@ export class Items {
     if (winnerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_SINRYU.itemId) {
       return;
     }
-    const additionalDamage = Math.max(Math.ceil((Math.abs(winnerSelectedCard.power - loserSelectedCard.power))/2) - 1, 0);
+    const additionalDamage = Math.max(
+      Math.ceil(
+        Math.abs(winnerSelectedCard.power - loserSelectedCard.power) / 2
+      ) - 1,
+      0
+    );
 
     loserStatus.hp -= additionalDamage;
+  }
+
+  applyZenchiZennouEffect(
+    player1Status: PlayerStatus,
+    player2Status: PlayerStatus
+  ) {
+    player1Status.hp += 1;
+
+    const tmp = player2Status.hands;
+    player2Status.hands = player1Status.hands;
+    player1Status.hands = tmp;
   }
 }

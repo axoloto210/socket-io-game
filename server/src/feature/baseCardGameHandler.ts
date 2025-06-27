@@ -310,6 +310,14 @@ export abstract class BaseCardGameHandler {
       player2SelectedItem,
     });
 
+    // 全知全能による体力・手札への効果適用
+    this.applyZenchiZennouEffect({
+      player1Status,
+      player2Status,
+      player1SelectedItem,
+      player2SelectedItem,
+    });
+
     // ゲームの終了判定
     if (
       player1Status.hp <= 0 ||
@@ -354,11 +362,11 @@ export abstract class BaseCardGameHandler {
       this.items.applyRiskyEffect(player2SelectedCard);
     }
 
-    if(player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+    if (player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId) {
       this.items.applySinryuEffect(player1SelectedCard);
     }
 
-    if(player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId){
+    if (player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_SINRYU.itemId) {
       this.items.applySinryuEffect(player2SelectedCard);
     }
   }
@@ -419,6 +427,31 @@ export abstract class BaseCardGameHandler {
     }
   }
 
+  private applyZenchiZennouEffect({
+    player1Status,
+    player2Status,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+    ) {
+      return;
+    }
+    if(player1SelectedItem?.itemId === ALL_ITEMS.KOURIN_ZENCHI_ZENNOU.itemId){
+      this.items.applyZenchiZennouEffect(player1Status, player2Status)
+    }
+    if(player2SelectedItem?.itemId === ALL_ITEMS.KOURIN_ZENCHI_ZENNOU.itemId){
+      this.items.applyZenchiZennouEffect(player2Status, player1Status)
+    }
+  }
+
   private applyDamage({
     player1SelectedCard,
     player2SelectedCard,
@@ -472,8 +505,7 @@ export abstract class BaseCardGameHandler {
         winnerSelectedItem: player1SelectedItem,
         winnerSelectedCard: player1SelectedCard,
         loserSelectedCard: player2SelectedCard,
-      })
-      
+      });
     } // player2 勝利時
     else if (
       this.isFirstPlayerWin({
@@ -512,7 +544,7 @@ export abstract class BaseCardGameHandler {
         winnerSelectedItem: player2SelectedItem,
         winnerSelectedCard: player2SelectedCard,
         loserSelectedCard: player1SelectedCard,
-      })
+      });
     } // 引き分け時
     else {
       let basePoint = 1;

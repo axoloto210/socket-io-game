@@ -210,7 +210,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 勝利したとき、通常ダメージの代わりに自分のカードの値と相手のカードの値の差の半分のダメージ（端数は切り上げ）を与える。
               </p>
             </div>
-            {/* <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
               <h4 className="font-bold text-gray-900 mb-2 flex items-center">
                 <img
                   src="kourin_zenchi_zennou.webp"
@@ -227,7 +227,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 <br />
                 自分の手札のカードと相手の手札のカードを全て入れ替える。
               </p>
-            </div> */}
+            </div>
           </div>
         </section>
       </div>
