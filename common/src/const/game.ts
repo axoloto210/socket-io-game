@@ -88,7 +88,7 @@ export const ALL_ITEMS = {
   KOURIN_YUIGA_DOKUSON: {
     itemId: 9,
     itemName: "唯我独尊",
-    itemEffect: "神のアイテム。\n相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。",
+    itemEffect: "神のアイテム。\n相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。\nお互いに使用すると通常の勝敗判定となります。",
     itemImageUrl: "kourin_yuiga_dokuson.webp",
   },
   KOURIN_SINRYU:{

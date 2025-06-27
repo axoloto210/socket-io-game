@@ -190,6 +190,8 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 神のアイテム。
                 <br />
                 相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。
+                <br/>
+                お互いに使用すると通常の勝敗判定となります。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
