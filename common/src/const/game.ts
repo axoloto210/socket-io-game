@@ -4,6 +4,8 @@ export const MAX_HP = 3;
 
 const MUKOUKA_MAX_LIMIT_POWER = 4;
 
+const KOURIN_MAX_LIMIT_POWER = 2;
+
 export const isRestrictedPair = ({
   power,
   itemId,
@@ -15,9 +17,14 @@ export const isRestrictedPair = ({
     return false;
   }
 
-  // ムコウカはpower 5以上のカードと使用できない。
+  // ムコウカはpowerがMUKOUKA_MAX_LIMIT_POWER より大きいカードと使用できない。
   if (itemId === ALL_ITEMS.MUKOUKA.itemId) {
     return power > MUKOUKA_MAX_LIMIT_POWER;
+  }
+
+  // コウリンはpowerがMUKOUKA_MAX_LIMIT_POWER より大きいカードと使用できない。
+  if(itemId === ALL_ITEMS.KOURIN.itemId){
+    return power > KOURIN_MAX_LIMIT_POWER;
   }
 
   return false;
@@ -75,7 +82,7 @@ export const ALL_ITEMS = {
   KOURIN: {
     itemId: 8,
     itemName: "コウリン",
-    itemEffect: "自分のアイテムを全て失い、神のアイテム2つを得る。",
+    itemEffect: "自分のアイテムを全て失い、神のアイテム2つを得る。\n3以上の数値のカードとつかうことはできません。",
     itemImageUrl: "kourin.webp",
   },
   KOURIN_YUIGA_DOKUSON: {

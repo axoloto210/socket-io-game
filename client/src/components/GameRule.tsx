@@ -1,6 +1,7 @@
 import { RevealedCardComponent } from "./CardGame";
 import { Heart } from "./ui/Heart";
 
+//TODO: アイテムの説明はALL_ITEMSの情報から生成できる。
 export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
   return (
     <div className="flex-1 overflow-y-auto p-6">
@@ -171,6 +172,8 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
               </h4>
               <p className="text-gray-700">
                 自分のアイテムを全て失い、神のアイテム2つを得る。
+                <br/>
+                3以上の数値のカードとつかうことはできません。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
