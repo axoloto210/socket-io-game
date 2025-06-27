@@ -170,6 +170,55 @@ export class Items {
     }
   }
 
+  isFirstPlayerWinByYuigaDokuson({
+    firstPlayerSelectedCard,
+    secondPlayerSelectedCard,
+    firstPlayerSelectedItem,
+    secondPlayerSelectedItem,
+  }: {
+    firstPlayerSelectedCard: Card;
+    secondPlayerSelectedCard: Card;
+    firstPlayerSelectedItem: Item | undefined;
+    secondPlayerSelectedItem: Item | undefined;
+  }): "win" | "lose" | "no_effect" | "draw" {
+    if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power > secondPlayerSelectedCard.power) {
+        return "win";
+      } else if (
+        firstPlayerSelectedCard.power < secondPlayerSelectedCard.power
+      ) {
+        return "lose";
+      } else {
+        return "draw";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId ===
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId !== ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power !== secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    } else if (
+      firstPlayerSelectedItem?.itemId !==
+        ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId &&
+      secondPlayerSelectedItem?.itemId === ALL_ITEMS.KOURIN_YUIGA_DOKUSON.itemId
+    ) {
+      if (firstPlayerSelectedCard.power === secondPlayerSelectedCard.power) {
+        return "win";
+      } else {
+        return "lose";
+      }
+    }
+    return "no_effect";
+  }
+
   isDoubleTenteki({
     player1SelectedCard,
     player2SelectedCard,

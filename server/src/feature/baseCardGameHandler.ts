@@ -274,7 +274,8 @@ export abstract class BaseCardGameHandler {
     const { card: player2SelectedCard, item: player2SelectedItem } =
       player2Cards;
 
-    this.applyItemEffects({
+    // アイテムによる、場のカードのパワーへの効果を適用
+    this.applyItemEffectsToRevealedCards({
       player1SelectedCard,
       player2SelectedCard,
       player1SelectedItem,
@@ -292,7 +293,7 @@ export abstract class BaseCardGameHandler {
     });
 
     // 手札へのパワー増減効果を適用
-    this.applyItemEffectsToCards({
+    this.applyItemEffectsToHands({
       player1Status,
       player2Status,
       player1SelectedCard,
@@ -307,7 +308,7 @@ export abstract class BaseCardGameHandler {
       player2Status,
       player1SelectedItem,
       player2SelectedItem,
-    })
+    });
 
     // ゲームの終了判定
     if (
@@ -320,7 +321,7 @@ export abstract class BaseCardGameHandler {
     }
   }
 
-  private applyItemEffects({
+  private applyItemEffectsToRevealedCards({
     player1SelectedCard,
     player2SelectedCard,
     player1SelectedItem,
@@ -354,7 +355,7 @@ export abstract class BaseCardGameHandler {
     }
   }
 
-  private applyItemEffectsToCards({
+  private applyItemEffectsToHands({
     player1Status,
     player2Status,
     player1SelectedCard,
@@ -566,13 +567,14 @@ export abstract class BaseCardGameHandler {
       }
     }
 
+    //テンテキによる勝敗判定
     const isFirstPlayerWinByTentekiFlg = this.items.isFirstPlayerWinByTenteki({
       firstPlayerSelectedCard,
       secondPlayerSelectedCard,
       firstPlayerSelectedItem,
       secondPlayerSelectedItem,
     });
-    //テンテキによる勝敗判定
+
     if (isFirstPlayerWinByTentekiFlg === "win") {
       return true;
     } else if (isFirstPlayerWinByTentekiFlg === "lose") {
@@ -580,6 +582,23 @@ export abstract class BaseCardGameHandler {
     } else if (isFirstPlayerWinByTentekiFlg === "draw") {
       return false;
     }
+
+    // 唯我独尊による勝敗判定。テンテキの勝敗判定が優先される。
+    const isFirstPlayerWinByYuigaDokusonFlg =
+      this.items.isFirstPlayerWinByYuigaDokuson({
+        firstPlayerSelectedCard,
+        secondPlayerSelectedCard,
+        firstPlayerSelectedItem,
+        secondPlayerSelectedItem,
+      });
+    if (isFirstPlayerWinByYuigaDokusonFlg === "win") {
+      return true;
+    } else if (isFirstPlayerWinByYuigaDokusonFlg === "lose") {
+      return false;
+    } else if (isFirstPlayerWinByYuigaDokusonFlg === "draw") {
+      return false;
+    }
+    // TODO: 各プレイヤーについて順次勝敗判定をしていくのは、処理が煩雑になるため統一して扱いたい。
 
     // アベコベによる勝敗判定。テンテキに無効化される。
     if (
