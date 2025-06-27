@@ -9,15 +9,15 @@ export class Items {
     ALL_ITEMS.URAGIRI,
   ] as const satisfies Item[];
 
-  private INITIAL_DX_ITEMS = [
+  private INITIAL_FIXED_DELUXE_ITEMS = [ALL_ITEMS.ABEKOBE, ALL_ITEMS.KOURIN];
+
+  private INITIAL_DELUXE_ITEMS = [
     ALL_ITEMS.GUSU,
     ALL_ITEMS.MUKOUKA,
     ALL_ITEMS.RISKY,
-    ALL_ITEMS.ABEKOBE,
     ALL_ITEMS.URAGIRI,
     ALL_ITEMS.TENTEKI,
     ALL_ITEMS.OUEN,
-    ALL_ITEMS.KOURIN,
   ] as const satisfies Item[];
 
   private KOURIN_ITEMS = [
@@ -26,12 +26,28 @@ export class Items {
     ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
   ] as const satisfies Item[];
 
+  private decidedDeluxeItems: Item[] = [];
+
   getInitialItems() {
     return structuredClone(this.INITIAL_ITEMS);
   }
 
   getInitialDxItems() {
-    const dxItems = structuredClone(this.INITIAL_DX_ITEMS);
+    if (this.decidedDeluxeItems.length > 0) {
+      const decidedItemIds = this.decidedDeluxeItems.map((item) => {
+        return item.itemId;
+      });
+      const restItems = structuredClone(this.INITIAL_DELUXE_ITEMS.filter((item) => {
+        return !decidedItemIds.includes(item.itemId);
+      }));
+
+      return [
+        ...structuredClone(this.INITIAL_FIXED_DELUXE_ITEMS),
+        ...restItems,
+      ];
+    }
+
+    const dxItems = structuredClone(this.INITIAL_DELUXE_ITEMS);
 
     // Fisher-Yatesアルゴリズムでシャッフル
     for (let i = dxItems.length - 1; i > 0; i--) {
@@ -39,12 +55,21 @@ export class Items {
       [dxItems[i], dxItems[j]] = [dxItems[j], dxItems[i]];
     }
 
-    // 最初の5つの要素を返す
-    return dxItems.slice(0, 5);
+    // 最初の3つの要素を返す
+    const randomDeluxeItems = dxItems.slice(0, 3);
+    const initialItems = [
+      ...structuredClone(this.INITIAL_FIXED_DELUXE_ITEMS),
+      ...randomDeluxeItems,
+    ];
+
+    if (this.decidedDeluxeItems.length === 0) {
+      this.decidedDeluxeItems = randomDeluxeItems;
+    }
+
+    return initialItems;
   }
 
   getKourinItems() {
-
     const kourinItems = structuredClone(this.KOURIN_ITEMS);
 
     // Fisher-Yatesアルゴリズムでシャッフル
