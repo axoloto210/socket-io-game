@@ -236,7 +236,7 @@ export abstract class BaseCardGameHandler {
       return;
     }
 
-    // 勝敗判定
+    // 勝敗判定とアイテム効果の適用
     this.determineBattleResult(
       player1Key,
       player2Key,
@@ -300,6 +300,14 @@ export abstract class BaseCardGameHandler {
       player1SelectedItem,
       player2SelectedItem,
     });
+
+    // コウリンの適用
+    this.applyKourinEffect({
+      player1Status,
+      player2Status,
+      player1SelectedItem,
+      player2SelectedItem,
+    })
 
     // ゲームの終了判定
     if (
@@ -373,6 +381,32 @@ export abstract class BaseCardGameHandler {
     }
     if (player2SelectedItem?.itemId === ALL_ITEMS.OUEN.itemId) {
       this.items.applyOuenEffectToCards(player2Status, player2SelectedCard);
+    }
+  }
+
+  private applyKourinEffect({
+    player1Status,
+    player2Status,
+    player1SelectedItem,
+    player2SelectedItem,
+  }: {
+    player1Status: PlayerStatus;
+    player2Status: PlayerStatus;
+    player1SelectedItem?: Item;
+    player2SelectedItem?: Item;
+  }) {
+    if (
+      player1SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId ||
+      player2SelectedItem?.itemId === ALL_ITEMS.MUKOUKA.itemId
+    ) {
+      return;
+    }
+
+    if (player1SelectedItem?.itemId === ALL_ITEMS.KOURIN.itemId) {
+      this.items.changeToKourinItems(player1Status);
+    }
+    if (player2SelectedItem?.itemId === ALL_ITEMS.KOURIN.itemId) {
+      this.items.changeToKourinItems(player2Status);
     }
   }
 

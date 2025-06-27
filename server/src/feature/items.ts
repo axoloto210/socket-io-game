@@ -17,7 +17,14 @@ export class Items {
     ALL_ITEMS.URAGIRI,
     ALL_ITEMS.TENTEKI,
     ALL_ITEMS.OUEN,
-  ];
+    ALL_ITEMS.KOURIN,
+  ] as const satisfies Item[];
+
+  private KOURIN_ITEMS = [
+    ALL_ITEMS.KOURIN_YUIGA_DOKUSON,
+    ALL_ITEMS.KOURIN_SINRYU,
+    ALL_ITEMS.KOURIN_ZENCHI_ZENNOU,
+  ] as const satisfies Item[];
 
   getInitialItems() {
     return structuredClone(this.INITIAL_ITEMS);
@@ -34,6 +41,10 @@ export class Items {
 
     // 最初の5つの要素を返す
     return dxItems.slice(0, 5);
+  }
+
+  getKourinItems() {
+    return structuredClone(this.KOURIN_ITEMS);
   }
 
   applyGusuEffect(player1SelectedCard: Card, player2SelectedCard: Card) {
@@ -217,5 +228,9 @@ export class Items {
         card.power++;
       });
     }
+  }
+
+  changeToKourinItems(player1Status: PlayerStatus) {
+    player1Status.items = this.getKourinItems();
   }
 }

@@ -93,7 +93,7 @@ export const ALL_ITEMS = {
   KOURIN_ZENCHI_ZENNOU:{
     itemId: 11,
     itemName:"全知全能",
-    itemEffect:"神のアイテム。\nライフを1回復する。自分の手札のカードと相手の手札のカードを全て入れ替える。",
+    itemEffect:"神のアイテム。\nライフを1回復する。\n自分の手札のカードと相手の手札のカードを全て入れ替える。",
     itemImageUrl:"woop_mouse.png",
   }
 } as const satisfies { [itemName: string]: Item };
