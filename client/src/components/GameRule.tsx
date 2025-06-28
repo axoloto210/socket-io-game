@@ -102,7 +102,7 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 アベコベ
               </h4>
               <p className="text-gray-700">
-                カードの勝敗が逆転します。
+                カードの数値による勝敗が逆転します。
                 <br />
                 お互いに使用すると通常の勝敗判定となります。
               </p>
@@ -142,13 +142,13 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 テンテキ
               </h4>
               <p className="text-gray-700">
-                お互いのカードの数値の差が2のときに勝利します。
-                <br />
-                差が2のとき、アベコベは無効化されます。
+                お互いのカードの数値の差が2のときにも勝利します。
                 <br />
                 差が2のときに勝利すると、相手のすべての手札の数値を-1します。
                 <br />
                 お互いがテンテキを使用して差が2のときには、お互いに1ダメージを与えてすべての手札の数値が-1されます。
+                <br />
+                テンテキの勝利判定は、アベコベ・唯我独尊の勝利判定よりも優先されます。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
