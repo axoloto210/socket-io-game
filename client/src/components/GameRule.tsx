@@ -127,7 +127,9 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
               DXモードアイテム
             </h3>
             <p>
-              追加アイテムも含めて、各々ランダムに5つ持った状態で始まるモードです。
+              アベコベ・コウリンと残り6個のアイテムから3個ずつをランダムに持った状態で始まるモードです。
+              <br/>
+              ランダムに選ばれるアイテムは自分と相手が同じものを1つももたないように選ばれます。
             </p>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
               <h4 className="font-bold text-gray-900 mb-2 flex items-center">
@@ -192,6 +194,8 @@ export const GameRule = ({ needHeader }: { needHeader: boolean }) => {
                 相手のカードの値と異なる値のカードを出すと勝利するが、同じ値の時には敗北する。
                 <br/>
                 お互いに使用すると通常の勝敗判定となります。
+                <br/>
+                テンテキによる勝敗判定が優先されます。
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
