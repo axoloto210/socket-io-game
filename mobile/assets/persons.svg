@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Left person -->
+  <circle cx="60" cy="65" r="22" fill="gray"/>
+  <rect x="38" y="87" width="44" height="64" rx="4" fill="gray"/>
+  
+  <!-- Right person -->
+  <circle cx="140" cy="65" r="22" fill="gray"/>
+  <rect x="118" y="87" width="44" height="64" rx="4" fill="gray"/>
+</svg>

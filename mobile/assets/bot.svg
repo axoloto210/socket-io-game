@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Left person (human) - exactly as in reference -->
+  <circle cx="60" cy="65" r="22" fill="gray"/>
+  <rect x="38" y="87" width="44" height="64" rx="4" fill="gray"/>
+  
+  <!-- Right figure (robot) -->
+  <!-- Robot head floating closer to body (3px from original) -->
+  <rect x="125" y="50" width="30" height="35" rx="2" fill="gray"/>
+  <rect x="118" y="87" width="44" height="64" rx="1" fill="gray"/>
+  
+  <!-- Robot head details -->
+  <rect x="130" y="55" width="20" height="10" fill="gray"/>
+  <circle cx="135" cy="60" r="2" fill="gray"/>
+  <circle cx="145" cy="60" r="2" fill="gray"/>
+  
+  <!-- Robot antenna -->
+  <line x1="140" y1="50" x2="140" y2="40" stroke="gray" stroke-width="2"/>
+  <circle cx="140" cy="38" r="3" fill="gray"/>
+  
+  <!-- Arms for robot -->
+  <rect x="106" y="95" width="12" height="30" rx="0" fill="gray"/>
+  <rect x="162" y="95" width="12" height="30" rx="0" fill="gray"/>
+  
+  <!-- Robot arm joints -->
+  <circle cx="112" cy="95" r="3" fill="gray"/>
+  <circle cx="168" cy="95" r="3" fill="gray"/>
+  
+  <!-- Robot chest details -->
+  <rect x="130" y="95" width="20" height="15" rx="1" fill="gray"/>
+  <circle cx="135" cy="102" r="3" fill="gray"/>
+  <circle cx="145" cy="102" r="3" fill="gray"/>
+</svg>
