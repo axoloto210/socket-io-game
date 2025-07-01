@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import { GameRuleModal } from "./components/GameRuleModal";
 import { RoomModeSelector } from "./components/RoomModeSelector";
@@ -6,14 +6,23 @@ import { RoomModeSelector } from "./components/RoomModeSelector";
 import { Analytics } from "@vercel/analytics/react";
 import { GameRule } from "./components/GameRule";
 
+const USER_NAME_KEY = "userName";
+
 function App() {
   const [userName, setUserName] = useState<string>("");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // ユーザー名入力処理
+  useEffect(() => {
+    const savedName = localStorage.getItem(USER_NAME_KEY);
+    if (savedName) {
+      setUserName(savedName);
+    }
+  }, []);
+
   const handleLogin = () => {
     if (userName.trim()) {
       setIsAuthenticated(true);
+      localStorage.setItem(USER_NAME_KEY, userName);
     }
   };
 
