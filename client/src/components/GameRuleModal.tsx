@@ -31,7 +31,7 @@ export const GameRuleModal = () => {
     <div>
       <button
         onClick={openModal}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none transition-colors duration-200"
+        className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white shadow-sm transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         aria-label="ルール"
       >
         ルール
@@ -45,20 +45,18 @@ export const GameRuleModal = () => {
             aria-hidden="true"
           />
 
-          <div className="relative bg-white rounded-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-white">
+            <div className="flex items-center justify-between border-b border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900">ルール</h2>
               <button
                 onClick={closeModal}
-                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 text-xl"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-gray-500 transition-colors duration-200 hover:bg-gray-100"
                 aria-label="閉じる"
               >
                 ×
               </button>
             </div>
-            <GameRule 
-            needHeader = {false}
-            />
+            <GameRule needHeader={false} />
           </div>
         </div>
       )}

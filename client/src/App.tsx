@@ -38,8 +38,8 @@ function App() {
       <UserContext.Provider value={{ userName, setUserName }}>
         <div className="min-h-screen bg-gray-50">
           <header className="bg-white shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center">
+            <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-semibold text-gray-900">
                   リアクトデュエル
                 </h1>
@@ -48,29 +48,29 @@ function App() {
             </div>
           </header>
 
-          <main className="max-w-4xl mx-auto">
+          <main className="mx-auto max-w-4xl">
             {!isAuthenticated ? (
               <>
-                <div className="bg-white shadow rounded-lg p-6 mt-2">
+                <div className="mt-2 rounded-lg bg-white p-6 shadow">
                   <div className="flex gap-4">
                     <input
                       type="text"
                       value={userName}
                       maxLength={12}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="flex-1 border rounded-md px-3 py-2"
+                      className="flex-1 rounded-md border px-3 py-2"
                       placeholder="ユーザー名"
                       onKeyDown={handleKeyDown}
                     />
                     <button
                       onClick={handleLogin}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                      className="rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
                     >
                       けってい
                     </button>
                   </div>
                 </div>
-                <div className="bg-white shadow rounded-lg p-6 mt-2">
+                <div className="mt-2 rounded-lg bg-white p-6 shadow">
                   <GameRule needHeader />
                 </div>
               </>

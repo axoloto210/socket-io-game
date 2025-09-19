@@ -10,13 +10,9 @@ export const LoadingOverlay = ({ children, isLoading = false }: Props) => {
     <div className="relative">
       {children}
       {isLoading && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <span
-            className="
-          inline-block 
-          text-xl 
-          loading-blink
-        "
+            className="loading-blink inline-block text-xl"
             style={{ color: "#D4B840" }}
           >
             たいきちゅう

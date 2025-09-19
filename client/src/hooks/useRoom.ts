@@ -45,19 +45,19 @@ export const useRoom = (socket: Socket) => {
             isBotMatch
               ? ROOM_EVENTS.JOIN_DELUXE_BOT_ROOM
               : ROOM_EVENTS.JOIN_DELUXE_ROOM,
-            { roomId, userName: user.userName }
+            { roomId, userName: user.userName },
           );
           setCurrentRoomId(roomId);
         } else {
           socket.emit(
             isBotMatch ? ROOM_EVENTS.JOIN_BOT_ROOM : ROOM_EVENTS.JOIN_ROOM,
-            { roomId, userName: user.userName }
+            { roomId, userName: user.userName },
           );
           setCurrentRoomId(roomId);
         }
       }
     },
-    [currentRoomId, socket, user.userName]
+    [currentRoomId, socket, user.userName],
   );
 
   // ルーム退室処理
