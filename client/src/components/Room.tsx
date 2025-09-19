@@ -5,28 +5,29 @@ import { ReturnTopButton } from "./ui/ReturnTopButton";
 import { socket } from "../socket";
 import { BOT_ROOM_PREFIX, RANDOM_ROOM_PREFIX } from "@socket-io-game/common";
 
-
-const isValidRoomId = (roomId:string) => {
-  if(roomId.startsWith(RANDOM_ROOM_PREFIX) || roomId.startsWith(BOT_ROOM_PREFIX)){
-    return false
+const isValidRoomId = (roomId: string) => {
+  if (
+    roomId.startsWith(RANDOM_ROOM_PREFIX) ||
+    roomId.startsWith(BOT_ROOM_PREFIX)
+  ) {
+    return false;
   }
-  return true
-}
+  return true;
+};
 
 const Room = () => {
   const [roomId, setRoomId] = useState<string>("");
   const [roomIdError, setRoomIdError] = useState<string>("");
 
-
   const { currentRoomId, errorMessage, joinRoom, leaveRoom } = useRoom(socket);
 
   const clickJoinHandler = () => {
-    if(!isValidRoomId(roomId)){
-      setRoomIdError('このルームは使用できません。')
-      return ;
+    if (!isValidRoomId(roomId)) {
+      setRoomIdError("このルームは使用できません。");
+      return;
     }
-    setRoomIdError("")
-    joinRoom({roomId, isBotMatch: false, isDeluxeMode:false});
+    setRoomIdError("");
+    joinRoom({ roomId, isBotMatch: false, isDeluxeMode: false });
   };
 
   const isInRoom = currentRoomId && !errorMessage;
@@ -45,11 +46,11 @@ const Room = () => {
                   clickJoinHandler();
                 }
               }}
-              className="border p-2 mr-2"
+              className="mr-2 border p-2"
             />
             <button
               onClick={clickJoinHandler}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="rounded bg-blue-500 px-4 py-2 text-white"
             >
               ルームに参加
             </button>
@@ -59,7 +60,7 @@ const Room = () => {
         {errorMessage && (
           <>
             <div className="text-red-500">{errorMessage}</div>
-            <ReturnTopButton/>
+            <ReturnTopButton />
           </>
         )}
         {isInRoom && (
@@ -67,7 +68,7 @@ const Room = () => {
             <p className="mr-4">現在のルーム: {currentRoomId}</p>
             <button
               onClick={leaveRoom}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="rounded bg-blue-500 px-4 py-2 text-white"
             >
               ルームから出る
             </button>

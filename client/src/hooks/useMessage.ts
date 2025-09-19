@@ -1,10 +1,8 @@
-
 import { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { UserContext } from "../contexts/UserContext";
 import { Message } from "@socket-io-game/common";
 import { MESSAGE_EVENTS } from "@socket-io-game/common";
-
 
 export const useMessage = (socket: Socket) => {
   const user = useContext(UserContext);

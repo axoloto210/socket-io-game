@@ -33,7 +33,7 @@ const getRoomComponent = (roomMode: RoomMode) => {
       return <DeluxeRandomRoom />;
     }
     case ROOM_MODE.DELUXE_BOT: {
-      return <DeluxeBotRoom/>
+      return <DeluxeBotRoom />;
     }
     default:
       assertUnreachable(roomMode);
@@ -48,8 +48,8 @@ export const RoomModeSelector = () => {
       {!selectedMode && (
         <>
           <div className="flex flex-col justify-center">
-            <div className="mt-4 mb-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-b-2 border-blue-300 pb-2">
+            <div className="mb-8 mt-4">
+              <h2 className="mb-4 border-b-2 border-blue-300 pb-2 text-center text-xl font-bold text-gray-800">
                 基本モード
               </h2>
               <div className="m-4 flex justify-center">
@@ -81,7 +81,7 @@ export const RoomModeSelector = () => {
               </div>
             </div>
             <div className="mt-4">
-              <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-b-2 border-red-300 pb-2">
+              <h2 className="mb-4 border-b-2 border-red-300 pb-2 text-center text-xl font-bold text-gray-800">
                 DXモード
               </h2>
               <div className="m-4 flex justify-center">

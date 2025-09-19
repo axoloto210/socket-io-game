@@ -43,7 +43,7 @@ export const CardGame = (props: CardGameProps) => {
     : undefined;
 
   const opponentStatusKey = Object.keys(cardGameStatus.playerStatuses).filter(
-    (key) => key !== socket.id
+    (key) => key !== socket.id,
   )[0];
 
   const opponentStatus = cardGameStatus.playerStatuses[opponentStatusKey];
@@ -82,17 +82,17 @@ export const CardGame = (props: CardGameProps) => {
               <GameEnd gameResult={gameResult} />
             )}
 
-            <div className="flex items-center justify-center ml-2 mr-2 mb-2">
+            <div className="mb-2 ml-2 mr-2 flex items-center justify-center">
               {[...Array(opponentStatus.hands.length)].map(() => {
                 return <OpponentCardComponent />;
               })}
             </div>
-            <div className="flex flex-col items-center justify-center mb-2">
-              <div className="flex justify-center mt-4 min-w-full relative">
+            <div className="mb-2 flex flex-col items-center justify-center">
+              <div className="relative mt-4 flex min-w-full justify-center">
                 <PlayerNamePlate playerName={opponentStatus.userName}>
                   <Hearts hp={opponentStatus.hp} />
                 </PlayerNamePlate>
-                <div className="flex justify-center mx-auto pl-12">
+                <div className="mx-auto flex justify-center pl-12">
                   {opponentSelectedCards?.card ? (
                     <div className="relative">
                       <RevealedCardComponent
@@ -125,11 +125,11 @@ export const CardGame = (props: CardGameProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex min-w-full mt-2 relative">
+              <div className="relative mt-2 flex min-w-full">
                 <PlayerNamePlate playerName={playerStatus.userName}>
                   <Hearts hp={playerStatus.hp} />
                 </PlayerNamePlate>
-                <div className="flex justify-center mx-auto pl-12">
+                <div className="mx-auto flex justify-center pl-12">
                   {playerSelectedCards?.card ? (
                     <div className="relative">
                       <RevealedCardComponent
@@ -158,7 +158,7 @@ export const CardGame = (props: CardGameProps) => {
                   </div>
                 </div>
                 <button
-                  className="absolute right-2 max-md:right-[-12px] top-1/2 -translate-y-1/2 bg-blue-500 text-white h-12 w-16 max-md:text-[16px] px-4 max-md:px-2 py-2 max-md:py-1 rounded ml-auto mt-16 mb-16 max-md:mt-4 max-md:mb-4"
+                  className="absolute right-2 top-1/2 mb-16 ml-auto mt-16 h-12 w-16 -translate-y-1/2 rounded bg-blue-500 px-4 py-2 text-white max-md:right-[-12px] max-md:mb-4 max-md:mt-4 max-md:px-2 max-md:py-1 max-md:text-[16px]"
                   onClick={handleDecideClick}
                 >
                   SET
@@ -166,7 +166,7 @@ export const CardGame = (props: CardGameProps) => {
               </div>
             </div>
             <LoadingOverlay isLoading={isCardDecided}>
-              <div className="flex items-center justify-center ml-2 mr-2 mb-2">
+              <div className="mb-2 ml-2 mr-2 flex items-center justify-center">
                 {playerStatus.hands.map((hand) => {
                   return (
                     <CardComponent
@@ -178,7 +178,7 @@ export const CardGame = (props: CardGameProps) => {
                   );
                 })}
               </div>
-              <div className="flex ml-2 mr-2 mt-2">
+              <div className="ml-2 mr-2 mt-2 flex">
                 {playerStatus.items.map((item) => {
                   return (
                     <ItemComponent
@@ -216,27 +216,17 @@ const CardComponent = (props: {
     <button
       onClick={() => props.onClick(props.card)}
       disabled={isRestricted}
-      className={`
-        w-32 h-48
-        max-md:w-16 max-md:h-24 
-        rounded-lg 
-        shadow-lg border-2 border-gray-200 
-        flex items-center justify-center 
-        relative 
-        transition-all duration-300 
-        cursor-pointer hover:shadow-xl hover:bg-sky-500
-        ${cardId === props.currentCardId ? "bg-sky-300" : " bg-white"}
-      `}
+      className={`relative flex h-48 w-32 cursor-pointer items-center justify-center rounded-lg border-2 border-gray-200 shadow-lg transition-all duration-300 hover:bg-sky-500 hover:shadow-xl max-md:h-24 max-md:w-16 ${cardId === props.currentCardId ? "bg-sky-300" : "bg-white"} `}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+      <span className="text-5xl font-bold text-gray-900 max-md:text-3xl">
         {cardText}
       </span>
 
-      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
+      <span className="absolute left-1 top-1 text-xl font-semibold text-gray-900 max-md:text-base">
         {cardText}
       </span>
 
-      <span className="absolute bottom-1 right-1 text-xl max-md:text-base  font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 rotate-180 text-xl font-semibold text-gray-900 max-md:text-base">
         {cardText}
       </span>
     </button>
@@ -246,25 +236,17 @@ const CardComponent = (props: {
 const OpponentCardComponent = () => {
   return (
     <div
-      className={`
-        w-32 h-48
-        max-md:w-16 max-md:h-24 
-        bg-white rounded-lg 
-        shadow-lg border-2 border-gray-200 
-        flex items-center justify-center 
-        relative 
-        transition-all duration-300 
-      `}
+      className={`relative flex h-48 w-32 items-center justify-center rounded-lg border-2 border-gray-200 bg-white shadow-lg transition-all duration-300 max-md:h-24 max-md:w-16`}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+      <span className="text-5xl font-bold text-gray-900 max-md:text-3xl">
         ?
       </span>
 
-      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
+      <span className="absolute left-1 top-1 text-xl font-semibold text-gray-900 max-md:text-base">
         ?
       </span>
 
-      <span className="absolute bottom-1 right-1 text-xl max-md:text-base font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 rotate-180 text-xl font-semibold text-gray-900 max-md:text-base">
         ?
       </span>
     </div>
@@ -274,25 +256,17 @@ const OpponentCardComponent = () => {
 export const RevealedCardComponent = (props: { power: number }) => {
   return (
     <div
-      className={`
-        w-32 h-48
-        max-md:w-16 max-md:h-24 
-        bg-white rounded-lg 
-        shadow-lg border-2 border-gray-200 
-        flex items-center justify-center 
-        relative 
-        transition-all duration-300 
-      `}
+      className={`relative flex h-48 w-32 items-center justify-center rounded-lg border-2 border-gray-200 bg-white shadow-lg transition-all duration-300 max-md:h-24 max-md:w-16`}
     >
-      <span className="text-5xl max-md:text-3xl font-bold text-gray-900">
+      <span className="text-5xl font-bold text-gray-900 max-md:text-3xl">
         {props.power}
       </span>
 
-      <span className="absolute top-1 left-1 text-xl max-md:text-base font-semibold text-gray-900">
+      <span className="absolute left-1 top-1 text-xl font-semibold text-gray-900 max-md:text-base">
         {props.power}
       </span>
 
-      <span className="absolute bottom-1 right-1 text-xl max-md:text-base font-semibold rotate-180 text-gray-900">
+      <span className="absolute bottom-1 right-1 rotate-180 text-xl font-semibold text-gray-900 max-md:text-base">
         {props.power}
       </span>
     </div>
@@ -302,14 +276,7 @@ export const RevealedCardComponent = (props: { power: number }) => {
 const CardComponentArea = () => {
   return (
     <div
-      className={`
-        w-32 h-48
-        max-md:w-16 max-md:h-24 
-        rounded-lg 
-        border-2 border-dashed border-gray-200 
-        flex items-center justify-center 
-        relative 
-      `}
+      className={`relative flex h-48 w-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 max-md:h-24 max-md:w-16`}
     ></div>
   );
 };
@@ -320,21 +287,12 @@ const RevealedItemComponent = (props: {
 }) => {
   return (
     <div
-      className={`
-w-12 h-12 
-bg-white
-rounded-lg 
-shadow-lg border-2 border-gray-200 
-flex items-center justify-center 
-relative 
-transition-all duration-300 
-overflow-hidden
-`}
+      className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-lg transition-all duration-300`}
     >
       <img
         src={props.itemImageUrl}
         alt={props.itemName}
-        className="w-14 h-14 object-cover"
+        className="h-14 w-14 object-cover"
       />
     </div>
   );
@@ -342,13 +300,7 @@ overflow-hidden
 const ItemComponentArea = () => {
   return (
     <div
-      className={`
-w-12 h-12 
-rounded-lg 
-border-2 border-dashed border-gray-200 
-flex items-center justify-center 
-relative 
-`}
+      className={`relative flex h-12 w-12 items-center justify-center rounded-lg border-2 border-dashed border-gray-200`}
     ></div>
   );
 };
@@ -387,17 +339,7 @@ const AnimatedPowerChange = (props: {
         `}
       </style>
       <div
-        className={`
-    absolute
-    top-1/2
-    left-0
-    w-12 h-12
-    flex items-center justify-center
-    ${bgColor} text-white text-2xl font-bold
-    rounded
-    shadow-lg
-    pointer-events-none
-  `}
+        className={`absolute left-0 top-1/2 flex h-12 w-12 items-center justify-center ${bgColor} pointer-events-none rounded text-2xl font-bold text-white shadow-lg`}
         style={{
           opacity: 0,
           transform: "translate(-50%, -50%)",

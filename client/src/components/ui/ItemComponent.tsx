@@ -50,7 +50,7 @@ export const ItemComponent = (props: ItemComponentProps) => {
         ((pressedTime - PROGRESS_SHOW_DELAY) /
           (PRESS_DURATION - PROGRESS_SHOW_DELAY)) *
           100,
-        100
+        100,
       )
     : 0;
 
@@ -77,33 +77,22 @@ export const ItemComponent = (props: ItemComponentProps) => {
         onPointerLeave={handlePressEnd}
         onPointerCancel={handlePressEnd}
         onContextMenu={(e) => e.preventDefault()}
-        className={`
-          w-12 h-12 
-          bg-white
-          rounded-lg 
-          shadow-lg border-2 border-gray-200 
-          flex items-center justify-center 
-          relative 
-          transition-all duration-300 
-          cursor-pointer overflow-hidden
-          ${isPressed ? "scale-105 shadow-xl" : ""}
-          ${
-            isRestricted
-              ? "border-red-500 border-4"
-              : `hover:shadow-xl ${
-                  props.currentItemId === props.itemId
-                    ? "border-sky-500 border-4"
-                    : "border-gray-200 hover:border-sky-500 hover:border-4"
-                }`
-          }
-        `}
+        className={`relative flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-lg transition-all duration-300 ${isPressed ? "scale-105 shadow-xl" : ""} ${
+          isRestricted
+            ? "border-4 border-red-500"
+            : `hover:shadow-xl ${
+                props.currentItemId === props.itemId
+                  ? "border-4 border-sky-500"
+                  : "border-gray-200 hover:border-4 hover:border-sky-500"
+              }`
+        } `}
         disabled={isRestricted}
         style={{ touchAction: "manipulation" }}
       >
         <img
           src={props.itemImageUrl}
           alt={props.itemName}
-          className="w-14 h-14 object-cover select-none"
+          className="h-14 w-14 select-none object-cover"
           style={{
             WebkitUserSelect: "none",
             WebkitTouchCallout: "none",
@@ -122,8 +111,8 @@ export const ItemComponent = (props: ItemComponentProps) => {
         )}
 
         {isProgressShown && (
-          <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-            <div className="text-white text-xs font-medium">
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20">
+            <div className="text-xs font-medium text-white">
               {Math.round(pressProgress)}%
             </div>
           </div>
@@ -132,49 +121,49 @@ export const ItemComponent = (props: ItemComponentProps) => {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
+            className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center justify-between border-b p-4">
               <h2 className="text-lg font-semibold text-gray-800">
                 {props.itemName}
               </h2>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors w-6 h-6 flex items-center justify-center"
+                className="flex h-6 w-6 items-center justify-center text-gray-400 transition-colors hover:text-gray-600"
               >
                 ×
               </button>
             </div>
 
             <div className="p-4">
-              <div className="flex justify-center mb-4">
+              <div className="mb-4 flex justify-center">
                 <img
                   src={props.itemImageUrl}
                   alt={props.itemName}
-                  className="w-32 h-32 object-cover rounded-lg shadow-md"
+                  className="h-32 w-32 rounded-lg object-cover shadow-md"
                 />
               </div>
 
-              <h3 className="text-xl font-bold text-center text-gray-800 mb-3">
+              <h3 className="mb-3 text-center text-xl font-bold text-gray-800">
                 {props.itemName}
               </h3>
 
               {props.itemEffect && (
-                <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                  <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                <div className="mb-4 rounded-lg bg-gray-50 p-3">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
                     {props.itemEffect}
                   </p>
                 </div>
               )}
 
               {!props.itemEffect && (
-                <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                  <p className="text-gray-500 text-sm text-center italic">
+                <div className="mb-4 rounded-lg bg-gray-50 p-3">
+                  <p className="text-center text-sm italic text-gray-500">
                     No Caption.
                   </p>
                 </div>

@@ -26,7 +26,7 @@ export const MessageArea = (props: MessageAreaProps) => {
             <div key={localeTimeString} className="mb-2">
               <span className="font-bold">{msg.userName}:</span>
               <span className="ml-2">{msg.message}</span>
-              <span className="text-sm text-gray-500 ml-2">
+              <span className="ml-2 text-sm text-gray-500">
                 {localeTimeString}
               </span>
             </div>
@@ -46,10 +46,10 @@ export const MessageArea = (props: MessageAreaProps) => {
               }
             }}
             placeholder="メッセージを入力"
-            className="border p-2 mr-2"
+            className="mr-2 border p-2"
           />
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="rounded bg-blue-500 px-4 py-2 text-white"
             onClick={clickSubmitHandler}
           >
             送信
